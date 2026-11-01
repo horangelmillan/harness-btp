@@ -29,22 +29,28 @@ if (!fs.existsSync(path.join(src, "AI"))) {
   console.log("ABORT: no se encontró AI/ junto al paquete");
   process.exit(1);
 }
+function readVer(p) {
+  try {
+    return fs.readFileSync(p, "utf8").split(/\r?\n/)[0].trim() || "desconocida";
+  } catch { return "desconocida"; }
+}
+const harnessVersion = readVer(path.join(src, "AI", "VERSION"));
 
 const aiDst = path.join(dest, "AI");
 if (fs.existsSync(aiDst)) {
   if (force) {
+    const oldVersion = readVer(path.join(aiDst, "VERSION"));
     const bak = path.join(dest, "AI.bak");
     fs.rmSync(bak, { recursive: true, force: true });
     fs.renameSync(aiDst, bak);
-    console.log("BACKUP: AI/ -> AI.bak");
     fs.cpSync(path.join(src, "AI"), aiDst, { recursive: true });
-    console.log("CREATE: AI/ (reinstalado con --force)");
+    console.log("BACKUP: AI/ (v" + oldVersion + ") -> AI.bak; CREATE: AI/ (v" + harnessVersion + ")");
   } else {
     console.log("SKIP: AI/ ya existe (usa --force para reinstalar con backup .bak)");
   }
 } else {
   fs.cpSync(path.join(src, "AI"), aiDst, { recursive: true });
-  console.log("CREATE: AI/");
+  console.log("CREATE: AI/ (v" + harnessVersion + ")");
 }
 
 const agentsDst = path.join(dest, "AGENTS.md");
@@ -67,4 +73,4 @@ if (missing.length === 0) {
   fs.appendFileSync(giDst, (cur.length ? "" : "") + missing.join("\n") + "\n");
   console.log("CREATE: .gitignore (+" + missing.length + " líneas)");
 }
-console.log("OK: harness instalado en " + dest + " (package.json y mta.yaml intactos)");
+console.log("OK: harness v" + harnessVersion + " instalado en " + dest + " (package.json y mta.yaml intactos)");

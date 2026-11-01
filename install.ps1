@@ -16,21 +16,29 @@ $TplPointer = Join-Path $Src "templates\AGENTS.pointer.md"
 
 if (-not (Test-Path $AiSrc)) { Write-Output "ABORT: no se encontró AI/ junto a install.ps1"; exit 1 }
 
+$HarnessVersion = "desconocida"
+$VersionFile = Join-Path $AiSrc "VERSION"
+if (Test-Path $VersionFile) { $HarnessVersion = ((Get-Content $VersionFile | Select-Object -First 1) + "").Trim() }
+if (-not $HarnessVersion) { $HarnessVersion = "desconocida" }
+
 $AiDst = Join-Path $Dest "AI"
 if (Test-Path $AiDst) {
   if ($Force) {
+    $OldVersion = "desconocida"
+    $DstVersionFile = Join-Path $AiDst "VERSION"
+    if (Test-Path $DstVersionFile) { $OldVersion = ((Get-Content $DstVersionFile | Select-Object -First 1) + "").Trim() }
+    if (-not $OldVersion) { $OldVersion = "desconocida" }
     $Bak = Join-Path $Dest "AI.bak"
     if (Test-Path $Bak) { Remove-Item $Bak -Recurse -Force }
     Rename-Item $AiDst "AI.bak"
-    Write-Output "BACKUP: AI/ -> AI.bak"
     Copy-Item $AiSrc $AiDst -Recurse -Force
-    Write-Output "CREATE: AI/ (reinstalado con -Force)"
+    Write-Output "BACKUP: AI/ (v$OldVersion) -> AI.bak; CREATE: AI/ (v$HarnessVersion)"
   } else {
     Write-Output "SKIP: AI/ ya existe (usa -Force para reinstalar con backup .bak)"
   }
 } else {
   Copy-Item $AiSrc $AiDst -Recurse -Force
-  Write-Output "CREATE: AI/"
+  Write-Output "CREATE: AI/ (v$HarnessVersion)"
 }
 
 $AgentsDst = Join-Path $Dest "AGENTS.md"
@@ -57,7 +65,7 @@ if (Test-Path $GiDst) {
   Write-Output "CREATE: .gitignore"
 }
 
-Write-Output "OK: harness instalado en $Dest (package.json y mta.yaml intactos)"
+Write-Output "OK: harness v$HarnessVersion instalado en $Dest (package.json y mta.yaml intactos)"
 
 # Verificación de prerrequisitos en modo aviso (no bloquea la instalación).
 try {
