@@ -1,0 +1,8 @@
+# Deps y transitorios del harness (el fragmento para proyectos vive en AI/.gitignore.fragment)
+node_modules/
+AI.bak/
+AI-tmp/
+temp/
+*.log
+.DS_Store
+Thumbs.db

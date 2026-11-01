@@ -1,0 +1,11 @@
+# Harness BTP — líneas para `.gitignore` del proyecto destino.
+# El instalador agrega las que falten; no borra nada existente.
+temp/
+evidencia/
+.playwright-mcp/
+graphify-out/
+mta_archives/
+*.mtar
+.env*
+default-env.json
+default-services.json

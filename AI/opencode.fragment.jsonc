@@ -1,0 +1,17 @@
+// Fragmento MCP para el proyecto destino. Fusionar en su `opencode.jsonc`.
+// `graphify-code` viene DESHABILITADO por defecto: el índice vive en el
+// proyecto (`AI/graphify-out/graph.json`, ruta relativa) y debe generarse
+// tras instalar. Para activarlo:
+//   1. Generar el índice del proyecto en `AI/graphify-out/graph.json`.
+//   2. Poner `"enabled": true` en el bloque `graphify-code`.
+//   3. Reiniciar OpenCode.
+{
+  "mcp": {
+    "graphify-code": {
+      "type": "local",
+      "command": ["graphify-mcp", "--graph", "AI/graphify-out/graph.json"],
+      "cwd": ".",
+      "enabled": false
+    }
+  }
+}
