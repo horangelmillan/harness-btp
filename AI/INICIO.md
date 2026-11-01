@@ -73,6 +73,13 @@ Toda lectura CF con secreto potencial vía `scripts/cf-safe.ps1`
 (nunca `cf` directo en agentes/scripts si la salida puede traer
 credenciales). Detalle: `docs/cf-safe.md`.
 
+## Papeles guía
+
+Documentación oficial que respalda las guías del harness:
+`docs/fuentes-oficiales.md` (tabla Fuente | URL oficial | Qué cubre | Última
+verificación). Antes de usar una fuente, refresca su estado con
+`AI/scripts/check-docs.ps1` (o `.sh`).
+
 ## Skills candidatas (no instaladas)
 
 Inspeccionadas solo por procedencia; adoptar **únicamente** si

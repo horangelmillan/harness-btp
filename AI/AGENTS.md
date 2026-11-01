@@ -230,7 +230,7 @@ el `ECONNREFUSED`. `chrome-devtools` usa canal propio y no necesita `:9222`.
 
 - `context7` (`resolve-library-id` → `query-docs`): docs de CAP, UI5, CF CLI,
   MTA y cualquier librería antes de suponer APIs. Lo usan `researcher` y los
-  especialistas. Ante un error de servicio con código (p. ej. EP003) o un
+  especialistas. En etapa 1 el `researcher` re-verifica con `AI/scripts/check-docs` las fuentes de `AI/docs/fuentes-oficiales.md` que la spec vaya a usar y registra la fecha. Ante un error de servicio con código (p. ej. EP003) o un
   payload dudoso, contrastar el payload contra el tutorial oficial vigente +
   el error real antes de asumir; las docs viejas o el scaffold no mandan.
 - `codebase-memory`: contexto del índice cuando el MVP viva en un proyecto

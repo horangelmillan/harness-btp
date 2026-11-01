@@ -55,3 +55,6 @@ cliente agéntico**, no en el repo: debes tener configurados
 Tras instalar lo que falte, re-ejecuta `check-prereqs` (mismo comando de arriba):
 `exit 0` = puedes empezar; `exit 1` = aún falta algo **REQUERIDO** (la tabla dice cuál y dónde instalarlo).
 El script nunca imprime secretos (solo ejecuta `<comando> --version`).
+
+Fuentes oficiales: `AI/scripts/check-docs.ps1` (o `.sh`) verifica las URLs de
+`AI/docs/fuentes-oficiales.md`; `exit 1` = alguna REQUERIDA rota.
