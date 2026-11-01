@@ -11,6 +11,6 @@
   "bin": {
     "harness-btp": "./bin/harness-btp.js"
   },
-  "files": ["AI", "templates", "install.ps1", "install.sh", "README.md", "VERSION"],
+  "files": ["AI", "bin", "templates", "install.ps1", "install.sh", "README.md", "VERSION"],
   "license": "MIT"
 }
