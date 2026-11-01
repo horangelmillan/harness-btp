@@ -9,10 +9,10 @@
 
 | Uso | Comando | Notas |
 |---|---|---|
-| Cloud Foundry | `cf` | CLI estándar de Cloud Foundry (v8). |
+| Cloud Foundry | `cf` (`$env:CF_BIN` si está definido) | CLI estándar de Cloud Foundry (v8). |
 | MTA build | `mbt` | Cloud MTA Build Tool (binario recuperado vía su propio `install.js`). |
 
-Si `cf` en tu máquina corresponde a otra herramienta, define un alias propio y úsalo donde el harness diga `cf`.
+El mapeo máquina→binario NO se versiona: vive en `~/.harness/local.ps1` (Windows: `$env:CF_BIN="sap_cf.cmd"`) o `$HOME/.harness/local.sh` (Unix). El harness dice `cf`; el skill `cf-cli` resuelve: si existe `$env:CF_BIN` lo usa, si no `cf`, verificado con `Get-Command` una vez por sesión. Nunca transcribir el mapeo en `AGENTS.md` ni en la spec.
 
 Ver skill local `cf-cli` antes del primer comando CF del turno;
 ver `mta-build` antes del primer build MTAR.
@@ -193,13 +193,13 @@ encadenarlo en pipes.
 
 Toda tarea que use navegador (`playwright` o `chrome-devtools`, en pruebas o
 implementación) cumple este protocolo sin excepciones. Fuente única: esta
-sección + `scripts/cdp-chrome.ps1`. Causa raíz conocida: el MCP
+sección + `AI/scripts/cdp-chrome.ps1` (en el MVP instalado puede estar copiado como `scripts/cdp-chrome.ps1`; vale cualquiera — resolver con `Test-Path` ambas). Causa raíz conocida: el MCP
 `playwright` está configurado con `--cdp-endpoint http://localhost:9222` y
 **solo se conecta, no lanza navegador**; nadie levantaba el host CDP, de ahí
 el `ECONNREFUSED`. `chrome-devtools` usa canal propio y no necesita `:9222`.
 
 1. **Antes (verificación previa):** comprobar el puerto con
-   `scripts/cdp-chrome.ps1 status`. Para `playwright`, ejecutar `ensure`:
+   `AI/scripts/cdp-chrome.ps1 status`. Para `playwright`, ejecutar `ensure`:
    reutiliza el endpoint si responde; si el puerto lo ocupa un proceso
    ajeno, **detenerse, no matarlo**, e informar; si está libre, lanza Chrome
    headless propio con perfil temporal y verifica `/json/version` con
@@ -219,7 +219,7 @@ el `ECONNREFUSED`. `chrome-devtools` usa canal propio y no necesita `:9222`.
    (captura + URL + punto alcanzado) salvo orden contraria del usuario;
    nunca se omite en silencio.
 3. **Después (limpieza):** al terminar la sesión de navegador o la tarea,
-   ejecutar `scripts/cdp-chrome.ps1 cleanup` (mata **solo** procesos propios
+   ejecutar `AI/scripts/cdp-chrome.ps1 cleanup` (mata **solo** procesos propios
    verificados por PID + perfil, borra el perfil temporal) y, con
    `chrome-devtools`, cerrar las páginas abiertas. Verificar puerto libre.
    Sin limpieza verificada no se cierra la tarea.
@@ -244,9 +244,9 @@ el `ECONNREFUSED`. `chrome-devtools` usa canal propio y no necesita `:9222`.
 - `eslint`: calidad estática en código JS/TS del MVP.
 - `playwright` / `chrome-devtools`: validación en navegador de UIs Fiori
   cuando el MVP la incluya; `playwright` exige host CDP externo
-  (`scripts/cdp-chrome.ps1 ensure` antes, `cleanup` después; nunca dar UI
+  (`AI/scripts/cdp-chrome.ps1 ensure` antes, `cleanup` después; nunca dar UI
   por hecha solo porque compila ni sin endpoint verificado).
-- Skills globales en su fase, sin cargar todas: `sapui5` con `frontend-ui5`;
+- Skills globales en su fase, sin cargar todas: `sapui5` con `frontend-ui5` (en diálogos con JSON/trazabilidad, aplicar AI/docs/ui5-dialog-checklist.md);
   `systematic-debugging` ante fallos; `verification-before-completion` con
   `qa-review`; `test-driven-development` si la spec exige TDD; `git-workflow`
   con Git. Skills externas SAP (ver `INICIO.md § Skills candidatas`) solo se

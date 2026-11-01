@@ -5,10 +5,11 @@ description: Uso estándar del CLI de Cloud Foundry (cf)
 
 # CLI Cloud Foundry (`cf`)
 
-El CLI de Cloud Foundry se invoca **siempre** como `cf` (instalación
-estándar del CLI; adapta rutas según tu equipo). Si `cf` en tu máquina
-corresponde a otra herramienta, define un alias propio y úsalo de forma
-consistente donde el harness diga `cf`.
+El CLI de Cloud Foundry se invoca como `cf`, resuelto por máquina: si
+existe `$env:CF_BIN` (mapeo local en `~/.harness/local.ps1` o
+`$HOME/.harness/local.sh`, NO versionado) se usa ese binario; si no, `cf`.
+Verificar una vez por sesión con `Get-Command` antes del primer comando CF
+del turno. Nunca transcribir el mapeo en `AGENTS.md` ni en la spec.
 
 ## Lectura segura (sin secretos)
 
