@@ -1,6 +1,7 @@
 <# Instalador del harness BTP (idempotente, PowerShell 5.1).
    Uso: .\install.ps1 [-Dest "."] [-Force]
    - Copia AI/ al proyecto destino (SKIP si ya existe; con -Force hace backup a AI.bak).
+   - Fusiona AI/.opencode/{agents,commands,skills} en .opencode/ raíz (solo faltantes; con -Force hace backup a .opencode.bak).
    - Crea AGENTS.md raíz desde la plantilla solo si no existe.
    - Fusiona .gitignore con las líneas del fragmento (solo agrega faltantes).
    - NO toca package.json ni mta.yaml del proyecto. Sin secretos. #>
@@ -47,6 +48,38 @@ if (Test-Path $AgentsDst) {
 } else {
   Copy-Item $TplPointer $AgentsDst -Force
   Write-Output "CREATE: AGENTS.md (puntero a AI/AGENTS.md)"
+}
+
+$OpSrc = Join-Path $AiSrc ".opencode"
+$OpDst = Join-Path $Dest ".opencode"
+if (Test-Path $OpSrc) {
+  if ($Force) {
+    if (Test-Path $OpDst) {
+      $OpBak = Join-Path $Dest ".opencode.bak"
+      if (Test-Path $OpBak) { Remove-Item $OpBak -Recurse -Force }
+      Rename-Item $OpDst ".opencode.bak"
+      Write-Output "BACKUP: .opencode/ -> .opencode.bak"
+    }
+    Copy-Item $OpSrc $OpDst -Recurse -Force
+    $OpCount = @(Get-ChildItem $OpDst -Recurse -File).Count
+    Write-Output ("CREATE: .opencode/ (+{0} archivos)" -f $OpCount)
+  } else {
+    $OpCount = 0
+    $OpFiles = @(Get-ChildItem $OpSrc -Recurse -File)
+    foreach ($f in $OpFiles) {
+      $rel = $f.FullName.Substring($OpSrc.Length + 1)
+      $tgt = Join-Path $OpDst $rel
+      if (Test-Path $tgt) {
+        Write-Output ("SKIP: .opencode/{0} ya existe" -f ($rel -replace "\\","/"))
+      } else {
+        $tgtDir = Split-Path -Parent $tgt
+        if (-not (Test-Path $tgtDir)) { New-Item $tgtDir -ItemType Directory -Force | Out-Null }
+        Copy-Item $f.FullName $tgt -Force
+        $OpCount++
+      }
+    }
+    Write-Output ("CREATE: .opencode/ (+{0} archivos)" -f $OpCount)
+  }
 }
 
 $Frag = Join-Path $AiSrc ".gitignore.fragment"

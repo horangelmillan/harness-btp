@@ -2,6 +2,8 @@
 # Instalador del harness BTP (idempotente, POSIX sh).
 # Uso: ./install.sh [--dest <dir>] [--force] [--help]
 # Sin secretos. No toca package.json ni mta.yaml del proyecto.
+# Fusiona AI/.opencode/{agents,commands,skills} en .opencode/ raíz
+# (solo faltantes; con --force hace backup a .opencode.bak).
 DEST="."
 FORCE=0
 while [ $# -gt 0 ]; do
@@ -41,6 +43,34 @@ if [ -f "$DEST/AGENTS.md" ]; then
   echo "SKIP: AGENTS.md ya existe"
 else
   cp "$SRC/templates/AGENTS.pointer.md" "$DEST/AGENTS.md" && echo "CREATE: AGENTS.md (puntero a AI/AGENTS.md)"
+fi
+
+OP_SRC="$SRC/AI/.opencode"
+OP_DST="$DEST/.opencode"
+if [ -d "$OP_SRC" ]; then
+  if [ "$FORCE" -eq 1 ]; then
+    if [ -d "$OP_DST" ]; then
+      rm -rf "$DEST/.opencode.bak" && mv "$DEST/.opencode" "$DEST/.opencode.bak"
+      echo "BACKUP: .opencode/ -> .opencode.bak"
+    fi
+    cp -r "$OP_SRC" "$OP_DST" && OP_COUNT=$(find "$OP_DST" -type f | wc -l) && echo "CREATE: .opencode/ (+$OP_COUNT archivos)"
+  else
+    OP_COUNT=0
+    OP_LIST="${TMPDIR:-/tmp}/harness-opcount-$$.tmp"
+    find "$OP_SRC" -type f -print > "$OP_LIST"
+    while IFS= read -r OP_FILE; do
+      OP_REL=${OP_FILE#"$OP_SRC"/}
+      if [ -f "$OP_DST/$OP_REL" ]; then
+        echo "SKIP: .opencode/$OP_REL ya existe"
+      else
+        mkdir -p "$(dirname "$OP_DST/$OP_REL")"
+        cp "$OP_FILE" "$OP_DST/$OP_REL"
+        OP_COUNT=$((OP_COUNT + 1))
+      fi
+    done < "$OP_LIST"
+    rm -f "$OP_LIST"
+    echo "CREATE: .opencode/ (+$OP_COUNT archivos)"
+  fi
 fi
 
 FRAG="$SRC/AI/.gitignore.fragment"

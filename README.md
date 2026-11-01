@@ -1,6 +1,6 @@
 # harness-btp
 
-[![version](https://img.shields.io/badge/version-v0.2.4-blue)](https://github.com/horangelmillan/harness-btp/releases/tag/v0.2.4)
+[![version](https://img.shields.io/badge/version-v0.2.5-blue)](https://github.com/horangelmillan/harness-btp/releases/tag/v0.2.5)
 [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![platform](https://img.shields.io/badge/platform-windows%20%7C%20linux%20%7C%20macos-lightgrey)](https://github.com/horangelmillan/harness-btp)
 [![agent](https://img.shields.io/badge/agent-any%20AGENTS.md--compatible-purple)](https://github.com/horangelmillan/harness-btp)
@@ -55,7 +55,7 @@ El camino de 30 segundos en un proyecto nuevo. Elige tu shell:
 PowerShell (Windows):
 
 ```powershell
-npx -p degit degit horangelmillan/harness-btp#v0.2.4 AI-tmp -- AI-tmp
+npx -p degit degit horangelmillan/harness-btp#v0.2.5 AI-tmp -- AI-tmp
 powershell -ExecutionPolicy Bypass -File AI-tmp/install.ps1 -Dest .
 Remove-Item -Recurse -Force AI-tmp
 ```
@@ -63,7 +63,7 @@ Remove-Item -Recurse -Force AI-tmp
 bash (Linux, macOS o Git Bash):
 
 ```bash
-npx -p degit degit horangelmillan/harness-btp#v0.2.4 AI-tmp -- AI-tmp
+npx -p degit degit horangelmillan/harness-btp#v0.2.5 AI-tmp -- AI-tmp
 sh AI-tmp/install.sh --dest .
 rm -rf AI-tmp
 ```
@@ -79,7 +79,7 @@ Descarga solo lo necesario, sin historial git:
 PowerShell:
 
 ```powershell
-npx -p degit degit horangelmillan/harness-btp#v0.2.4 AI-tmp -- AI-tmp
+npx -p degit degit horangelmillan/harness-btp#v0.2.5 AI-tmp -- AI-tmp
 powershell -ExecutionPolicy Bypass -File AI-tmp/install.ps1 -Dest .
 Remove-Item -Recurse -Force AI-tmp
 ```
@@ -87,7 +87,7 @@ Remove-Item -Recurse -Force AI-tmp
 bash:
 
 ```bash
-npx -p degit degit horangelmillan/harness-btp#v0.2.4 AI-tmp -- AI-tmp
+npx -p degit degit horangelmillan/harness-btp#v0.2.5 AI-tmp -- AI-tmp
 sh AI-tmp/install.sh --dest .
 rm -rf AI-tmp
 ```
@@ -99,7 +99,7 @@ Clon superficial anclado al tag:
 PowerShell:
 
 ```powershell
-git clone --branch v0.2.4 --depth 1 https://github.com/horangelmillan/harness-btp AI-tmp
+git clone --branch v0.2.5 --depth 1 https://github.com/horangelmillan/harness-btp AI-tmp
 powershell -ExecutionPolicy Bypass -File AI-tmp/install.ps1 -Dest .
 Remove-Item -Recurse -Force AI-tmp
 ```
@@ -107,7 +107,7 @@ Remove-Item -Recurse -Force AI-tmp
 bash:
 
 ```bash
-git clone --branch v0.2.4 --depth 1 https://github.com/horangelmillan/harness-btp AI-tmp
+git clone --branch v0.2.5 --depth 1 https://github.com/horangelmillan/harness-btp AI-tmp
 sh AI-tmp/install.sh --dest .
 rm -rf AI-tmp
 ```
@@ -117,13 +117,14 @@ rm -rf AI-tmp
 Sin descargas manuales (requiere publicar `create-harness-btp` en el registry). Igual en todos los SO:
 
 ```bash
-pnpm dlx create-harness-btp@0.2.4 --dest .
+pnpm dlx create-harness-btp@0.2.5 --dest .
 ```
 
 ### Qué hace el instalador
 
 - `CREATE: AI/` o `SKIP: AI/ ya existe` (solo lo reemplaza con `-Force` / `--force`, con backup a `AI.bak`).
 - `CREATE: AGENTS.md` o `SKIP: AGENTS.md ya existe` (tu `AGENTS.md` propio se conserva; con `-Force` / `--force` se respalda a `AGENTS.md.bak`).
+- Fusiona `.opencode/` raíz desde `AI/.opencode/` (`agents` + `commands` + `skills`, lo que OpenCode descubre en la raíz del proyecto): sin fuerza solo copia los archivos que falten (`SKIP: .opencode/<ruta> ya existe` por cada uno conservado y `CREATE: .opencode/ (+N archivos)`); con `-Force` / `--force` respalda `.opencode/` a `.opencode.bak` (`BACKUP: .opencode/ -> .opencode.bak`) y copia todo.
 - Fusiona `.gitignore`: añade las líneas que falten, sin duplicar ni borrar las tuyas.
 - **No toca** `package.json` ni `mta.yaml` de tu proyecto, nunca.
 
@@ -132,7 +133,8 @@ Salida típica en proyecto nuevo:
 ```text
 CREATE: AI/
 CREATE: AGENTS.md
-OK: harness v0.2.4 instalado
+CREATE: .opencode/ (+17 archivos)
+OK: harness v0.2.5 instalado
 ```
 
 ## Instalación asistida por agente
@@ -152,7 +154,7 @@ Vale para proyecto nuevo (con URL), existente, Windows/Linux/macOS y cualquier c
 PowerShell:
 
 ```powershell
-npx -p degit degit horangelmillan/harness-btp#v0.2.4 AI-tmp -- AI-tmp
+npx -p degit degit horangelmillan/harness-btp#v0.2.5 AI-tmp -- AI-tmp
 powershell -ExecutionPolicy Bypass -File AI-tmp/install.ps1 -Dest . -Force
 Remove-Item -Recurse -Force AI-tmp
 # tu versión anterior queda en AI.bak por si quieres comparar
@@ -161,7 +163,7 @@ Remove-Item -Recurse -Force AI-tmp
 bash:
 
 ```bash
-npx -p degit degit horangelmillan/harness-btp#v0.2.4 AI-tmp -- AI-tmp
+npx -p degit degit horangelmillan/harness-btp#v0.2.5 AI-tmp -- AI-tmp
 sh AI-tmp/install.sh --dest . --force
 rm -rf AI-tmp
 # tu versión anterior queda en AI.bak por si quieres comparar
@@ -213,7 +215,7 @@ harness-btp/
 ├── install.ps1 / install.sh   # instaladores idempotentes (SKIP / CREATE / BACKUP / OK)
 ├── bin/                       # ejecutable de create-harness-btp (pnpm dlx)
 ├── package.json               # name create-harness-btp
-└── VERSION                    # 0.2.4
+└── VERSION                    # 0.2.5
 ```
 
 ## Cómo lo descubre el agente
@@ -230,11 +232,12 @@ Tú no configuras nada: el agente se adapta solo.
 | Problema | Causa | Comando |
 |---|---|---|
 | `SKIP: AI/ ya existe` y quería actualizar | reinstalación sin fuerza conserva lo existente | repite con `-Force` (`.ps1`) o `--force` (`.sh`); guarda `AI.bak` |
+| No aparece `orchestrator` / no existe `/flow` | fusión a `.opencode/` raíz ausente (OpenCode solo descubre `.opencode/` en la raíz del proyecto, no `AI/.opencode/`) | reinstala sin fuerza (copia solo faltantes) o copia `AI/.opencode/` a `.opencode/` en la raíz sin pisar archivos propios |
 | Mi `AGENTS.md` propio desapareció | se instaló con fuerza | recupera `AGENTS.md.bak` |
 | Líneas duplicadas en `.gitignore` | edición manual tras la fusión | el instalador fusiona sin duplicar; borra el duplicado a mano |
 | `ExecutionPolicy` bloquea `install.ps1` | política de PowerShell | `powershell -ExecutionPolicy Bypass -File AI-tmp/install.ps1 -Dest .` (o usa `install.sh` en Git Bash) |
 | `ABORT: opción desconocida` en `install.sh` | flag inexistente | `sh install.sh --help` lista `--dest`, `--force` |
-| `degit` falla sin Node | `degit` corre sobre Node 18+ | instala Node o usa `git clone --branch v0.2.4` |
+| `degit` falla sin Node | `degit` corre sobre Node 18+ | instala Node o usa `git clone --branch v0.2.5` |
 | Tu cliente no lee los agentes de `.opencode/` | layout específico de OpenCode | son un adapter opcional; el flujo está en `AI/AGENTS.md` + `AI/INICIO.md` |
 | No se deja borrar la carpeta del proyecto ("Carpeta en uso") | procesos huérfanos parados dentro (shells/MCPs de una sesión ya cerrada) | resmon → CPU → Identificadores asociados → busca la carpeta y termina solo esos PIDs; nunca fueron del instalador (solo copia archivos y termina) |
 
@@ -262,6 +265,7 @@ MIT. Haz lo que quieras con el harness; sin garantía.
 
 ## Changelog
 
+- **v0.2.5** — fusión a `.opencode/` raíz: el instalador sincroniza `AI/.opencode/` (agents + commands + skills) en `.opencode/` del proyecto para que OpenCode descubra `orchestrator` y `/flow` (SKIP sin fuerza, `.opencode.bak` con fuerza); `prompts/setup.md` verifica adopción y fusiona el fragmento MCP.
 - **v0.2.4** — estilo Neon: una línea que lee `prompts/setup.md` (versionado, siempre al día) en vez de un bloque que caduca.
 - **v0.2.3** — prompt universal todo-en-uno: clona + instala con la versión que indique el README (nunca caduca), verifica AI/VERSION instalado.
 - **v0.2.2** — anti-huérfanos: bloque de agente con regla de cierre limpio (no dejar servidores corriendo, no borrar carpetas con procesos dentro) + troubleshooting de carpeta bloqueada (resmon → Identificadores asociados).

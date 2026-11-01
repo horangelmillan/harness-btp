@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // harness-btp init --dest <dir> [--force] [--ref <tag>]
-// Copia AI/, crea AGENTS.md puntero y fusiona .gitignore. Sin secretos.
+// Copia AI/, crea AGENTS.md puntero, fusiona AI/.opencode/ en .opencode/
+// raíz (solo faltantes; con --force hace backup a .opencode.bak) y fusiona .gitignore. Sin secretos.
 // No toca package.json ni mta.yaml del proyecto.
 const fs = require("fs");
 const path = require("path");
@@ -59,6 +60,43 @@ if (fs.existsSync(agentsDst)) {
 } else {
   fs.copyFileSync(path.join(src, "templates", "AGENTS.pointer.md"), agentsDst);
   console.log("CREATE: AGENTS.md (puntero a AI/AGENTS.md)");
+}
+
+const opSrc = path.join(src, "AI", ".opencode");
+const opDst = path.join(dest, ".opencode");
+function listFilesRec(dir, base) {
+  let out = [];
+  for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+    const p = path.join(dir, e.name);
+    if (e.isDirectory()) out = out.concat(listFilesRec(p, base));
+    else out.push(path.relative(base, p));
+  }
+  return out;
+}
+if (fs.existsSync(opSrc)) {
+  if (force) {
+    if (fs.existsSync(opDst)) {
+      const opBak = path.join(dest, ".opencode.bak");
+      fs.rmSync(opBak, { recursive: true, force: true });
+      fs.renameSync(opDst, opBak);
+      console.log("BACKUP: .opencode/ -> .opencode.bak");
+    }
+    fs.cpSync(opSrc, opDst, { recursive: true });
+    console.log("CREATE: .opencode/ (+" + listFilesRec(opDst, opDst).length + " archivos)");
+  } else {
+    let opCount = 0;
+    for (const rel of listFilesRec(opSrc, opSrc)) {
+      const tgt = path.join(opDst, rel);
+      if (fs.existsSync(tgt)) {
+        console.log("SKIP: .opencode/" + rel.split(path.sep).join("/") + " ya existe");
+      } else {
+        fs.mkdirSync(path.dirname(tgt), { recursive: true });
+        fs.copyFileSync(path.join(opSrc, rel), tgt);
+        opCount++;
+      }
+    }
+    console.log("CREATE: .opencode/ (+" + opCount + " archivos)");
+  }
 }
 
 const frag = fs.readFileSync(path.join(src, "AI", ".gitignore.fragment"), "utf8")
