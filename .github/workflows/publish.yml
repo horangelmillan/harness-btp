@@ -1,0 +1,26 @@
+# Auto-publica create-harness-btp en npm cuando se pushea un tag v*.
+# Requiere: trusted publisher configurado en npmjs.com (package settings →
+# Trusted Publisher → GitHub Actions: horangelmillan / harness-btp /
+# publish.yml, permitir "npm publish"). Sin tokens ni secretos en el repo.
+# Nota npm: la config caduca si no completa su primer publish en 2 días;
+# créala justo antes de taggear la próxima versión.
+name: Publish to npm
+on:
+  push:
+    tags:
+      - "v*"
+permissions:
+  id-token: write # OIDC para npm, sin tokens
+  contents: read
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          registry-url: "https://registry.npmjs.org"
+          package-manager-cache: false
+      - run: npm pack --dry-run
+      - run: npm publish --access public

@@ -2,6 +2,12 @@
   "name": "create-harness-btp",
   "version": "0.1.0",
   "description": "Instala el harness MVP SAP BTP como carpeta AI/ en cualquier proyecto",
+  "keywords": ["sap-btp", "opencode", "harness", "agents", "scaffolder", "create"],
+  "homepage": "https://github.com/horangelmillan/harness-btp#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/horangelmillan/harness-btp.git"
+  },
   "bin": {
     "harness-btp": "./bin/harness-btp.js"
   },
