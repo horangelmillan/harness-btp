@@ -58,3 +58,9 @@ if (Test-Path $GiDst) {
 }
 
 Write-Output "OK: harness instalado en $Dest (package.json y mta.yaml intactos)"
+
+# Verificación de prerrequisitos en modo aviso (no bloquea la instalación).
+try {
+  $Check = Join-Path $AiSrc "scripts\check-prereqs.ps1"
+  if (Test-Path $Check) { & $Check -WarnOnly }
+} catch { Write-Output "AVISO: no se pudo ejecutar check-prereqs.ps1 (ver AI/docs/prerequisitos.md)" }

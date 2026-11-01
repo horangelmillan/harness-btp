@@ -5,6 +5,19 @@
 Entorno local Windows para llevar MVPs SAP de especificación a despliegue en
 Cloud Foundry, con OpenCode como orquestador.
 
+## Antes de empezar
+
+Verifica qué tienes instalado **antes** de usar el harness (el flujo asume
+que tu máquina cumple los prerrequisitos):
+
+```powershell
+powershell -ExecutionPolicy Bypass -File AI/scripts/check-prereqs.ps1
+```
+
+Tabla Herramienta | Necesaria para | Estado (OK/FALTA) | Cómo instalarla.
+`exit 1` = falta algo REQUERIDO; `exit 0` con avisos = solo faltan opcionales.
+Detalle por caso y re-verificación: `docs/prerequisitos.md`.
+
 ## Estado verificado (Windows, [TU_PC])
 
 | Herramienta | Resultado |

@@ -46,3 +46,10 @@ if [ "$ADDED" -eq 0 ]; then echo "SKIP: .gitignore ya contiene el fragmento"
 else echo "CREATE: .gitignore (+$ADDED líneas)"; fi
 
 echo "OK: harness instalado en $DEST (package.json y mta.yaml intactos)"
+
+# Verificación de prerrequisitos en modo aviso (no bloquea la instalación).
+if [ -f "$SRC/AI/scripts/check-prereqs.sh" ]; then
+  sh "$SRC/AI/scripts/check-prereqs.sh" --warn-only || true
+else
+  echo "AVISO: no se encontró check-prereqs.sh (ver AI/docs/prerequisitos.md)"
+fi

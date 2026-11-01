@@ -77,6 +77,7 @@ ver `mta-build` antes del primer build MTAR.
 9. Git → 10. Documentación (+ cosecha de lecciones: `harness-evolution`
    propone, el orquestador aplica tras revisión).
 
+- En etapa 0, si la spec exige builds o despliegues, el orquestador pide al usuario el resultado de `AI/scripts/check-prereqs.ps1` (o `.sh`) antes de planificar.
 - Cada etapa tiene entregable verificable; el orquestador define el criterio
   de avance en el plan y lo exige antes de continuar.
 - Rigor proporcional al MVP: saltar etapas irrelevantes está permitido y se
