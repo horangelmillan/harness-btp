@@ -72,7 +72,7 @@ $r = Test-Tool "mbt" @("--version")
 Add-Row "mbt" "construir MTAR (solo si el MVP lo exige)" (Opt-Level $NeedMtar) $(if ($r.Found) { "OK" } else { "FALTA" }) $r.Detail "https://github.com/SAP/cloud-mta-build-tool"
 
 $r = Test-Tool "make" @("--version")
-Add-Row "make" "requerido por mbt en Windows" $(if ($NeedMtar) { "REQ" } else { "OPT" }) $(if ($r.Found) { "OK" } else { "FALTA" }) $r.Detail "https://www.gnu.org/software/make/ (Win: ezwinports via winget)"
+Add-Row "make" "requerido por mbt en el SO" $(if ($NeedMtar) { "REQ" } else { "OPT" }) $(if ($r.Found) { "OK" } else { "FALTA" }) $r.Detail "https://www.gnu.org/software/make/"
 
 $r = Test-Tool "java" @("-version")
 Add-Row "java" "builds MTA Java (solo si la spec los pide)" (Opt-Level $NeedJava) $(if ($r.Found) { "OK" } else { "FALTA" }) $r.Detail "https://adoptium.net/"

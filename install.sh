@@ -1,6 +1,6 @@
 #!/bin/sh
 # Instalador del harness BTP (idempotente, POSIX sh).
-# Uso: ./install.sh [--dest .] [--force]
+# Uso: ./install.sh [--dest <dir>] [--force] [--help]
 # Sin secretos. No toca package.json ni mta.yaml del proyecto.
 DEST="."
 FORCE=0
@@ -8,7 +8,13 @@ while [ $# -gt 0 ]; do
   case "$1" in
     --dest) DEST="$2"; shift 2 ;;
     --force) FORCE=1; shift ;;
-    *) echo "ABORT: opción desconocida $1"; exit 1 ;;
+    -h|--help)
+      echo "Uso: ./install.sh [--dest <dir>] [--force] [--help]"
+      echo "  --dest <dir>  proyecto destino (por defecto: .)"
+      echo "  --force       reinstala AI/ con backup a AI.bak"
+      echo "  -h, --help    muestra esta ayuda"
+      exit 0 ;;
+    *) echo "ABORT: opción desconocida $1 (usa --help)"; exit 1 ;;
   esac
 done
 SRC="$(cd "$(dirname "$0")" && pwd)"
