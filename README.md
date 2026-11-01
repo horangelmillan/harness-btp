@@ -1,6 +1,6 @@
 # harness-btp
 
-[![version](https://img.shields.io/badge/version-v0.1.0-blue)](https://github.com/horangelmillan/harness-btp/releases/tag/v0.1.0)
+[![version](https://img.shields.io/badge/version-v0.2.0-blue)](https://github.com/horangelmillan/harness-btp/releases/tag/v0.2.0)
 [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![platform](https://img.shields.io/badge/platform-windows%20%7C%20linux%20%7C%20macos-lightgrey)](https://github.com/horangelmillan/harness-btp)
 [![agent](https://img.shields.io/badge/agent-any%20AGENTS.md--compatible-purple)](https://github.com/horangelmillan/harness-btp)
@@ -54,7 +54,7 @@ El camino de 30 segundos en un proyecto nuevo. Elige tu shell:
 PowerShell (Windows):
 
 ```powershell
-npx -p degit degit horangelmillan/harness-btp#v0.1.0 AI-tmp -- AI-tmp
+npx -p degit degit horangelmillan/harness-btp#v0.2.0 AI-tmp -- AI-tmp
 powershell -ExecutionPolicy Bypass -File AI-tmp/install.ps1 -Dest .
 Remove-Item -Recurse -Force AI-tmp
 ```
@@ -62,7 +62,7 @@ Remove-Item -Recurse -Force AI-tmp
 bash (Linux, macOS o Git Bash):
 
 ```bash
-npx -p degit degit horangelmillan/harness-btp#v0.1.0 AI-tmp -- AI-tmp
+npx -p degit degit horangelmillan/harness-btp#v0.2.0 AI-tmp -- AI-tmp
 sh AI-tmp/install.sh --dest .
 rm -rf AI-tmp
 ```
@@ -78,7 +78,7 @@ Descarga solo lo necesario, sin historial git:
 PowerShell:
 
 ```powershell
-npx -p degit degit horangelmillan/harness-btp#v0.1.0 AI-tmp -- AI-tmp
+npx -p degit degit horangelmillan/harness-btp#v0.2.0 AI-tmp -- AI-tmp
 powershell -ExecutionPolicy Bypass -File AI-tmp/install.ps1 -Dest .
 Remove-Item -Recurse -Force AI-tmp
 ```
@@ -86,7 +86,7 @@ Remove-Item -Recurse -Force AI-tmp
 bash:
 
 ```bash
-npx -p degit degit horangelmillan/harness-btp#v0.1.0 AI-tmp -- AI-tmp
+npx -p degit degit horangelmillan/harness-btp#v0.2.0 AI-tmp -- AI-tmp
 sh AI-tmp/install.sh --dest .
 rm -rf AI-tmp
 ```
@@ -98,7 +98,7 @@ Clon superficial anclado al tag:
 PowerShell:
 
 ```powershell
-git clone --branch v0.1.0 --depth 1 https://github.com/horangelmillan/harness-btp AI-tmp
+git clone --branch v0.2.0 --depth 1 https://github.com/horangelmillan/harness-btp AI-tmp
 powershell -ExecutionPolicy Bypass -File AI-tmp/install.ps1 -Dest .
 Remove-Item -Recurse -Force AI-tmp
 ```
@@ -106,7 +106,7 @@ Remove-Item -Recurse -Force AI-tmp
 bash:
 
 ```bash
-git clone --branch v0.1.0 --depth 1 https://github.com/horangelmillan/harness-btp AI-tmp
+git clone --branch v0.2.0 --depth 1 https://github.com/horangelmillan/harness-btp AI-tmp
 sh AI-tmp/install.sh --dest .
 rm -rf AI-tmp
 ```
@@ -131,7 +131,7 @@ Salida típica en proyecto nuevo:
 ```text
 CREATE: AI/
 CREATE: AGENTS.md
-OK: harness v0.1.0 instalado
+OK: harness v0.2.0 instalado
 ```
 
 ## Actualizar y desinstalar
@@ -202,7 +202,7 @@ harness-btp/
 ├── install.ps1 / install.sh   # instaladores idempotentes (SKIP / CREATE / BACKUP / OK)
 ├── bin/                       # ejecutable de create-harness-btp (pnpm dlx)
 ├── package.json               # name create-harness-btp
-└── VERSION                    # 0.1.0
+└── VERSION                    # 0.2.0
 ```
 
 ## Cómo lo descubre el agente
@@ -223,7 +223,7 @@ Tú no configuras nada: el agente se adapta solo.
 | Líneas duplicadas en `.gitignore` | edición manual tras la fusión | el instalador fusiona sin duplicar; borra el duplicado a mano |
 | `ExecutionPolicy` bloquea `install.ps1` | política de PowerShell | `powershell -ExecutionPolicy Bypass -File AI-tmp/install.ps1 -Dest .` (o usa `install.sh` en Git Bash) |
 | `ABORT: opción desconocida` en `install.sh` | flag inexistente | `sh install.sh --help` lista `--dest`, `--force` |
-| `degit` falla sin Node | `degit` corre sobre Node 18+ | instala Node o usa `git clone --branch v0.1.0` |
+| `degit` falla sin Node | `degit` corre sobre Node 18+ | instala Node o usa `git clone --branch v0.2.0` |
 | Tu cliente no lee los agentes de `.opencode/` | layout específico de OpenCode | son un adapter opcional; el flujo está en `AI/AGENTS.md` + `AI/INICIO.md` |
 
 ## Compatibilidad
@@ -250,4 +250,4 @@ MIT. Haz lo que quieras con el harness; sin garantía.
 
 ## Changelog
 
-- **v0.1.0** — versión inicial: carpeta `AI/` parametrizada, instaladores idempotentes `install.ps1` / `install.sh`, `create-harness-btp` vía `pnpm dlx`, plantilla de puntero, docs de flujo / cf-safe / habilitación trial, plantilla de spec.
+- **v0.2.0** — versión inicial: carpeta `AI/` parametrizada, instaladores idempotentes `install.ps1` / `install.sh`, `create-harness-btp` vía `pnpm dlx`, plantilla de puntero, docs de flujo / cf-safe / habilitación trial, plantilla de spec.

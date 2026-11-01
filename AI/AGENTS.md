@@ -1,10 +1,9 @@
 # Harness MVP SAP BTP — Reglas del proyecto
-> Nota portabilidad: verificado en Windows, adapta rutas a [TU_PC].
+> Nota portabilidad: verificado en Windows (PowerShell 5.1) y Git Bash; adapta rutas a tu equipo.
 
 > Flujo reutilizable especificación → despliegue en SAP BTP Cloud Foundry,
-> orquestado por OpenCode en este equipo Windows. El `AGENTS.md` global de
-> `[TU_PC]\.config\opencode` sigue cargándose; en caso de conflicto,
-> manda este archivo.
+> orquestado por tu cliente agéntico (verificado con OpenCode). Si tu cliente
+> carga un `AGENTS.md` global, en caso de conflicto manda este archivo.
 
 ## Herramientas: nombres intocables
 
@@ -20,7 +19,7 @@ ver `mta-build` antes del primer build MTAR.
 
 ## Destino Cloud Foundry conocido (sin secretos)
 
-- Endpoint verificado: `[TU_ENDPOINT_CF]` (p. ej. `https://api.cf.<region>.hana.ondemand.com`;
+- Endpoint: el de tu paisaje (p. ej. `https://api.cf.<region>.hana.ondemand.com`;
   registrar el valor real en la spec del MVP, nunca aquí).
 - Org y espacio objetivo (ver `cf target`;
   no se transcriben aquí por higiene). Antes de **cada despliegue**, el
@@ -132,7 +131,7 @@ ver `mta-build` antes del primer build MTAR.
 
 ## Local frente a BAS
 
-Este harness corre en Windows local ([TU_PC]). No presuponer que una instalación local
+Este harness corre en tu máquina local (verificado en Windows + Git Bash). No presuponer que una instalación local
 (`cf`, `mbt`, Node, Java, Python) existe en un dev space
 remoto de BAS, ni viceversa. `cds` y `ui5` CLIs no están instalados
 globalmente: se instalan por proyecto cuando la especificación los exija.
@@ -237,7 +236,7 @@ el `ECONNREFUSED`. `chrome-devtools` usa canal propio y no necesita `:9222`.
   indexado (`index_status`/`detect_changes` para frescura al arrancar;
   `index_repository` tras cambios si hay novedades); nada que asumir si
   puede recuperarse del grafo. `graphify-code` local como complemento
-  cuando esté `connected` (ver `opencode.jsonc`); índice local por defecto,
+  cuando esté `connected` (ver fragmento `opencode.fragment.jsonc`, opcional); índice local por defecto,
   sin reindexar redundante en ambos en el mismo turno.
 - `github`: solo si la especificación pide repo remoto/PR. Sin spec que lo
   pida, trabajo local.

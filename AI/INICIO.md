@@ -1,9 +1,9 @@
 # Guía de inicio — Harness MVP SAP BTP
 
-> Nota portabilidad: verificado en Windows, adapta rutas a [TU_PC].
+> Nota portabilidad: verificado en Windows (PowerShell 5.1) y Git Bash; adapta rutas a tu equipo.
 
-Entorno local Windows para llevar MVPs SAP de especificación a despliegue en
-Cloud Foundry, con OpenCode como orquestador.
+Entorno local (Windows/Linux/macOS) para llevar MVPs SAP de especificación a despliegue en
+Cloud Foundry, con tu cliente agéntico como orquestador.
 
 ## Antes de empezar
 
@@ -18,15 +18,15 @@ Tabla Herramienta | Necesaria para | Estado (OK/FALTA) | Cómo instalarla.
 `exit 1` = falta algo REQUERIDO; `exit 0` con avisos = solo faltan opcionales.
 Detalle por caso y re-verificación: `docs/prerequisitos.md`.
 
-## Estado verificado (Windows, [TU_PC])
+## Estado verificado de referencia
 
 | Herramienta | Resultado |
 |---|---|
-| `cf --version` | CLI de Cloud Foundry, sesión activa contra `[TU_ENDPOINT_CF]` |
+| `cf --version` | CLI de Cloud Foundry, sesión activa contra tu endpoint (ver `cf target`) |
 | `mbt --version` | Cloud MTA Build Tool (binario recuperado; el `install.js` del paquete npm pedía `cloud-mta-build-tool`, no `mbt`) |
-| `node` / `npm` | versión instalada en [TU_PC] |
-| `java` | versión instalada en [TU_PC] — sirve para builds MTA Java si la spec los pide |
-| OpenCode | agente `orchestrator` por defecto (este proyecto) |
+| `node` / `npm` | versión 18+ (verifica con `check-prereqs`) |
+| `java` | versión instalada en tu equipo — sirve para builds MTA Java si la spec los pide |
+| Cliente agéntico | agente `orchestrator` por defecto (verificado con OpenCode) |
 | MCP heredados (global) | `context7`, `codebase-memory`, `github`, `playwright`, `eslint`, `chrome-devtools` |
 | Skill instalada útil | `sapui5` (global) |
 | Pendiente (a propósito) | CLIs `cds`/`ui5`, skills SAP externas — se instalan solo si una spec los exige. Plugin CF `multiapps`: verificar con `cf plugins` antes de asumir |
