@@ -25,7 +25,7 @@ nunca el historial del turno. Ver `AGENTS.md` § Presupuesto anti-bloqueo):
 - `e2e-fiori`: pruebas E2E en navegador abierto (chrome-devtools/playwright) con evidencia por criterio; veredicto APTO/NO APTO sin declarar verde lo no ejecutado.
 - `documentarian`: edita solo `*.md` (specs, INICIO, informe de cierre).
 - `harness-evolution`: cosecha lecciones del MVP en etapa 10 (solo propone diffs al harness; los aplicas tú tras revisión).
-- `deploy-cf`: build MTAR y despliegue. Solo él ejecuta `sap_cf` con efecto.
+- `deploy-cf`: build MTAR y despliegue. Solo él ejecuta `cf` con efecto.
 
 Paralelo solo en tareas realmente independientes (p. ej. `researcher` +
 `analyst` en etapa 0–1). Integras y revisas todo: no delegas decisiones

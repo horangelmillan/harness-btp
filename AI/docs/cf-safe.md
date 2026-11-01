@@ -1,6 +1,6 @@
 # cf-safe — broker determinista para Cloud Foundry
 
-Punto único de salida hacia `sap_cf`. Fail-closed: nada ejecuta sin pasar
+Punto único de salida hacia `cf`. Fail-closed: nada ejecuta sin pasar
 denylist → allowlist → validación de target.
 
 Fuentes: `scripts/cf-safe.ps1` (cabecera, líneas 1-34), `scripts/cf-safe-patterns.ps1`,
@@ -13,7 +13,7 @@ redacción 24/24. Sin E2E real contra CF todavía (pendiente).
 ## Qué es
 
 - `scripts/cf-safe.ps1`: broker. Recibe `-CfArgs`, valida, ejecuta solo
-  `sap_cf` (`sap_cf.cmd`, ruta fija) y devuelve UNA línea JSON
+  `cf` (binario estándar, resuelto en `PATH`) y devuelve UNA línea JSON
   `{ok, exit, verb, redacted, rawLog, names, output}`.
 - `scripts/cf-safe-patterns.ps1`: tabla central de redacción (6 regex +
   marcador `***REDACTED***`, fail-closed: ante error devuelve el marcador,
@@ -27,7 +27,7 @@ redacción 24/24. Sin E2E real contra CF todavía (pendiente).
 
 ## Por qué (sin LLM ejecutor)
 
-Ningún agente/LLM invoca `sap_cf` directamente para lecturas con secreto
+Ningún agente/LLM invoca `cf` directamente para lecturas con secreto
 potencial: el broker aplica las reglas de forma determinista (código, no
 criterio del modelo). El LLM solo recibe `output` ya redactado y truncado;
 el crudo nunca llega a stdout ni a prompts.
@@ -57,12 +57,12 @@ Invoke-SapCfSeguro -CfArgs @('services') -ExpectedApi 'https://api.cf.us10-001.h
 ```
 
 Regla: **toda lectura CF con secreto potencial vía cf-safe** (nunca
-`sap_cf` directo en agentes/scripts cuando la salida pueda traer
+`cf` directo en agentes/scripts cuando la salida pueda traer
 credenciales: `env`, `service-key` con valores, `logs --recent`).
 
 ## Allowlist / denylist y códigos
 
-Orden: 1) binario fijo (`cf` de Cloudflare se rechaza) → 2) denylist →
+Orden: 1) binario (`cf` resuelto en `PATH`) → 2) denylist →
 3) allowlist → 4) target → 5) ejecución.
 
 - Denylist (exit 1): `delete-*`, `unbind-*`, `purge-*`, `restage-*`,

@@ -10,24 +10,25 @@
 
 | Uso | Comando | Notas |
 |---|---|---|
-| Cloud Foundry | `sap_cf` | `sap_cf.cmd` (ruta de instalación de Cloud Foundry CLI en [TU_PC]). |
+| Cloud Foundry | `cf` | CLI estándar de Cloud Foundry (v8). |
 | MTA build | `mbt` | Cloud MTA Build Tool (binario recuperado vía su propio `install.js`). |
-| Cloudflare | `cf` | **Prohibido** usar `cf` para Cloud Foundry: ese comando es el CLI de Cloudflare en [TU_PC]. |
 
-Ver skill local `sap-cf-cli` antes del primer comando CF del turno;
+Si `cf` en tu máquina corresponde a otra herramienta, define un alias propio y úsalo donde el harness diga `cf`.
+
+Ver skill local `cf-cli` antes del primer comando CF del turno;
 ver `mta-build` antes del primer build MTAR.
 
 ## Destino Cloud Foundry conocido (sin secretos)
 
 - Endpoint verificado: `[TU_ENDPOINT_CF]` (p. ej. `https://api.cf.<region>.hana.ondemand.com`;
   registrar el valor real en la spec del MVP, nunca aquí).
-- Org y espacio objetivo (ver `sap_cf target`;
+- Org y espacio objetivo (ver `cf target`;
   no se transcriben aquí por higiene). Antes de **cada despliegue**, el
   orquestador re-verifica endpoint/org/espacio contra la especificación del
   MVP. Si no coinciden o no pueden deducirse, se pide solo el dato
   indispensable y no se despliega.
-- Despliegue MTA (`sap_cf deploy *.mtar`) requiere el plugin **multiapps**.
-  Antes de asumir su ausencia o instalarlo, verificar con `sap_cf plugins`
+- Despliegue MTA (`cf deploy *.mtar`) requiere el plugin **multiapps**.
+  Antes de asumir su ausencia o instalarlo, verificar con `cf plugins`
   (lección: verificar siempre antes de asumir su ausencia).
   Instalarlo solo cuando un MVP lo requiera (ver `mta-build`).
 - Placeholders MTA a credenciales: antes de diseñar un placeholder, verificar
@@ -47,13 +48,13 @@ ver `mta-build` antes del primer build MTAR.
 > poseer. Objetivo: portar un MVP entre espacios/cuentas sin intervención
 > humana salvo decisiones de coste/acceso.
 
-| En MTA (`mta.yaml`) | Fuera del MTA (agentes por `sap_cf`, una vez por espacio) |
+| En MTA (`mta.yaml`) | Fuera del MTA (agentes por `cf`, una vez por espacio) |
 |---|---|
 | `managed-service`: xsuaa, destination, html5-repo-host/runtime, todo lo que el deploy puede crear/actualizar | `existing-service`: bindings a instancias pre-existentes (p. ej. DIE trial, `it-rt` integration-flow), espacios, roles `SpaceDeveloper`, entitlements/cuotas |
 | Keys DECLARADAS por nombre (`service-key: name:`); el deploy reutiliza la key existente del espacio, nunca la crea con secretos | Creación idempotente de espacio/instancias/roles vía `scripts/provision-<espacio>.ps1` (ver § Paisajes); cero secretos en repo, solo nombres |
 | Destinos versionados con referencias por nombre (`TokenServiceInstanceName/KeyName`, `~{srv-api/srv-url}`); ninguna credencial literal | Lo que el deploy-service rechace (p. ej. placeholders a keys anidadas `credentials.oauth`) NO se reintenta igual: fallback = binding nativo o destino MANUAL en cockpit registrado como pendiente conocido con su causa |
 
-- `sap_cf` siempre; `cf` prohibido (es Cloudflare en [TU_PC]).
+- El CLI de Cloud Foundry se invoca siempre como `cf`.
 - Keys rotadas por deploy (el deploy-service puede borrar la
   `service-key` en cada deploy): el runtime NUNCA lee keys; solo binding/VCAP.
   Las keys son solo de diseño (temporal borrable, solo nombre documentado).
@@ -63,10 +64,10 @@ ver `mta-build` antes del primer build MTAR.
 ## Paisajes .mtaext y pre-provisión idempotente
 
 - Cada paisaje = un `<paisaje>.mtaext` en la raíz del MVP (`dev.mtaext`, `prd.mtaext`): `extends: <mta-id>`, overrides SOLO por paisaje (nombres de `existing-service`, `service-key`, URL del iFlow). `mta.yaml` guarda el default (= dev vivo). Cero secretos.
-- Cadena de deploy: `sap_cf target -s <paisaje>` → `sap_cf deploy mta_archives/<mtar> -e <paisaje>.mtaext`. Sin `-e` no hay deploy multi-paisaje.
+- Cadena de deploy: `cf target -s <paisaje>` → `cf deploy mta_archives/<mtar> -e <paisaje>.mtaext`. Sin `-e` no hay deploy multi-paisaje.
 - Puerta `/verify` (etapa 7) exige en verde: `mbt mtad-gen -e <paisaje>.mtaext` por cada `.mtaext` afectado + target coincide con spec + instancia/key esperadas existen verificadas (comando o cockpit, nunca heredadas de notas).
 - Persistencia efímera (p. ej. SQLite `:memory:` se vacía en cada redeploy/restart): la spec lo declara; el E2E resiembra tras cada deploy y ningún CA exige datos supervivientes salvo que la spec defina persistencia real.
-- Pre-provisión: `scripts/provision-<espacio>.ps1` por paisaje no-dev, idempotente (cada paso comprueba y emite `SKIP:` si existe), NO despliega nada. Plantilla obligatoria: preflight de target (endpoint+org, aborta si no coinciden) → crea espacio si falta → guardia de marketplace (aborta antes de crear si falta un offering) → crea instancias solo si faltan → asigna rol solo si falta. Allowlist cerrada: `target, spaces, space-users, services, marketplace, create-space, create-service, set-space-role`. PROHIBIDO: `delete-*`, `unbind-*`, `purge-*`, `restage-*`. Usa `sap_cf` (nunca `cf`).
+- Pre-provisión: `scripts/provision-<espacio>.ps1` por paisaje no-dev, idempotente (cada paso comprueba y emite `SKIP:` si existe), NO despliega nada. Plantilla obligatoria: preflight de target (endpoint+org, aborta si no coinciden) → crea espacio si falta → guardia de marketplace (aborta antes de crear si falta un offering) → crea instancias solo si faltan → asigna rol solo si falta. Allowlist cerrada: `target, spaces, space-users, services, marketplace, create-space, create-service, set-space-role`. PROHIBIDO: `delete-*`, `unbind-*`, `purge-*`, `restage-*`. Usa `cf`.
 
 ## Flujo por etapas (`/flow <ruta-spec>`)
 
@@ -88,7 +89,7 @@ ver `mta-build` antes del primer build MTAR.
   vueltas y presupuesto explícito por vuelta:
   1. El MVP tiene al menos un despliegue anterior con éxito al MISMO
      endpoint/org/espacio, registrado en la spec;
-  2. `sap_cf target` re-verificado coincide con la spec;
+  2. `cf target` re-verificado coincide con la spec;
   3. El cambio no puede verificarse por completo en local (integraciones
      que solo existen en SAP: DIE, iFlow, XSUAA, HTML5 Repo…) o el usuario
      ordenó el despliegue.
@@ -131,7 +132,7 @@ ver `mta-build` antes del primer build MTAR.
 ## Local frente a BAS
 
 Este harness corre en Windows local ([TU_PC]). No presuponer que una instalación local
-(`sap_cf`, `mbt`, Node, Java, Python) existe en un dev space
+(`cf`, `mbt`, Node, Java, Python) existe en un dev space
 remoto de BAS, ni viceversa. `cds` y `ui5` CLIs no están instalados
 globalmente: se instalan por proyecto cuando la especificación los exija.
 
@@ -176,7 +177,7 @@ encadenarlo en pipes.
   la ruta `temp/<tarea>/` en cada delegación que implique tests, builds o
   navegador; la evidencia que deba conservarse se mueve a `evidencia/` con su
   referencia en docs. Al cerrar la tarea se borra lo transitorio.
-- El target CF puede cambiar entre sesiones: re-verificar `sap_cf target`
+- El target CF puede cambiar entre sesiones: re-verificar `cf target`
   en cada puerta y registrar el cambio en la spec antes de desplegar.
 - Higiene de navegador y CDP (regla irrestricta, ver § Higiene obligatoria de
   navegador y CDP): matar procesos solo por PID con filtro de perfil temporal

@@ -9,7 +9,7 @@
 ## Paso 0. Verificar el entorno Cloud Foundry (lectura, sin cambios)
 
 - **Para qué sirve.** Confirma contra qué org/espacio desplegará el MTA.
-- **Cómo.** En el equipo local: `sap_cf target` (endpoint, org, espacio).
+- **Cómo.** En el equipo local: `cf target` (endpoint, org, espacio).
 - **Casos de uso / cuándo.** Antes de cada despliegue y siempre que el
   cockpit muestre un espacio con otro nombre (aquí: cockpit `dev` frente a
   la sesión local). Si no coinciden, se ajusta el target en la puerta de
@@ -113,7 +113,7 @@
 ## Concepto clave: usuarios de plataforma frente a usuarios de negocio
 
 El trial te da un **usuario de plataforma** (tu login, p. ej. el `HM` del
-cockpit): administra la cuenta global —cockpit, `sap_cf`, crear
+cockpit): administra la cuenta global —cockpit, `cf`, crear
 instancias— autenticado por el IdP por defecto de SAP. Ese usuario **no**
 sirve para entrar a las aplicaciones desplegadas.
 

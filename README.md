@@ -147,7 +147,7 @@ harness-btp/
 ## Cómo lo descubre el agente
 
 1. OpenCode abre tu proyecto y lee `AGENTS.md` en la raíz (el puntero que deja el instalador).
-2. El puntero lo lleva a `AI/AGENTS.md`: reglas, herramientas (`sap_cf`, `mbt`) y presupuestos.
+2. El puntero lo lleva a `AI/AGENTS.md`: reglas, herramientas (`cf`, `mbt`) y presupuestos.
 3. Desde ahí sigue a `AI/INICIO.md` para el flujo por etapas (`/flow`), descubre agentes en `.opencode/`, skills y scripts, y usa `AI/specs/_template.md` para nuevas especificaciones.
 4. Antes del primer despliegue adapta los dos placeholders a tu máquina y destino (ver `AI/INICIO.md`).
 

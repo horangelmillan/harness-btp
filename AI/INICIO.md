@@ -9,15 +9,14 @@ Cloud Foundry, con OpenCode como orquestador.
 
 | Herramienta | Resultado |
 |---|---|
-| `sap_cf --version` | CF CLI, sesión activa contra `[TU_ENDPOINT_CF]` |
+| `cf --version` | CLI de Cloud Foundry, sesión activa contra `[TU_ENDPOINT_CF]` |
 | `mbt --version` | Cloud MTA Build Tool (binario recuperado; el `install.js` del paquete npm pedía `cloud-mta-build-tool`, no `mbt`) |
 | `node` / `npm` | versión instalada en [TU_PC] |
 | `java` | versión instalada en [TU_PC] — sirve para builds MTA Java si la spec los pide |
-| `cf` | CLI de Cloudflare — no usar para Foundry |
 | OpenCode | agente `orchestrator` por defecto (este proyecto) |
 | MCP heredados (global) | `context7`, `codebase-memory`, `github`, `playwright`, `eslint`, `chrome-devtools` |
 | Skill instalada útil | `sapui5` (global) |
-| Pendiente (a propósito) | CLIs `cds`/`ui5`, skills SAP externas — se instalan solo si una spec los exige. Plugin CF `multiapps`: verificar con `sap_cf plugins` antes de asumir |
+| Pendiente (a propósito) | CLIs `cds`/`ui5`, skills SAP externas — se instalan solo si una spec los exige. Plugin CF `multiapps`: verificar con `cf plugins` antes de asumir |
 
 ## Cómo proporcionar una especificación
 
@@ -47,18 +46,18 @@ proporcional al tamaño del MVP. Comando de apoyo:
 ## Comandos locales de referencia
 
 ```
-sap_cf target            # endpoint/org/espacio actuales (sin secretos)
-sap_cf apps              # estado observable tras desplegar
-sap_cf logs <app> --recent
+cf target            # endpoint/org/espacio actuales (sin secretos)
+cf apps              # estado observable tras desplegar
+cf logs <app> --recent
 mbt build                # genera .mtar en mta_archives/ (requiere mta.yaml)
 ```
 
-Nunca `cf ...` para Foundry. Nunca pegar tokens en terminal ni en specs.
+Nunca pegar tokens en terminal ni en specs.
 
 ## Lecturas CF seguras (broker cf-safe)
 
 Toda lectura CF con secreto potencial vía `scripts/cf-safe.ps1`
-(nunca `sap_cf` directo en agentes/scripts si la salida puede traer
+(nunca `cf` directo en agentes/scripts si la salida puede traer
 credenciales). Detalle: `docs/cf-safe.md`.
 
 ## Skills candidatas (no instaladas)

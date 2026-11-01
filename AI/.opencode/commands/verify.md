@@ -8,7 +8,7 @@ Ejecuta solo la puerta de despliegue (etapa 7) para $ARGUMENTS
 
 Verificaciones (delegables en `qa-review` + `deploy-cf` en solo lectura):
 
-1. `sap_cf target` coincide con el destino de la spec (endpoint/org/espacio).
+1. `cf target` coincide con el destino de la spec (endpoint/org/espacio).
 2. El artefacto existe y es reciente (`.mtar` en `mta_archives/` o bundle
    para `push`).
 3. Todos los criterios de aceptación están en verde con evidencia.

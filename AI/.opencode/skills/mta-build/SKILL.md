@@ -23,16 +23,16 @@ mbt build                # requiere mta.yaml en la raíz del proyecto
 
 ## Despliegue del MTAR
 
-`sap_cf deploy <archivo>.mtar` requiere el **plugin multiapps**. Verificar
-siempre con `sap_cf plugins` antes de asumir su ausencia (2026-10-30 resultó
+`cf deploy <archivo>.mtar` requiere el **plugin multiapps**. Verificar
+siempre con `cf plugins` antes de asumir su ausencia (2026-10-30 resultó
 ya instalado contra lo documentado). Instalarlo solo cuando un MVP necesite
 despliegue MTA:
 
 ```
-sap_cf install-plugin -r CF-Community multiapps
+cf install-plugin -r CF-Community multiapps
 ```
 
-Alternativa sin plugin para MVPs simples: `sap_cf push` por app según plan.
+Alternativa sin plugin para MVPs simples: `cf push` por app según plan.
 
 ## Notas
 

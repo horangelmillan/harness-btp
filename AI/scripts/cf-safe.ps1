@@ -1,11 +1,11 @@
 <#
 .SYNOPSIS
-  Broker determinista para Cloud Foundry: unico punto de salida hacia sap_cf.
+  Broker determinista para Cloud Foundry: unico punto de salida hacia cf.
   Fail-closed: denylist primero, luego allowlist, luego validacion de target.
 
 .DESCRIPTION
   Orden de evaluacion (nada ejecuta antes de pasarla):
-    1. Binario: solo sap_cf / sap_cf.cmd (ruta fija). `cf` (Cloudflare aqui) se rechaza.
+    1. Binario: `cf` (CLI estandar de Cloud Foundry, resuelto en PATH).
     2. Denylist -> exit 1: delete-*, unbind-*, purge-*, restage-*, set-env sin
        -AllowWrite, create-service-key directo, service-key con valores sin
        -NeedValues (y sin -AllowWrite), inyeccion (| > ; ` $()).
@@ -49,7 +49,7 @@ param(
   [switch]$AllowWrite,
   [switch]$PassThru,
   [switch]$WhatIf,
-  [string]$CfBinary = 'sap_cf',
+  [string]$CfBinary = 'cf',
   [switch]$NeedValues
 )
 
@@ -63,7 +63,7 @@ if ($CfArgs.Count -gt 0 -and $CfArgs[0] -eq '--') {
   $CfArgs = @($CfArgs | Select-Object -Skip 1)
 }
 
-$SapCfCmd = 'C:\Program Files\Cloud Foundry\sap_cf.cmd'
+$CfCmd = (Get-Command cf -ErrorAction SilentlyContinue).Source
 $TempDir = Join-Path (Split-Path $PSScriptRoot -Parent) 'temp\cf-safe'
 $MaxOutput = 4000
 $MaxLogLines = 200
@@ -90,15 +90,15 @@ $verb = if ($CfArgs.Count -gt 0) { [string]$CfArgs[0] } else { '' }
 $verbNorm = $verb.ToLowerInvariant()
 $joined = ($CfArgs -join ' ')
 
-# 1. Binario fijo: rechaza `cf` y cualquier otro binario.
+# 1. Binario: solo `cf` (resuelto en PATH).
 $binNorm = ([string]$CfBinary).ToLowerInvariant()
-$binOk = ($binNorm -eq 'sap_cf' -or $binNorm -eq 'sap_cf.cmd' -or $binNorm -eq $SapCfCmd.ToLowerInvariant())
+$binOk = ($binNorm -eq 'cf' -or $binNorm -eq 'cf.exe')
 if (-not $binOk) {
-  Emit-Result -Ok $false -Code 1 -Verb $verb -WasRedacted $false -RawLog '' -Names @() -Text "DENY: binario no autorizado [$CfBinary]. Solo sap_cf."
+  Emit-Result -Ok $false -Code 1 -Verb $verb -WasRedacted $false -RawLog '' -Names @() -Text "DENY: binario no autorizado [$CfBinary]. Solo cf."
   exit 1
 }
-if (-not (Test-Path $SapCfCmd)) {
-  Emit-Result -Ok $false -Code 4 -Verb $verb -WasRedacted $false -RawLog '' -Names @() -Text "ERROR: no existe $SapCfCmd."
+if (-not $CfCmd) {
+  Emit-Result -Ok $false -Code 4 -Verb $verb -WasRedacted $false -RawLog '' -Names @() -Text 'ERROR: cf no encontrado en PATH.'
   exit 4
 }
 
@@ -145,8 +145,8 @@ if ($verbNorm -eq 'logs' -and $joined -notmatch '(?i)--recent') {
 
 # Modo WhatIf: no toca red ni ejecuta; util para tests offline.
 if ($WhatIf) {
-  $preview = Redact-Secrets ("WHATIF: sap_cf " + $joined)
-  Emit-Result -Ok $true -Code 0 -Verb $verb -WasRedacted ($preview -ne ("WHATIF: sap_cf " + $joined)) -RawLog '' -Names @() -Text $preview
+  $preview = Redact-Secrets ("WHATIF: cf " + $joined)
+  Emit-Result -Ok $true -Code 0 -Verb $verb -WasRedacted ($preview -ne ("WHATIF: cf " + $joined)) -RawLog '' -Names @() -Text $preview
   exit 0
 }
 if ($CfArgs.Count -eq 0) {
@@ -156,7 +156,7 @@ if ($CfArgs.Count -eq 0) {
 
 # 4. Validacion de target (endpoint siempre; org solo si ExpectedOrg no vacio).
 try {
-  $tRaw = & $SapCfCmd target 2>&1 | Out-String
+  $tRaw = & $CfCmd target 2>&1 | Out-String
   if ($tRaw -notmatch [regex]::Escape($ExpectedApi)) {
     Emit-Result -Ok $false -Code 3 -Verb $verb -WasRedacted $true -RawLog '' -Names @() -Text (Redact-Secrets ('TARGET MISMATCH: endpoint no coincide con ' + $ExpectedApi))
     exit 3
@@ -175,10 +175,10 @@ New-Item -ItemType Directory -Force -Path $TempDir | Out-Null
 $stamp = Get-Date -Format 'yyyyMMdd-HHmmss'
 $rawLog = Join-Path $TempDir ("cf-" + $stamp + "-PID" + $PID + ".raw.log")
 try {
-  $raw = & $SapCfCmd @CfArgs 2>&1 | Out-String
+  $raw = & $CfCmd @CfArgs 2>&1 | Out-String
   $code = $LASTEXITCODE
 } catch {
-  Emit-Result -Ok $false -Code 4 -Verb $verb -WasRedacted $false -RawLog '' -Names @() -Text 'ERROR: fallo al invocar sap_cf.'
+  Emit-Result -Ok $false -Code 4 -Verb $verb -WasRedacted $false -RawLog '' -Names @() -Text 'ERROR: fallo al invocar cf.'
   exit 4
 }
 try { Set-Content -Path $rawLog -Value $raw -Encoding UTF8 } catch { $rawLog = '' }
