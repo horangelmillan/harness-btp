@@ -10,6 +10,7 @@ lo resolverá o lo pedirá en la etapa 0.
 - **Objetivo (1–2 frases):**
 - **Tipo:** [UI5 freestyle / Fiori Elements / CAP + UI5 / solo servicio CAP / MTA Java / TBD]
 - **Repositorio:** [nuevo local / existente: ruta / remoto: URL o TBD]
+- **Harness BTP:** [versión de `AI/VERSION` al abrir el MVP, p. ej. `0.3.2`; el orquestador la copia en etapa 0 y la actualiza si hace upgrade]
 
 ## 2. Destino SAP BTP (* antes del despliegue)
 

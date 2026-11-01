@@ -9,3 +9,14 @@ mta_archives/
 .env*
 default-env.json
 default-services.json
+
+# Harness: generados/locales del cliente — nunca se versionan en el MVP.
+# (El instalador agrega las que falten; no borra nada existente.)
+AI.bak/
+AI.bak-v1.0/
+AI*.bak/
+*.bak/
+*.orig/
+.opencode/
+AI/.opencode/
+opencode.jsonc
