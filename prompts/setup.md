@@ -30,6 +30,7 @@ Solo con `import + install + test` en verde: borra `package-lock.json`.
 
 ## 7. Cierre limpio (obligatorio)
 No dejes servidores ni observadores corriendo: detén lo que hayas iniciado y verifica que no queden procesos parados en la carpeta. Nunca intentes borrar una carpeta con procesos dentro: repórtalos.
+Si el usuario va a borrar la carpeta del proyecto: adviértele que PRIMERO debe cerrar esta sesión (quitarla de la lista no apaga sus procesos: siguen vivos, parados en la carpeta, y Windows bloqueará el borrado). Solo cuando resmon no muestre candados puede borrar.
 
 ## 8. Reporte
 Comando ejecutado, salida del instalador, contenido de `AI/VERSION`, `git status` y qué quedó pendiente.
