@@ -24,5 +24,5 @@ jobs:
           package-manager-cache: false
       - run: npm pack --dry-run
       - name: Verificar que package.json, VERSION y AI/VERSION coinciden
-        run: node -e "const fs=require('fs');const p=JSON.parse(fs.readFileSync('package.json','utf8')).version.trim();const v=fs.readFileSync('VERSION','utf8').split(/\r?\n/)[0].trim();const a=fs.readFileSync('AI/VERSION','utf8').split(/\r?\n/)[0].trim();if(p!==v||p!==a){console.error('ABORT: versiones no coinciden package.json='+p+' VERSION='+v+' AI/VERSION='+a);process.exit(1)}console.log('OK: versiones coinciden '+p)"
+        run: node .github/scripts/check-release-versions.js
       - run: npm publish --access public
