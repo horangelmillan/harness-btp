@@ -1,6 +1,6 @@
 # harness-btp
 
-[![version](https://img.shields.io/badge/version-v0.2.3-blue)](https://github.com/horangelmillan/harness-btp/releases/tag/v0.2.3)
+[![version](https://img.shields.io/badge/version-v0.2.4-blue)](https://github.com/horangelmillan/harness-btp/releases/tag/v0.2.4)
 [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![platform](https://img.shields.io/badge/platform-windows%20%7C%20linux%20%7C%20macos-lightgrey)](https://github.com/horangelmillan/harness-btp)
 [![agent](https://img.shields.io/badge/agent-any%20AGENTS.md--compatible-purple)](https://github.com/horangelmillan/harness-btp)
@@ -55,7 +55,7 @@ El camino de 30 segundos en un proyecto nuevo. Elige tu shell:
 PowerShell (Windows):
 
 ```powershell
-npx -p degit degit horangelmillan/harness-btp#v0.2.3 AI-tmp -- AI-tmp
+npx -p degit degit horangelmillan/harness-btp#v0.2.4 AI-tmp -- AI-tmp
 powershell -ExecutionPolicy Bypass -File AI-tmp/install.ps1 -Dest .
 Remove-Item -Recurse -Force AI-tmp
 ```
@@ -63,7 +63,7 @@ Remove-Item -Recurse -Force AI-tmp
 bash (Linux, macOS o Git Bash):
 
 ```bash
-npx -p degit degit horangelmillan/harness-btp#v0.2.3 AI-tmp -- AI-tmp
+npx -p degit degit horangelmillan/harness-btp#v0.2.4 AI-tmp -- AI-tmp
 sh AI-tmp/install.sh --dest .
 rm -rf AI-tmp
 ```
@@ -79,7 +79,7 @@ Descarga solo lo necesario, sin historial git:
 PowerShell:
 
 ```powershell
-npx -p degit degit horangelmillan/harness-btp#v0.2.3 AI-tmp -- AI-tmp
+npx -p degit degit horangelmillan/harness-btp#v0.2.4 AI-tmp -- AI-tmp
 powershell -ExecutionPolicy Bypass -File AI-tmp/install.ps1 -Dest .
 Remove-Item -Recurse -Force AI-tmp
 ```
@@ -87,7 +87,7 @@ Remove-Item -Recurse -Force AI-tmp
 bash:
 
 ```bash
-npx -p degit degit horangelmillan/harness-btp#v0.2.3 AI-tmp -- AI-tmp
+npx -p degit degit horangelmillan/harness-btp#v0.2.4 AI-tmp -- AI-tmp
 sh AI-tmp/install.sh --dest .
 rm -rf AI-tmp
 ```
@@ -99,7 +99,7 @@ Clon superficial anclado al tag:
 PowerShell:
 
 ```powershell
-git clone --branch v0.2.3 --depth 1 https://github.com/horangelmillan/harness-btp AI-tmp
+git clone --branch v0.2.4 --depth 1 https://github.com/horangelmillan/harness-btp AI-tmp
 powershell -ExecutionPolicy Bypass -File AI-tmp/install.ps1 -Dest .
 Remove-Item -Recurse -Force AI-tmp
 ```
@@ -107,7 +107,7 @@ Remove-Item -Recurse -Force AI-tmp
 bash:
 
 ```bash
-git clone --branch v0.2.3 --depth 1 https://github.com/horangelmillan/harness-btp AI-tmp
+git clone --branch v0.2.4 --depth 1 https://github.com/horangelmillan/harness-btp AI-tmp
 sh AI-tmp/install.sh --dest .
 rm -rf AI-tmp
 ```
@@ -117,7 +117,7 @@ rm -rf AI-tmp
 Sin descargas manuales (requiere publicar `create-harness-btp` en el registry). Igual en todos los SO:
 
 ```bash
-pnpm dlx create-harness-btp@0.2.3 --dest .
+pnpm dlx create-harness-btp@0.2.4 --dest .
 ```
 
 ### Qué hace el instalador
@@ -132,27 +132,18 @@ Salida típica en proyecto nuevo:
 ```text
 CREATE: AI/
 CREATE: AGENTS.md
-OK: harness v0.2.3 instalado
+OK: harness v0.2.4 instalado
 ```
 
 ## Instalación asistida por agente
 
-Si prefieres que tu agente lo haga todo (clonar + instalar), pégale este bloque. Solo crea la carpeta vacía y vincúlala a tu cliente; rellena lo de [CORCHETES]:
+Si prefieres que tu agente lo haga todo (clonar + instalar), pégale esta línea. Solo crea la carpeta vacía y vincúlala a tu cliente:
 
 ```text
-Déjame el proyecto listo en [RUTA-CARPETA] con el harness BTP instalado. Repo a usar: [URL-del-repo o VACÍO si la carpeta ya es un proyecto existente].
-1) Si te di URL y la carpeta está vacía: clónalo ahí dentro con git clone --depth 1 [URL] . Si la carpeta ya tiene un proyecto, no borres ni muevas nada: trabaja sobre ella.
-2) Lee https://github.com/horangelmillan/harness-btp (README, opción pnpm) y ejecuta el comando pnpm dlx EXACTO con la versión que ahí se indique, sin cambiarle la versión (sin --force salvo que AI/ ya exista y yo lo autorice; con --force verifica la línea BACKUP primero).
-3) PROHIBIDO pisar o borrar: AGENTS.md raíz si ya existe, package.json, mta.yaml, lockfiles.
-4) Verifica lo INSTALADO, no lo publicado (no vale pnpm view ni npm view): el archivo AI/VERSION debe decir exactamente la versión del comando que ejecutaste. Si no coincide, dilo y detente.
-5) Si migraste npm→pnpm (import + install + test en verde), borra package-lock.json.
-6) Corre AI/scripts/check-prereqs (modo aviso) y reporta faltantes.
-7) Si AI/AGENTS.md trae placeholders por adaptar, dímelos antes de desplegar.
-8) Cierre limpio: no dejes servidores ni observadores corriendo — detén lo que hayas iniciado y verifica que no queden procesos parados en la carpeta; nunca intentes borrar una carpeta con procesos dentro, repórtamelos.
-Sin secretos en el reporte. Repórtame: comando ejecutado, salida del instalador, contenido de AI/VERSION, git status y qué quedó pendiente.
+Déjame este proyecto listo con el harness BTP: lee https://raw.githubusercontent.com/horangelmillan/harness-btp/main/prompts/setup.md y síguelo al pie de la letra. Si te falta un dato (p. ej. la URL del repo a clonar), pregúntamelo antes de suponer.
 ```
 
-Vale para proyecto nuevo (con URL), existente, Windows/Linux/macOS y cualquier cliente que lea este README.
+Vale para proyecto nuevo (con URL), existente, Windows/Linux/macOS y cualquier cliente que lea este README. El archivo `prompts/setup.md` vive versionado con el harness: siempre está al día sin que cambies tu línea.
 
 ## Actualizar y desinstalar
 
@@ -161,7 +152,7 @@ Vale para proyecto nuevo (con URL), existente, Windows/Linux/macOS y cualquier c
 PowerShell:
 
 ```powershell
-npx -p degit degit horangelmillan/harness-btp#v0.2.3 AI-tmp -- AI-tmp
+npx -p degit degit horangelmillan/harness-btp#v0.2.4 AI-tmp -- AI-tmp
 powershell -ExecutionPolicy Bypass -File AI-tmp/install.ps1 -Dest . -Force
 Remove-Item -Recurse -Force AI-tmp
 # tu versión anterior queda en AI.bak por si quieres comparar
@@ -170,7 +161,7 @@ Remove-Item -Recurse -Force AI-tmp
 bash:
 
 ```bash
-npx -p degit degit horangelmillan/harness-btp#v0.2.3 AI-tmp -- AI-tmp
+npx -p degit degit horangelmillan/harness-btp#v0.2.4 AI-tmp -- AI-tmp
 sh AI-tmp/install.sh --dest . --force
 rm -rf AI-tmp
 # tu versión anterior queda en AI.bak por si quieres comparar
@@ -222,7 +213,7 @@ harness-btp/
 ├── install.ps1 / install.sh   # instaladores idempotentes (SKIP / CREATE / BACKUP / OK)
 ├── bin/                       # ejecutable de create-harness-btp (pnpm dlx)
 ├── package.json               # name create-harness-btp
-└── VERSION                    # 0.2.3
+└── VERSION                    # 0.2.4
 ```
 
 ## Cómo lo descubre el agente
@@ -243,7 +234,7 @@ Tú no configuras nada: el agente se adapta solo.
 | Líneas duplicadas en `.gitignore` | edición manual tras la fusión | el instalador fusiona sin duplicar; borra el duplicado a mano |
 | `ExecutionPolicy` bloquea `install.ps1` | política de PowerShell | `powershell -ExecutionPolicy Bypass -File AI-tmp/install.ps1 -Dest .` (o usa `install.sh` en Git Bash) |
 | `ABORT: opción desconocida` en `install.sh` | flag inexistente | `sh install.sh --help` lista `--dest`, `--force` |
-| `degit` falla sin Node | `degit` corre sobre Node 18+ | instala Node o usa `git clone --branch v0.2.3` |
+| `degit` falla sin Node | `degit` corre sobre Node 18+ | instala Node o usa `git clone --branch v0.2.4` |
 | Tu cliente no lee los agentes de `.opencode/` | layout específico de OpenCode | son un adapter opcional; el flujo está en `AI/AGENTS.md` + `AI/INICIO.md` |
 | No se deja borrar la carpeta del proyecto ("Carpeta en uso") | procesos huérfanos parados dentro (shells/MCPs de una sesión ya cerrada) | resmon → CPU → Identificadores asociados → busca la carpeta y termina solo esos PIDs; nunca fueron del instalador (solo copia archivos y termina) |
 
@@ -271,6 +262,7 @@ MIT. Haz lo que quieras con el harness; sin garantía.
 
 ## Changelog
 
+- **v0.2.4** — estilo Neon: una línea que lee `prompts/setup.md` (versionado, siempre al día) en vez de un bloque que caduca.
 - **v0.2.3** — prompt universal todo-en-uno: clona + instala con la versión que indique el README (nunca caduca), verifica AI/VERSION instalado.
 - **v0.2.2** — anti-huérfanos: bloque de agente con regla de cierre limpio (no dejar servidores corriendo, no borrar carpetas con procesos dentro) + troubleshooting de carpeta bloqueada (resmon → Identificadores asociados).
 - **v0.2.1** — trazabilidad y versión visible: `AI/VERSION` viaja en el paquete, los instaladores imprimen la versión (`OK: harness vX.Y.Z…`, `BACKUP` con vieja→nueva) y el workflow exige que `package.json`, `VERSION` y `AI/VERSION` coincidan. Comandos fijados a `@0.2.1` / `#v0.2.1` / `--branch v0.2.1`.
