@@ -1,6 +1,6 @@
 # harness-btp
 
-[![version](https://img.shields.io/badge/version-v0.2.1-blue)](https://github.com/horangelmillan/harness-btp/releases/tag/v0.2.1)
+[![version](https://img.shields.io/badge/version-v0.2.2-blue)](https://github.com/horangelmillan/harness-btp/releases/tag/v0.2.2)
 [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![platform](https://img.shields.io/badge/platform-windows%20%7C%20linux%20%7C%20macos-lightgrey)](https://github.com/horangelmillan/harness-btp)
 [![agent](https://img.shields.io/badge/agent-any%20AGENTS.md--compatible-purple)](https://github.com/horangelmillan/harness-btp)
@@ -55,7 +55,7 @@ El camino de 30 segundos en un proyecto nuevo. Elige tu shell:
 PowerShell (Windows):
 
 ```powershell
-npx -p degit degit horangelmillan/harness-btp#v0.2.1 AI-tmp -- AI-tmp
+npx -p degit degit horangelmillan/harness-btp#v0.2.2 AI-tmp -- AI-tmp
 powershell -ExecutionPolicy Bypass -File AI-tmp/install.ps1 -Dest .
 Remove-Item -Recurse -Force AI-tmp
 ```
@@ -63,7 +63,7 @@ Remove-Item -Recurse -Force AI-tmp
 bash (Linux, macOS o Git Bash):
 
 ```bash
-npx -p degit degit horangelmillan/harness-btp#v0.2.1 AI-tmp -- AI-tmp
+npx -p degit degit horangelmillan/harness-btp#v0.2.2 AI-tmp -- AI-tmp
 sh AI-tmp/install.sh --dest .
 rm -rf AI-tmp
 ```
@@ -79,7 +79,7 @@ Descarga solo lo necesario, sin historial git:
 PowerShell:
 
 ```powershell
-npx -p degit degit horangelmillan/harness-btp#v0.2.1 AI-tmp -- AI-tmp
+npx -p degit degit horangelmillan/harness-btp#v0.2.2 AI-tmp -- AI-tmp
 powershell -ExecutionPolicy Bypass -File AI-tmp/install.ps1 -Dest .
 Remove-Item -Recurse -Force AI-tmp
 ```
@@ -87,7 +87,7 @@ Remove-Item -Recurse -Force AI-tmp
 bash:
 
 ```bash
-npx -p degit degit horangelmillan/harness-btp#v0.2.1 AI-tmp -- AI-tmp
+npx -p degit degit horangelmillan/harness-btp#v0.2.2 AI-tmp -- AI-tmp
 sh AI-tmp/install.sh --dest .
 rm -rf AI-tmp
 ```
@@ -99,7 +99,7 @@ Clon superficial anclado al tag:
 PowerShell:
 
 ```powershell
-git clone --branch v0.2.1 --depth 1 https://github.com/horangelmillan/harness-btp AI-tmp
+git clone --branch v0.2.2 --depth 1 https://github.com/horangelmillan/harness-btp AI-tmp
 powershell -ExecutionPolicy Bypass -File AI-tmp/install.ps1 -Dest .
 Remove-Item -Recurse -Force AI-tmp
 ```
@@ -107,7 +107,7 @@ Remove-Item -Recurse -Force AI-tmp
 bash:
 
 ```bash
-git clone --branch v0.2.1 --depth 1 https://github.com/horangelmillan/harness-btp AI-tmp
+git clone --branch v0.2.2 --depth 1 https://github.com/horangelmillan/harness-btp AI-tmp
 sh AI-tmp/install.sh --dest .
 rm -rf AI-tmp
 ```
@@ -117,7 +117,7 @@ rm -rf AI-tmp
 Sin descargas manuales (requiere publicar `create-harness-btp` en el registry). Igual en todos los SO:
 
 ```bash
-pnpm dlx create-harness-btp@0.2.1 --dest .
+pnpm dlx create-harness-btp@0.2.2 --dest .
 ```
 
 ### Qué hace el instalador
@@ -132,7 +132,7 @@ Salida típica en proyecto nuevo:
 ```text
 CREATE: AI/
 CREATE: AGENTS.md
-OK: harness v0.2.1 instalado
+OK: harness v0.2.2 instalado
 ```
 
 ## Instalación asistida por agente
@@ -140,7 +140,7 @@ OK: harness v0.2.1 instalado
 Si prefieres que tu agente lo instale por ti, pégale este bloque:
 
 ```text
-Pégale esto a tu agente: Instala el harness BTP versión 0.2.1 en la raíz del proyecto: 1) Lee el README del repo harness-btp (opción pnpm). 2) Ejecuta EXACTAMENTE pnpm dlx create-harness-btp@0.2.1 --dest . (sin --force salvo que AI/ ya exista y yo lo autorice; con --force verifica BACKUP primero). 3) PROHIBIDO pisar o borrar: AGENTS.md raíz existente, package.json, mta.yaml, lockfiles. 4) Verifica lo INSTALADO (no vale pnpm view): AI/VERSION debe decir 0.2.1. 5) Si migraste npm→pnpm con import+install+test en verde, borra package-lock.json. 6) Corre AI/scripts/check-prereqs y reporta faltantes. 7) Si hay placeholders por adaptar, dímelos antes de desplegar. Sin secretos en el reporte. Repórtame: comando, salida del instalador, contenido de AI/VERSION, git status y pendientes.
+Pégale esto a tu agente: Instala el harness BTP versión 0.2.2 en la raíz del proyecto: 1) Lee el README del repo harness-btp (opción pnpm). 2) Ejecuta EXACTAMENTE pnpm dlx create-harness-btp@0.2.2 --dest . (sin --force salvo que AI/ ya exista y yo lo autorice; con --force verifica BACKUP primero). 3) PROHIBIDO pisar o borrar: AGENTS.md raíz existente, package.json, mta.yaml, lockfiles. 4) Verifica lo INSTALADO (no vale pnpm view): AI/VERSION debe decir 0.2.2. 5) Si migraste npm→pnpm con import+install+test en verde, borra package-lock.json. 6) Corre AI/scripts/check-prereqs y reporta faltantes. 7) Si hay placeholders por adaptar, dímelos antes de desplegar. 8) Al terminar, cierre limpio: no dejes servidores ni observadores corriendo — detén lo que hayas iniciado y verifica que no queden procesos parados en la carpeta; nunca intentes borrar una carpeta con procesos dentro, repórtamelos. Sin secretos en el reporte. Repórtame: comando, salida del instalador, contenido de AI/VERSION, git status y pendientes.
 ```
 
 ## Actualizar y desinstalar
@@ -150,7 +150,7 @@ Pégale esto a tu agente: Instala el harness BTP versión 0.2.1 en la raíz del 
 PowerShell:
 
 ```powershell
-npx -p degit degit horangelmillan/harness-btp#v0.2.1 AI-tmp -- AI-tmp
+npx -p degit degit horangelmillan/harness-btp#v0.2.2 AI-tmp -- AI-tmp
 powershell -ExecutionPolicy Bypass -File AI-tmp/install.ps1 -Dest . -Force
 Remove-Item -Recurse -Force AI-tmp
 # tu versión anterior queda en AI.bak por si quieres comparar
@@ -159,7 +159,7 @@ Remove-Item -Recurse -Force AI-tmp
 bash:
 
 ```bash
-npx -p degit degit horangelmillan/harness-btp#v0.2.1 AI-tmp -- AI-tmp
+npx -p degit degit horangelmillan/harness-btp#v0.2.2 AI-tmp -- AI-tmp
 sh AI-tmp/install.sh --dest . --force
 rm -rf AI-tmp
 # tu versión anterior queda en AI.bak por si quieres comparar
@@ -211,7 +211,7 @@ harness-btp/
 ├── install.ps1 / install.sh   # instaladores idempotentes (SKIP / CREATE / BACKUP / OK)
 ├── bin/                       # ejecutable de create-harness-btp (pnpm dlx)
 ├── package.json               # name create-harness-btp
-└── VERSION                    # 0.2.1
+└── VERSION                    # 0.2.2
 ```
 
 ## Cómo lo descubre el agente
@@ -232,8 +232,9 @@ Tú no configuras nada: el agente se adapta solo.
 | Líneas duplicadas en `.gitignore` | edición manual tras la fusión | el instalador fusiona sin duplicar; borra el duplicado a mano |
 | `ExecutionPolicy` bloquea `install.ps1` | política de PowerShell | `powershell -ExecutionPolicy Bypass -File AI-tmp/install.ps1 -Dest .` (o usa `install.sh` en Git Bash) |
 | `ABORT: opción desconocida` en `install.sh` | flag inexistente | `sh install.sh --help` lista `--dest`, `--force` |
-| `degit` falla sin Node | `degit` corre sobre Node 18+ | instala Node o usa `git clone --branch v0.2.1` |
+| `degit` falla sin Node | `degit` corre sobre Node 18+ | instala Node o usa `git clone --branch v0.2.2` |
 | Tu cliente no lee los agentes de `.opencode/` | layout específico de OpenCode | son un adapter opcional; el flujo está en `AI/AGENTS.md` + `AI/INICIO.md` |
+| No se deja borrar la carpeta del proyecto ("Carpeta en uso") | procesos huérfanos parados dentro (shells/MCPs de una sesión ya cerrada) | resmon → CPU → Identificadores asociados → busca la carpeta y termina solo esos PIDs; nunca fueron del instalador (solo copia archivos y termina) |
 
 ## Compatibilidad
 
@@ -259,5 +260,6 @@ MIT. Haz lo que quieras con el harness; sin garantía.
 
 ## Changelog
 
+- **v0.2.2** — anti-huérfanos: bloque de agente con regla de cierre limpio (no dejar servidores corriendo, no borrar carpetas con procesos dentro) + troubleshooting de carpeta bloqueada (resmon → Identificadores asociados).
 - **v0.2.1** — trazabilidad y versión visible: `AI/VERSION` viaja en el paquete, los instaladores imprimen la versión (`OK: harness vX.Y.Z…`, `BACKUP` con vieja→nueva) y el workflow exige que `package.json`, `VERSION` y `AI/VERSION` coincidan. Comandos fijados a `@0.2.1` / `#v0.2.1` / `--branch v0.2.1`.
 - **v0.2.0** — versión inicial: carpeta `AI/` parametrizada, instaladores idempotentes `install.ps1` / `install.sh`, `create-harness-btp` vía `pnpm dlx`, plantilla de puntero, docs de flujo / cf-safe / habilitación trial, plantilla de spec.
