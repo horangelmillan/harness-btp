@@ -1,6 +1,6 @@
 # harness-btp
 
-[![version](https://img.shields.io/badge/version-v0.2.5-blue)](https://github.com/horangelmillan/harness-btp/releases/tag/v0.2.5)
+[![version](https://img.shields.io/badge/version-v0.3.0-blue)](https://github.com/horangelmillan/harness-btp/releases/tag/v0.3.0)
 [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![platform](https://img.shields.io/badge/platform-windows%20%7C%20linux%20%7C%20macos-lightgrey)](https://github.com/horangelmillan/harness-btp)
 [![agent](https://img.shields.io/badge/agent-any%20AGENTS.md--compatible-purple)](https://github.com/horangelmillan/harness-btp)
@@ -18,6 +18,7 @@ Para quien construye MVPs SAP BTP y quiere empezar cada proyecto con el mismo fl
 - [Instalación asistida por agente](#instalación-asistida-por-agente)
 - [Actualizar y desinstalar](#actualizar-y-desinstalar)
 - [Adaptadores opcionales](#adaptadores-opcionales)
+- [Multi-cliente](#multi-cliente)
 - [Estructura del repo](#estructura-del-repo)
 - [Cómo lo descubre el agente](#cómo-lo-descubre-el-agente)
 - [Troubleshooting](#troubleshooting)
@@ -55,7 +56,7 @@ El camino de 30 segundos en un proyecto nuevo. Elige tu shell:
 PowerShell (Windows):
 
 ```powershell
-npx -p degit degit horangelmillan/harness-btp#v0.2.5 AI-tmp -- AI-tmp
+npx -p degit degit horangelmillan/harness-btp#v0.3.0 AI-tmp -- AI-tmp
 powershell -ExecutionPolicy Bypass -File AI-tmp/install.ps1 -Dest .
 Remove-Item -Recurse -Force AI-tmp
 ```
@@ -63,7 +64,7 @@ Remove-Item -Recurse -Force AI-tmp
 bash (Linux, macOS o Git Bash):
 
 ```bash
-npx -p degit degit horangelmillan/harness-btp#v0.2.5 AI-tmp -- AI-tmp
+npx -p degit degit horangelmillan/harness-btp#v0.3.0 AI-tmp -- AI-tmp
 sh AI-tmp/install.sh --dest .
 rm -rf AI-tmp
 ```
@@ -79,7 +80,7 @@ Descarga solo lo necesario, sin historial git:
 PowerShell:
 
 ```powershell
-npx -p degit degit horangelmillan/harness-btp#v0.2.5 AI-tmp -- AI-tmp
+npx -p degit degit horangelmillan/harness-btp#v0.3.0 AI-tmp -- AI-tmp
 powershell -ExecutionPolicy Bypass -File AI-tmp/install.ps1 -Dest .
 Remove-Item -Recurse -Force AI-tmp
 ```
@@ -87,7 +88,7 @@ Remove-Item -Recurse -Force AI-tmp
 bash:
 
 ```bash
-npx -p degit degit horangelmillan/harness-btp#v0.2.5 AI-tmp -- AI-tmp
+npx -p degit degit horangelmillan/harness-btp#v0.3.0 AI-tmp -- AI-tmp
 sh AI-tmp/install.sh --dest .
 rm -rf AI-tmp
 ```
@@ -99,7 +100,7 @@ Clon superficial anclado al tag:
 PowerShell:
 
 ```powershell
-git clone --branch v0.2.5 --depth 1 https://github.com/horangelmillan/harness-btp AI-tmp
+git clone --branch v0.3.0 --depth 1 https://github.com/horangelmillan/harness-btp AI-tmp
 powershell -ExecutionPolicy Bypass -File AI-tmp/install.ps1 -Dest .
 Remove-Item -Recurse -Force AI-tmp
 ```
@@ -107,7 +108,7 @@ Remove-Item -Recurse -Force AI-tmp
 bash:
 
 ```bash
-git clone --branch v0.2.5 --depth 1 https://github.com/horangelmillan/harness-btp AI-tmp
+git clone --branch v0.3.0 --depth 1 https://github.com/horangelmillan/harness-btp AI-tmp
 sh AI-tmp/install.sh --dest .
 rm -rf AI-tmp
 ```
@@ -117,24 +118,25 @@ rm -rf AI-tmp
 Sin descargas manuales (requiere publicar `create-harness-btp` en el registry). Igual en todos los SO:
 
 ```bash
-pnpm dlx create-harness-btp@0.2.5 --dest .
+pnpm dlx create-harness-btp@0.3.0 --dest .
 ```
 
 ### Qué hace el instalador
 
 - `CREATE: AI/` o `SKIP: AI/ ya existe` (solo lo reemplaza con `-Force` / `--force`, con backup a `AI.bak`).
 - `CREATE: AGENTS.md` o `SKIP: AGENTS.md ya existe` (tu `AGENTS.md` propio se conserva; con `-Force` / `--force` se respalda a `AGENTS.md.bak`).
-- Fusiona `.opencode/` raíz desde `AI/.opencode/` (`agents` + `commands` + `skills`, lo que OpenCode descubre en la raíz del proyecto): sin fuerza solo copia los archivos que falten (`SKIP: .opencode/<ruta> ya existe` por cada uno conservado y `CREATE: .opencode/ (+N archivos)`); con `-Force` / `--force` respalda `.opencode/` a `.opencode.bak` (`BACKUP: .opencode/ -> .opencode.bak`) y copia todo.
+- Fusiona el árbol del cliente agéntico (`--client`, por defecto `auto`) desde `AI/clients/<cliente>/` en la raíz (ver [Multi-cliente](#multi-cliente)): sin fuerza solo copia los archivos que falten (`SKIP: <dir>/<ruta> ya existe` por cada uno conservado); con `-Force` / `--force` respalda cada dir a `<dir>.bak` (`BACKUP: <dir>/ -> <dir>.bak`) y copia todo.
 - Fusiona `.gitignore`: añade las líneas que falten, sin duplicar ni borrar las tuyas.
 - **No toca** `package.json` ni `mta.yaml` de tu proyecto, nunca.
 
 Salida típica en proyecto nuevo:
 
 ```text
-CREATE: AI/
+CREATE: AI/ (v0.3.0)
 CREATE: AGENTS.md
+CLIENT: auto -> opencode
 CREATE: .opencode/ (+17 archivos)
-OK: harness v0.2.5 instalado
+OK: harness v0.3.0 instalado
 ```
 
 ## Instalación asistida por agente
@@ -154,7 +156,7 @@ Vale para proyecto nuevo (con URL), existente, Windows/Linux/macOS y cualquier c
 PowerShell:
 
 ```powershell
-npx -p degit degit horangelmillan/harness-btp#v0.2.5 AI-tmp -- AI-tmp
+npx -p degit degit horangelmillan/harness-btp#v0.3.0 AI-tmp -- AI-tmp
 powershell -ExecutionPolicy Bypass -File AI-tmp/install.ps1 -Dest . -Force
 Remove-Item -Recurse -Force AI-tmp
 # tu versión anterior queda en AI.bak por si quieres comparar
@@ -163,7 +165,7 @@ Remove-Item -Recurse -Force AI-tmp
 bash:
 
 ```bash
-npx -p degit degit horangelmillan/harness-btp#v0.2.5 AI-tmp -- AI-tmp
+npx -p degit degit horangelmillan/harness-btp#v0.3.0 AI-tmp -- AI-tmp
 sh AI-tmp/install.sh --dest . --force
 rm -rf AI-tmp
 # tu versión anterior queda en AI.bak por si quieres comparar
@@ -194,8 +196,31 @@ El harness funciona con **cualquier** cliente agéntico que lea `AGENTS.md`. Est
 - **`AI/.opencode/`** — agentes, comandos y skills de ejemplo con el layout de OpenCode. Si tu cliente usa otro layout, ignóralos o adaptalos: el flujo vive en `AI/AGENTS.md`, `AI/INICIO.md`, `AI/docs/` y `AI/scripts/`, que son Markdown + shell portátil.
 - **`AI/opencode.fragment.jsonc`** — fragmento de ejemplo para fusionar en tu `opencode.jsonc` (p. ej. el bloque MCP `graphify-code`, deshabilitado por defecto). Solo aplica a OpenCode; otros clientes lo ignoran sin efecto.
 - **`install.ps1` / `install.sh`** — elige el de tu shell; ambos aplican la misma lógica idempotente. Los scripts de `AI/scripts/` también vienen en par `.ps1` / `.sh`.
+- **Multi-cliente:** desde v0.3.0 la fuente única es `AI/agents/`, `AI/commands/`, `AI/skills/` y cada cliente recibe su árbol renderizado en `AI/clients/<cliente>/` (ver [Multi-cliente](#multi-cliente)). `AI/.opencode/` se conserva intacto por compatibilidad.
 
 Nada del núcleo exige OpenCode, Windows ni ningún modelo concreto.
+
+## Multi-cliente
+
+El harness se configura para el cliente agéntico de turno desde UNA sola definición canónica:
+
+- **Canónico (`AI/`):** `AI/agents/*.md` (11 agentes), `AI/commands/*.md` (`flow`, `verify`), `AI/skills/*/SKILL.md` (4 skills). Es la única fuente que se edita a mano.
+- **Render (`AI/clients/`):** generado con `node scripts/render-clients.js` (sin dependencias); `node scripts/render-clients.js --check` solo verifica. El CI lo exige en verde antes de publicar (ver `.github/workflows/publish.yml`). No edites `AI/clients/` a mano: tus cambios se pierden en el próximo render.
+
+| Cliente | `--client` | Rutas generadas en la raíz | Adaptación |
+|---|---|---|---|
+| OpenCode | `opencode` | `.opencode/agents/`, `.opencode/commands/`, `.opencode/skills/` | copia exacta de `AI/.opencode/` |
+| Claude Code | `claude` | `.claude/agents/`, `.claude/commands/`, `.claude/skills/` | agents con `{name,description}` (sin `mode`) |
+| Cursor | `cursor` | `.cursor/commands/`, `.agents/skills/` | commands sin frontmatter (solo cuerpo) |
+| Copilot | `copilot` | `.github/agents/*.agent.md`, `.github/prompts/*.prompt.md`, `.github/skills/` | renombrados a su convención |
+| Aider (y genéricos) | `aider` | nada que generar | usan el `AGENTS.md` raíz |
+
+Flag `--client` en `install.ps1` (`-Client`), `install.sh` y `bin/harness-btp.js`:
+
+- `auto` (defecto): detecta por huellas (`CLAUDE.md`/`.claude`→claude, `.cursor`→cursor, `.github`→copilot, `opencode.json*`/`.opencode`→opencode); sin huellas usa opencode por compatibilidad histórica. Si hay huellas de varios clientes, fusiona los detectados.
+- `all`: fusiona los cuatro árboles.
+- Lista explícita (`-Client claude,cursor` / `--client claude,cursor`): solo esos.
+- Fusión idempotente con mensajes `CREATE:`/`SKIP:` por archivo y `BACKUP` a `<dir>.bak` con fuerza (mismo patrón que `AI/`).
 
 ## Estructura del repo
 
@@ -204,18 +229,24 @@ harness-btp/
 ├── AI/                        # lo que queda instalado en tu proyecto
 │   ├── AGENTS.md              # reglas del harness (parametrizado, sin rutas absolutas)
 │   ├── INICIO.md              # punto de entrada para el agente
+│   ├── agents/                # CANÓNICO: 11 agentes (única fuente, se edita a mano)
+│   ├── commands/              # CANÓNICO: flow + verify (única fuente)
+│   ├── skills/                # CANÓNICO: 4 skills (única fuente)
+│   ├── clients/               # RENDERIZADO por scripts/render-clients.js (no editar a mano)
 │   ├── opencode.fragment.jsonc# ADAPTER opcional: ejemplo para opencode.jsonc
-│   ├── .opencode/             # ADAPTER opcional: agents + commands + skills de ejemplo
+│   ├── .opencode/             # ADAPTER opcional: se conserva intacto (compatibilidad)
 │   ├── scripts/               # pares .ps1 / .sh + provision-espacio.template.ps1
 │   ├── docs/                  # flujo-etapas, cf-safe, habilitacion-trial
 │   ├── specs/                 # plantilla _template.md
 │   └── .gitignore.fragment    # líneas a fusionar en tu .gitignore
+├── scripts/
+│   └── render-clients.js      # genera AI/clients/ desde el canónico (--check en CI)
 ├── templates/
 │   └── AGENTS.pointer.md      # plantilla del puntero AGENTS.md raíz
 ├── install.ps1 / install.sh   # instaladores idempotentes (SKIP / CREATE / BACKUP / OK)
 ├── bin/                       # ejecutable de create-harness-btp (pnpm dlx)
 ├── package.json               # name create-harness-btp
-└── VERSION                    # 0.2.5
+└── VERSION                    # 0.3.0
 ```
 
 ## Cómo lo descubre el agente
@@ -237,8 +268,9 @@ Tú no configuras nada: el agente se adapta solo.
 | Líneas duplicadas en `.gitignore` | edición manual tras la fusión | el instalador fusiona sin duplicar; borra el duplicado a mano |
 | `ExecutionPolicy` bloquea `install.ps1` | política de PowerShell | `powershell -ExecutionPolicy Bypass -File AI-tmp/install.ps1 -Dest .` (o usa `install.sh` en Git Bash) |
 | `ABORT: opción desconocida` en `install.sh` | flag inexistente | `sh install.sh --help` lista `--dest`, `--force` |
-| `degit` falla sin Node | `degit` corre sobre Node 18+ | instala Node o usa `git clone --branch v0.2.5` |
+| `degit` falla sin Node | `degit` corre sobre Node 18+ | instala Node o usa `git clone --branch v0.3.0` |
 | Tu cliente no lee los agentes de `.opencode/` | layout específico de OpenCode | son un adapter opcional; el flujo está en `AI/AGENTS.md` + `AI/INICIO.md` |
+| Mi cliente no ve los agentes (claude/cursor/copilot) | instalaste sin el `--client` que usa tu proyecto (`auto` no encontró sus huellas) | reinstala sin fuerza con `--client <tu-cliente>` (p. ej. `--client claude`) y verifica la tabla de [Multi-cliente](#multi-cliente): `.claude/`, `.cursor/commands/` + `.agents/skills/`, o `.github/agents\|prompts\|skills` según cliente; si sigue sin verlos, revisa la fusión y no dupliques archivos a mano |
 | No se deja borrar la carpeta del proyecto ("Carpeta en uso") | procesos huérfanos parados dentro (shells/MCPs de una sesión ya cerrada) | resmon → CPU → Identificadores asociados → busca la carpeta y termina solo esos PIDs; nunca fueron del instalador (solo copia archivos y termina) |
 
 ## Compatibilidad
@@ -265,7 +297,9 @@ MIT. Haz lo que quieras con el harness; sin garantía.
 
 ## Changelog
 
-- **v0.2.5** — fusión a `.opencode/` raíz: el instalador sincroniza `AI/.opencode/` (agents + commands + skills) en `.opencode/` del proyecto para que OpenCode descubra `orchestrator` y `/flow` (SKIP sin fuerza, `.opencode.bak` con fuerza); `prompts/setup.md` verifica adopción y fusiona el fragmento MCP.
+- **v0.3.0** — multi-cliente: definición canónica única en `AI/agents/`, `AI/commands/`, `AI/skills/`; render a `AI/clients/<cliente>/` con `scripts/render-clients.js` (opencode byte-idéntico a `AI/.opencode/`, que se conserva intacto); instaladores con flag `--client auto|all|<lista>` (detección por huellas, fusión idempotente con `SKIP`/`BACKUP` por dir); `prompts/setup.md` pregunta el cliente si es ambiguo y verifica adopción por cliente; CI exige `render-clients.js --check` antes de la guardia de versiones.
+
+- **v0.3.0** — fusión a `.opencode/` raíz: el instalador sincroniza `AI/.opencode/` (agents + commands + skills) en `.opencode/` del proyecto para que OpenCode descubra `orchestrator` y `/flow` (SKIP sin fuerza, `.opencode.bak` con fuerza); `prompts/setup.md` verifica adopción y fusiona el fragmento MCP.
 - **v0.2.4** — estilo Neon: una línea que lee `prompts/setup.md` (versionado, siempre al día) en vez de un bloque que caduca.
 - **v0.2.3** — prompt universal todo-en-uno: clona + instala con la versión que indique el README (nunca caduca), verifica AI/VERSION instalado.
 - **v0.2.2** — anti-huérfanos: bloque de agente con regla de cierre limpio (no dejar servidores corriendo, no borrar carpetas con procesos dentro) + troubleshooting de carpeta bloqueada (resmon → Identificadores asociados).

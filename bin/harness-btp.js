@@ -1,7 +1,8 @@
 #!/usr/bin/env node
-// harness-btp init --dest <dir> [--force] [--ref <tag>]
-// Copia AI/, crea AGENTS.md puntero, fusiona AI/.opencode/ en .opencode/
-// raíz (solo faltantes; con --force hace backup a .opencode.bak) y fusiona .gitignore. Sin secretos.
+// harness-btp init --dest <dir> [--force] [--ref <tag>] [--client auto|all|opencode,claude,...]
+// Copia AI/, crea AGENTS.md puntero, fusiona el árbol del cliente agéntico
+// desde AI/clients/<cliente>/ en la raíz (solo faltantes; con --force hace
+// backup a <dir>.bak) y fusiona .gitignore. Sin secretos.
 // No toca package.json ni mta.yaml del proyecto.
 const fs = require("fs");
 const path = require("path");
@@ -19,10 +20,11 @@ if (!cmd || cmd.startsWith("-")) {
 const dest = arg("--dest", ".");
 const force = process.argv.includes("--force");
 const ref = arg("--ref", null);
+const clientSpec = arg("--client", "auto");
 const src = path.join(__dirname, "..");
 
 if (cmd !== "init") {
-  console.log("Uso: harness-btp init --dest <dir> [--force] [--ref <tag>]");
+  console.log("Uso: harness-btp init --dest <dir> [--force] [--ref <tag>] [--client auto|all|opencode,claude,...]");
   process.exit(1);
 }
 if (ref) console.log("REF: " + ref + " (el paquete incluye su propia versión; ver VERSION)");
@@ -62,8 +64,78 @@ if (fs.existsSync(agentsDst)) {
   console.log("CREATE: AGENTS.md (puntero a AI/AGENTS.md)");
 }
 
-const opSrc = path.join(src, "AI", ".opencode");
-const opDst = path.join(dest, ".opencode");
+const KNOWN = ["opencode", "claude", "cursor", "copilot", "aider"];
+function resolveClients(spec, destDir) {
+  const s = (spec + "").trim().toLowerCase();
+  if (s === "auto") {
+    const d = [];
+    if (fs.existsSync(path.join(destDir, "CLAUDE.md")) || fs.existsSync(path.join(destDir, ".claude"))) d.push("claude");
+    if (fs.existsSync(path.join(destDir, ".cursor"))) d.push("cursor");
+    if (fs.existsSync(path.join(destDir, ".github"))) d.push("copilot");
+    if (fs.readdirSync(destDir, { withFileTypes: true }).some((e) => e.isFile() && e.name.startsWith("opencode.json")) || fs.existsSync(path.join(destDir, ".opencode"))) d.push("opencode");
+    if (!d.length) d.push("opencode");
+    console.log("CLIENT: auto -> " + d.join(","));
+    return d;
+  }
+  if (s === "all") return ["opencode", "claude", "cursor", "copilot"];
+  const list = s.split(",").map((x) => x.trim().toLowerCase()).filter(Boolean);
+  for (const c of list) {
+    if (!KNOWN.includes(c)) {
+      console.log("ABORT: cliente desconocido '" + c + "' (usa auto|all|opencode,claude,cursor,copilot,aider)");
+      process.exit(1);
+    }
+  }
+  if (!list.length) {
+    console.log("ABORT: --client vacío (usa auto|all|opencode,claude,cursor,copilot,aider)");
+    process.exit(1);
+  }
+  return list;
+}
+
+function mergeTree(treeSrc, treeDst, label) {
+  if (!fs.existsSync(treeSrc)) {
+    console.log("AVISO: no existe " + treeSrc + " (regenera con node scripts/render-clients.js)");
+    return;
+  }
+  const bakLabel = label.replace(/\/$/, "") + ".bak";
+  if (force) {
+    if (fs.existsSync(treeDst)) {
+      const bak = treeDst + ".bak";
+      fs.rmSync(bak, { recursive: true, force: true });
+      fs.renameSync(treeDst, bak);
+      console.log("BACKUP: " + label + " -> " + bakLabel);
+    }
+    fs.cpSync(treeSrc, treeDst, { recursive: true });
+    console.log("CREATE: " + label + " (+" + listFilesRec(treeDst, treeDst).length + " archivos)");
+  } else {
+    let count = 0;
+    for (const rel of listFilesRec(treeSrc, treeSrc)) {
+      const tgt = path.join(treeDst, rel);
+      if (fs.existsSync(tgt)) {
+        console.log("SKIP: " + label + rel.split(path.sep).join("/") + " ya existe");
+      } else {
+        fs.mkdirSync(path.dirname(tgt), { recursive: true });
+        fs.copyFileSync(path.join(treeSrc, rel), tgt);
+        count++;
+      }
+    }
+    console.log("CREATE: " + label + " (+" + count + " archivos)");
+  }
+}
+
+const clientsSrc = path.join(src, "AI", "clients");
+for (const c of resolveClients(clientSpec, dest)) {
+  if (c === "opencode") mergeTree(path.join(clientsSrc, "opencode"), path.join(dest, ".opencode"), ".opencode/");
+  else if (c === "claude") mergeTree(path.join(clientsSrc, "claude"), path.join(dest, ".claude"), ".claude/");
+  else if (c === "cursor") {
+    mergeTree(path.join(clientsSrc, "cursor", "commands"), path.join(dest, ".cursor", "commands"), ".cursor/commands/");
+    mergeTree(path.join(clientsSrc, "cursor", "skills"), path.join(dest, ".agents", "skills"), ".agents/skills/");
+  } else if (c === "copilot") {
+    mergeTree(path.join(clientsSrc, "copilot", "agents"), path.join(dest, ".github", "agents"), ".github/agents/");
+    mergeTree(path.join(clientsSrc, "copilot", "skills"), path.join(dest, ".github", "skills"), ".github/skills/");
+    mergeTree(path.join(clientsSrc, "copilot", "prompts"), path.join(dest, ".github", "prompts"), ".github/prompts/");
+  } else if (c === "aider") console.log("SKIP: aider usa AGENTS.md raiz (nada que fusionar)");
+}
 function listFilesRec(dir, base) {
   let out = [];
   for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
@@ -73,32 +145,6 @@ function listFilesRec(dir, base) {
   }
   return out;
 }
-if (fs.existsSync(opSrc)) {
-  if (force) {
-    if (fs.existsSync(opDst)) {
-      const opBak = path.join(dest, ".opencode.bak");
-      fs.rmSync(opBak, { recursive: true, force: true });
-      fs.renameSync(opDst, opBak);
-      console.log("BACKUP: .opencode/ -> .opencode.bak");
-    }
-    fs.cpSync(opSrc, opDst, { recursive: true });
-    console.log("CREATE: .opencode/ (+" + listFilesRec(opDst, opDst).length + " archivos)");
-  } else {
-    let opCount = 0;
-    for (const rel of listFilesRec(opSrc, opSrc)) {
-      const tgt = path.join(opDst, rel);
-      if (fs.existsSync(tgt)) {
-        console.log("SKIP: .opencode/" + rel.split(path.sep).join("/") + " ya existe");
-      } else {
-        fs.mkdirSync(path.dirname(tgt), { recursive: true });
-        fs.copyFileSync(path.join(opSrc, rel), tgt);
-        opCount++;
-      }
-    }
-    console.log("CREATE: .opencode/ (+" + opCount + " archivos)");
-  }
-}
-
 const frag = fs.readFileSync(path.join(src, "AI", ".gitignore.fragment"), "utf8")
   .split(/\r?\n/).map((l) => l.trim()).filter((l) => l && !l.startsWith("#"));
 let cur = [];

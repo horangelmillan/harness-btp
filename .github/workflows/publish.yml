@@ -23,6 +23,8 @@ jobs:
           registry-url: "https://registry.npmjs.org"
           package-manager-cache: false
       - run: npm pack --dry-run
+      - name: Verificar que AI/clients/ coincide con el canónico
+        run: node scripts/render-clients.js --check
       - name: Verificar que package.json, VERSION y AI/VERSION coinciden
         run: node .github/scripts/check-release-versions.js
       - run: npm publish --access public

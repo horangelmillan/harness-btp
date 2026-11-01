@@ -1,20 +1,26 @@
 #!/bin/sh
 # Instalador del harness BTP (idempotente, POSIX sh).
-# Uso: ./install.sh [--dest <dir>] [--force] [--help]
+# Uso: ./install.sh [--dest <dir>] [--force] [--client auto|all|opencode,claude,...] [--help]
 # Sin secretos. No toca package.json ni mta.yaml del proyecto.
-# Fusiona AI/.opencode/{agents,commands,skills} en .opencode/ raíz
-# (solo faltantes; con --force hace backup a .opencode.bak).
+# Fusiona el árbol del cliente agéntico desde AI/clients/<cliente>/ en la raíz
+# (solo faltantes; con --force hace backup a <dir>.bak).
+# --client auto (defecto): detecta por huellas (CLAUDE.md|.claude→claude,
+# .cursor→cursor, .github→copilot, opencode.json*|.opencode→opencode;
+# sin huellas→opencode). all: todos. Lista explícita: esos.
 DEST="."
 FORCE=0
+CLIENT="auto"
 while [ $# -gt 0 ]; do
   case "$1" in
     --dest) DEST="$2"; shift 2 ;;
     --force) FORCE=1; shift ;;
+    --client) CLIENT="$2"; shift 2 ;;
     -h|--help)
-      echo "Uso: ./install.sh [--dest <dir>] [--force] [--help]"
-      echo "  --dest <dir>  proyecto destino (por defecto: .)"
-      echo "  --force       reinstala AI/ con backup a AI.bak"
-      echo "  -h, --help    muestra esta ayuda"
+      echo "Uso: ./install.sh [--dest <dir>] [--force] [--client <clientes>] [--help]"
+      echo "  --dest <dir>    proyecto destino (por defecto: .)"
+      echo "  --force         reinstala AI/ con backup a AI.bak"
+      echo "  --client <list> auto (defecto) | all | opencode,claude,cursor,copilot,aider"
+      echo "  -h, --help      muestra esta ayuda"
       exit 0 ;;
     *) echo "ABORT: opción desconocida $1 (usa --help)"; exit 1 ;;
   esac
@@ -45,33 +51,87 @@ else
   cp "$SRC/templates/AGENTS.pointer.md" "$DEST/AGENTS.md" && echo "CREATE: AGENTS.md (puntero a AI/AGENTS.md)"
 fi
 
-OP_SRC="$SRC/AI/.opencode"
-OP_DST="$DEST/.opencode"
-if [ -d "$OP_SRC" ]; then
+# Fusion idempotente de un arbol: merge_tree <origen> <destino> <etiqueta>
+# (etiqueta p. ej. ".opencode/"; el backup va a <destino>.bak).
+merge_tree() {
+  MT_SRC="$1"; MT_DST="$2"; MT_LABEL="$3"
+  if [ ! -d "$MT_SRC" ]; then echo "AVISO: no existe $MT_SRC (regenera con node scripts/render-clients.js)"; return 0; fi
+  MT_BAKLABEL="$(printf '%s' "$MT_LABEL" | sed 's:/$::').bak"
   if [ "$FORCE" -eq 1 ]; then
-    if [ -d "$OP_DST" ]; then
-      rm -rf "$DEST/.opencode.bak" && mv "$DEST/.opencode" "$DEST/.opencode.bak"
-      echo "BACKUP: .opencode/ -> .opencode.bak"
+    if [ -d "$MT_DST" ]; then
+      rm -rf "$MT_DST.bak" && mv "$MT_DST" "$MT_DST.bak"
+      echo "BACKUP: $MT_LABEL -> $MT_BAKLABEL"
     fi
-    cp -r "$OP_SRC" "$OP_DST" && OP_COUNT=$(find "$OP_DST" -type f | wc -l) && echo "CREATE: .opencode/ (+$OP_COUNT archivos)"
+    mkdir -p "$(dirname "$MT_DST")"
+    cp -r "$MT_SRC" "$MT_DST" && MT_COUNT=$(find "$MT_DST" -type f | wc -l) && echo "CREATE: $MT_LABEL (+$MT_COUNT archivos)"
   else
-    OP_COUNT=0
-    OP_LIST="${TMPDIR:-/tmp}/harness-opcount-$$.tmp"
-    find "$OP_SRC" -type f -print > "$OP_LIST"
-    while IFS= read -r OP_FILE; do
-      OP_REL=${OP_FILE#"$OP_SRC"/}
-      if [ -f "$OP_DST/$OP_REL" ]; then
-        echo "SKIP: .opencode/$OP_REL ya existe"
+    MT_COUNT=0
+    MT_LIST="${TMPDIR:-/tmp}/harness-mt-$$.tmp"
+    find "$MT_SRC" -type f -print > "$MT_LIST"
+    while IFS= read -r MT_FILE; do
+      MT_REL=${MT_FILE#"$MT_SRC"/}
+      if [ -f "$MT_DST/$MT_REL" ]; then
+        echo "SKIP: $MT_LABEL$MT_REL ya existe"
       else
-        mkdir -p "$(dirname "$OP_DST/$OP_REL")"
-        cp "$OP_FILE" "$OP_DST/$OP_REL"
-        OP_COUNT=$((OP_COUNT + 1))
+        mkdir -p "$(dirname "$MT_DST/$MT_REL")"
+        cp "$MT_FILE" "$MT_DST/$MT_REL"
+        MT_COUNT=$((MT_COUNT + 1))
       fi
-    done < "$OP_LIST"
-    rm -f "$OP_LIST"
-    echo "CREATE: .opencode/ (+$OP_COUNT archivos)"
+    done < "$MT_LIST"
+    rm -f "$MT_LIST"
+    echo "CREATE: $MT_LABEL (+$MT_COUNT archivos)"
   fi
-fi
+}
+
+# Resuelve la lista de clientes: detecta huellas en auto, valida explícitos.
+resolve_clients() {
+  case "$CLIENT" in
+    auto)
+      RC_LIST=""
+      { [ -f "$DEST/CLAUDE.md" ] || [ -d "$DEST/.claude" ]; } && RC_LIST="$RC_LIST claude"
+      [ -d "$DEST/.cursor" ] && RC_LIST="$RC_LIST cursor"
+      [ -d "$DEST/.github" ] && RC_LIST="$RC_LIST copilot"
+      if ls "$DEST"/opencode.json* >/dev/null 2>&1 || [ -d "$DEST/.opencode" ]; then RC_LIST="$RC_LIST opencode"; fi
+      [ -z "$RC_LIST" ] && RC_LIST=" opencode"
+      echo "CLIENT: auto -> $(printf '%s' "$RC_LIST" | tr ' ' ',' | sed 's/^,//')" >&2
+      printf '%s' "$RC_LIST"
+      ;;
+    all) printf ' opencode claude cursor copilot' ;;
+    *)
+      RC_OUT=""
+      RC_REST="$CLIENT,"
+      while [ -n "$RC_REST" ]; do
+        RC_ONE=${RC_REST%%,*}; RC_REST=${RC_REST#*,}
+        RC_ONE=$(printf '%s' "$RC_ONE" | tr 'A-Z' 'a-z' | tr -d ' ')
+        [ -z "$RC_ONE" ] && continue
+        case "$RC_ONE" in
+          opencode|claude|cursor|copilot|aider) RC_OUT="$RC_OUT $RC_ONE" ;;
+          *) echo "ABORT: cliente desconocido '$RC_ONE' (usa auto|all|opencode,claude,cursor,copilot,aider)" >&2; exit 1 ;;
+        esac
+      done
+      [ -z "$RC_OUT" ] && { echo "ABORT: --client vacío (usa auto|all|opencode,claude,cursor,copilot,aider)" >&2; exit 1; }
+      printf '%s' "$RC_OUT"
+      ;;
+  esac
+}
+
+CLIENTS_SRC="$SRC/AI/clients"
+RC_RESOLVED=$(resolve_clients); RC_STATUS=$?
+if [ "$RC_STATUS" -ne 0 ]; then exit "$RC_STATUS"; fi
+for C in $RC_RESOLVED; do
+  case "$C" in
+    opencode) merge_tree "$CLIENTS_SRC/opencode" "$DEST/.opencode" ".opencode/" ;;
+    claude) merge_tree "$CLIENTS_SRC/claude" "$DEST/.claude" ".claude/" ;;
+    cursor)
+      merge_tree "$CLIENTS_SRC/cursor/commands" "$DEST/.cursor/commands" ".cursor/commands/"
+      merge_tree "$CLIENTS_SRC/cursor/skills" "$DEST/.agents/skills" ".agents/skills/" ;;
+    copilot)
+      merge_tree "$CLIENTS_SRC/copilot/agents" "$DEST/.github/agents" ".github/agents/"
+      merge_tree "$CLIENTS_SRC/copilot/skills" "$DEST/.github/skills" ".github/skills/"
+      merge_tree "$CLIENTS_SRC/copilot/prompts" "$DEST/.github/prompts" ".github/prompts/" ;;
+    aider) echo "SKIP: aider usa AGENTS.md raiz (nada que fusionar)" ;;
+  esac
+done
 
 FRAG="$SRC/AI/.gitignore.fragment"
 touch "$DEST/.gitignore"
