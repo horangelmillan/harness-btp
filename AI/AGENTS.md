@@ -77,6 +77,7 @@ ver `mta-build` antes del primer build MTAR.
    propone, el orquestador aplica tras revisión).
 
 - En etapa 0, si la spec exige builds o despliegues, el orquestador pide al usuario el resultado de `AI/scripts/check-prereqs.ps1` (o `.sh`) antes de planificar.
+- En etapa 0 el orquestador copia `AI/VERSION` a la spec (`**Harness BTP:** vX.Y.Z`); si hace upgrade a mitad del MVP, añade línea `Upgrade harness vA → vB (<fecha>)`.
 - Cada etapa tiene entregable verificable; el orquestador define el criterio
   de avance en el plan y lo exige antes de continuar.
 - Rigor proporcional al MVP: saltar etapas irrelevantes está permitido y se
@@ -262,3 +263,23 @@ el `ECONNREFUSED`. `chrome-devtools` usa canal propio y no necesita `:9222`.
   del usuario.
 - Si el repo del MVP tiene CI con workflows: ningún merge a `main` se da por
   hecho sin CI en verde verificado en terminal (`gh pr checks <n> --watch`).
+
+## Frontera harness/proyecto: lo generado no se versiona (regla irrestricta)
+
+- **Prohibidos los backups dentro del proyecto:** nunca `cp -r AI AI.bak*`
+  ni `*.bak`/`*.orig` bajo la raíz del MVP. Backup válido = fuera del repo
+  (`%TEMP%/harness-bak/<yyyy-MM-dd>/` en Windows, `$HOME/.harness/bak/`
+  en Unix) o vía git (`stash`/`commit`). Motivo: `AI.bak/` y
+  `AI.bak-v1.0/` acabaron versionados en doc-extract-lab.
+- **Lo que genera el harness/cliente es local:** `opencode.jsonc` real,
+  `.opencode/`, `AI/.opencode/`, cachés y transitorios. El base versiona
+  solo la plantilla (`AI/opencode.fragment.jsonc` + `AI/opencode.jsonc.example`);
+  el real se genera al instalar y está ignorado.
+- **Qué SÍ / qué NUNCA / qué vive en el base:**
+
+  | SÍ se versiona en el MVP | NUNCA se versiona en el MVP | Vive solo en el base (`AI/`) |
+  |---|---|---|
+  | Producto (`app/`, `srv/`, `db/`, `mta.yaml`, `package.json`) | Backups (`AI.bak/`, `AI*.bak/`, `*.bak/`, `*.orig/`) | Agentes (`AI/agents/`, `AI/.opencode/agents/`) |
+  | Specs (`AI/specs/<mvp>.md`, con versión del harness) | Cachés de cliente (`.opencode/`, `AI/.opencode/`, `opencode.jsonc` real) | Skills (`AI/skills/`, `AI/.opencode/skills/`) |
+  | Paisajes (`dev.mtaext`, `prd.mtaext`), manifiestos, `xs-security.json` | Transitorios (`temp/`, `evidencia/`, `.playwright-mcp/`, `graphify-out/`) | Scripts y docs del harness (`AI/scripts/`, `AI/docs/`, `AI/commands/`, `AI/clients/`) |
+  | `.gitignore` del MVP (con el bloque del fragmento aplicado) | Build/deploy (`mta_archives/`, `*.mtar`) y secretos (`.env*`, `default-services.json` con claves) | Plantillas (`AI/opencode.fragment.jsonc`, `AI/opencode.jsonc.example`, `AI/.gitignore.fragment`, `AI/VERSION`) |

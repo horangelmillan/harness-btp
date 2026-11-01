@@ -1,0 +1,13 @@
+// PLANTILLA versionada. El `opencode.jsonc` real es LOCAL (generado al instalar, ignorado).
+// No editar este ejemplo por MVP: copiar a `<raíz>/opencode.jsonc` y ajustar allí.
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "graphify-code": {
+      "type": "local",
+      "command": ["graphify-mcp", "--graph", "AI/graphify-out/graph.json"],
+      "cwd": ".",
+      "enabled": false
+    }
+  }
+}
