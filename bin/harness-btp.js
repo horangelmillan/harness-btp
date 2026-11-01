@@ -9,7 +9,12 @@ function arg(name, def) {
   const i = process.argv.indexOf(name);
   return i !== -1 && process.argv[i + 1] ? process.argv[i + 1] : def;
 }
-const cmd = process.argv[2];
+let cmd = process.argv[2];
+if (!cmd || cmd.startsWith("-")) {
+  // Sin comando (p. ej. `pnpm dlx create-harness-btp --dest .`): asumir init.
+  process.argv.splice(2, 0, "init");
+  cmd = "init";
+}
 const dest = arg("--dest", ".");
 const force = process.argv.includes("--force");
 const ref = arg("--ref", null);
