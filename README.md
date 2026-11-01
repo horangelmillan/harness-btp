@@ -1,6 +1,6 @@
 # harness-btp
 
-[![version](https://img.shields.io/badge/version-v0.3.1-blue)](https://github.com/horangelmillan/harness-btp/releases/tag/v0.3.1)
+[![version](https://img.shields.io/badge/version-v0.3.2-blue)](https://github.com/horangelmillan/harness-btp/releases/tag/v0.3.2)
 [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![platform](https://img.shields.io/badge/platform-windows%20%7C%20linux%20%7C%20macos-lightgrey)](https://github.com/horangelmillan/harness-btp)
 [![agent](https://img.shields.io/badge/agent-any%20AGENTS.md--compatible-purple)](https://github.com/horangelmillan/harness-btp)
@@ -57,7 +57,7 @@ El camino de 30 segundos en un proyecto nuevo. Elige tu shell:
 PowerShell (Windows):
 
 ```powershell
-npx -p degit degit horangelmillan/harness-btp#v0.3.1 AI-tmp -- AI-tmp
+npx -p degit degit horangelmillan/harness-btp#v0.3.2 AI-tmp -- AI-tmp
 powershell -ExecutionPolicy Bypass -File AI-tmp/install.ps1 -Dest .
 Remove-Item -Recurse -Force AI-tmp
 ```
@@ -65,7 +65,7 @@ Remove-Item -Recurse -Force AI-tmp
 bash (Linux, macOS o Git Bash):
 
 ```bash
-npx -p degit degit horangelmillan/harness-btp#v0.3.1 AI-tmp -- AI-tmp
+npx -p degit degit horangelmillan/harness-btp#v0.3.2 AI-tmp -- AI-tmp
 sh AI-tmp/install.sh --dest .
 rm -rf AI-tmp
 ```
@@ -81,7 +81,7 @@ Descarga solo lo necesario, sin historial git:
 PowerShell:
 
 ```powershell
-npx -p degit degit horangelmillan/harness-btp#v0.3.1 AI-tmp -- AI-tmp
+npx -p degit degit horangelmillan/harness-btp#v0.3.2 AI-tmp -- AI-tmp
 powershell -ExecutionPolicy Bypass -File AI-tmp/install.ps1 -Dest .
 Remove-Item -Recurse -Force AI-tmp
 ```
@@ -89,7 +89,7 @@ Remove-Item -Recurse -Force AI-tmp
 bash:
 
 ```bash
-npx -p degit degit horangelmillan/harness-btp#v0.3.1 AI-tmp -- AI-tmp
+npx -p degit degit horangelmillan/harness-btp#v0.3.2 AI-tmp -- AI-tmp
 sh AI-tmp/install.sh --dest .
 rm -rf AI-tmp
 ```
@@ -101,7 +101,7 @@ Clon superficial anclado al tag:
 PowerShell:
 
 ```powershell
-git clone --branch v0.3.1 --depth 1 https://github.com/horangelmillan/harness-btp AI-tmp
+git clone --branch v0.3.2 --depth 1 https://github.com/horangelmillan/harness-btp AI-tmp
 powershell -ExecutionPolicy Bypass -File AI-tmp/install.ps1 -Dest .
 Remove-Item -Recurse -Force AI-tmp
 ```
@@ -109,7 +109,7 @@ Remove-Item -Recurse -Force AI-tmp
 bash:
 
 ```bash
-git clone --branch v0.3.1 --depth 1 https://github.com/horangelmillan/harness-btp AI-tmp
+git clone --branch v0.3.2 --depth 1 https://github.com/horangelmillan/harness-btp AI-tmp
 sh AI-tmp/install.sh --dest .
 rm -rf AI-tmp
 ```
@@ -119,7 +119,7 @@ rm -rf AI-tmp
 Sin descargas manuales (requiere publicar `create-harness-btp` en el registry). Igual en todos los SO:
 
 ```bash
-pnpm dlx create-harness-btp@0.3.1 --dest .
+pnpm dlx create-harness-btp@0.3.2 --dest .
 ```
 
 ### Qué hace el instalador
@@ -133,11 +133,11 @@ pnpm dlx create-harness-btp@0.3.1 --dest .
 Salida típica en proyecto nuevo:
 
 ```text
-CREATE: AI/ (v0.3.1)
+CREATE: AI/ (v0.3.2)
 CREATE: AGENTS.md
 CLIENT: auto -> opencode
 CREATE: .opencode/ (+17 archivos)
-OK: harness v0.3.1 instalado
+OK: harness v0.3.2 instalado
 ```
 
 ## Instalación asistida por agente
@@ -153,6 +153,8 @@ Vale para proyecto nuevo (con URL), existente, Windows/Linux/macOS y cualquier c
 ## Manual de uso
 
 El recorrido normal de un proyecto, en orden. Cada paso dice **qué hace, con qué comando y cuándo toca**.
+
+**0. Preparar el entorno: `/prepare`.** Guía interactiva que deja herramientas, accesos y spec mínima listos antes de `/flow` (la sugiere `/verify` cuando bloquea por entorno o configuración).
 
 **1. Instalar (una sola vez por proyecto).** Copia la carpeta `AI/` dentro de tu proyecto con `pnpm dlx`, `degit` o `git clone` (ver [Instalación](#instalación)). No mueve ni renombra nada tuyo; si `AI/` ya existe, avisa en vez de pisar.
 
@@ -172,6 +174,7 @@ El recorrido normal de un proyecto, en orden. Cada paso dice **qué hace, con qu
 |---|---|---|
 | `pnpm dlx create-harness-btp …` / `degit` / `git clone` | traer el harness al proyecto | una vez por proyecto; repite contra otro tag para actualizar |
 | `install.ps1` / `install.sh` | copiar `AI/`, crear el puntero y fusionar `.gitignore` sin romper nada | lo corre el paquete solo; úsalo directo si instalaste por `degit`/`clone` |
+| `/prepare` | dejar herramientas, accesos y spec mínima listos | primer paso tras instalar, o cuando `/verify` bloquee por entorno |
 | `/flow <spec>` | ejecutar el ciclo completo sobre tu spec | cada vez que construyas o cambies el MVP |
 | `/verify` | revisar que todo está listo sin desplegar | antes de cada despliegue, siempre |
 | `AI/scripts/check-prereqs.*` | decirte qué herramientas te faltan y dónde instalarlas | al estrenar máquina o si algo falla por entorno |
@@ -187,7 +190,7 @@ El recorrido normal de un proyecto, en orden. Cada paso dice **qué hace, con qu
 PowerShell:
 
 ```powershell
-npx -p degit degit horangelmillan/harness-btp#v0.3.1 AI-tmp -- AI-tmp
+npx -p degit degit horangelmillan/harness-btp#v0.3.2 AI-tmp -- AI-tmp
 powershell -ExecutionPolicy Bypass -File AI-tmp/install.ps1 -Dest . -Force
 Remove-Item -Recurse -Force AI-tmp
 # tu versión anterior queda en AI.bak por si quieres comparar
@@ -196,7 +199,7 @@ Remove-Item -Recurse -Force AI-tmp
 bash:
 
 ```bash
-npx -p degit degit horangelmillan/harness-btp#v0.3.1 AI-tmp -- AI-tmp
+npx -p degit degit horangelmillan/harness-btp#v0.3.2 AI-tmp -- AI-tmp
 sh AI-tmp/install.sh --dest . --force
 rm -rf AI-tmp
 # tu versión anterior queda en AI.bak por si quieres comparar
@@ -277,7 +280,7 @@ harness-btp/
 ├── install.ps1 / install.sh   # instaladores idempotentes (SKIP / CREATE / BACKUP / OK)
 ├── bin/                       # ejecutable de create-harness-btp (pnpm dlx)
 ├── package.json               # name create-harness-btp
-└── VERSION                    # 0.3.1
+└── VERSION                    # 0.3.2
 ```
 
 ## Cómo lo descubre el agente
@@ -299,7 +302,7 @@ Tú no configuras nada: el agente se adapta solo.
 | Líneas duplicadas en `.gitignore` | edición manual tras la fusión | el instalador fusiona sin duplicar; borra el duplicado a mano |
 | `ExecutionPolicy` bloquea `install.ps1` | política de PowerShell | `powershell -ExecutionPolicy Bypass -File AI-tmp/install.ps1 -Dest .` (o usa `install.sh` en Git Bash) |
 | `ABORT: opción desconocida` en `install.sh` | flag inexistente | `sh install.sh --help` lista `--dest`, `--force` |
-| `degit` falla sin Node | `degit` corre sobre Node 18+ | instala Node o usa `git clone --branch v0.3.1` |
+| `degit` falla sin Node | `degit` corre sobre Node 18+ | instala Node o usa `git clone --branch v0.3.2` |
 | Tu cliente no lee los agentes de `.opencode/` | layout específico de OpenCode | son un adapter opcional; el flujo está en `AI/AGENTS.md` + `AI/INICIO.md` |
 | Mi cliente no ve los agentes (claude/cursor/copilot) | instalaste sin el `--client` que usa tu proyecto (`auto` no encontró sus huellas) | reinstala sin fuerza con `--client <tu-cliente>` (p. ej. `--client claude`) y verifica la tabla de [Multi-cliente](#multi-cliente): `.claude/`, `.cursor/commands/` + `.agents/skills/`, o `.github/agents\|prompts\|skills` según cliente; si sigue sin verlos, revisa la fusión y no dupliques archivos a mano |
 | No se deja borrar la carpeta del proyecto ("Carpeta en uso") | procesos huérfanos parados dentro (shells/MCPs de una sesión ya cerrada) | resmon → CPU → Identificadores asociados → busca la carpeta y termina solo esos PIDs; nunca fueron del instalador (solo copia archivos y termina) |
@@ -328,6 +331,7 @@ MIT. Haz lo que quieras con el harness; sin garantía.
 
 ## Changelog
 
+- **v0.3.2** — `/prepare`: guía interactiva que deja herramientas, accesos y spec mínima listos antes de `/flow` (sugerido por `/verify` cuando bloquea por entorno/configuración); paso 0 en el manual de uso.
 - **v0.3.1** — manual de uso: recorrido 1–7, tabla comando→para qué→cuándo, y señales de que todo va bien, en lenguaje normal.
 - **v0.3.0** — multi-cliente: definición canónica única en `AI/agents/`, `AI/commands/`, `AI/skills/`; render a `AI/clients/<cliente>/` con `scripts/render-clients.js` (opencode byte-idéntico a `AI/.opencode/`, que se conserva intacto); instaladores con flag `--client auto|all|<lista>` (detección por huellas, fusión idempotente con `SKIP`/`BACKUP` por dir); `prompts/setup.md` pregunta el cliente si es ambiguo y verifica adopción por cliente; CI exige `render-clients.js --check` antes de la guardia de versiones.
 

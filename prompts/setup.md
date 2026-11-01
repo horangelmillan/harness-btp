@@ -45,6 +45,7 @@ Pisar o borrar: `AGENTS.md` raíz existente, `package.json`, `mta.yaml`, lockfil
 Solo con `import + install + test` en verde: borra `package-lock.json`.
 
 ## 8. Prerrequisitos y pendientes
+- Primer paso tras instalar: pide `/prepare` para dejar herramientas, accesos y spec mínima listos antes de `/flow`.
 - Corre `AI/scripts/check-prereqs` (modo aviso) y reporta faltantes.
 - Si `AI/AGENTS.md` trae placeholders por adaptar, dímelos antes de desplegar.
 

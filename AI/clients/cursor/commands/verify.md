@@ -12,3 +12,6 @@ Verificaciones (delegables en `qa-review` + `deploy-cf` en solo lectura):
 
 Veredicto: apto / no apto con motivos concretos. Este comando nunca
 despliega ni muta nada en Cloud Foundry.
+
+Si el veredicto es NO APTO por entorno o configuración (herramientas,
+accesos, spec ausente), sugiere `/prepare` en vez de reintentar `/verify`.
