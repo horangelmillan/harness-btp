@@ -4,7 +4,9 @@
 
 - [ ] Branch protection: marcar job `validate` como required en `main`.
 - [ ] Pin SHA acciones (recomendación security, hoy `@v6` por convención).
-- [ ] Indexar `harness-btp` en `codebase-memory`.
+- [x] Indexar `harness-btp` en `codebase-memory` → proyecto
+  `C-Users-Horan-Desktop-harness-btp`, 726 nodos / 790 aristas,
+  `index_status: ready` (2026-11-03).
 - [ ] Actualizar columna fecha en `AI/docs/fuentes-oficiales.md` → 2026-11-03.
 - [ ] P2: completar `.gitignore.fragment` multi-cliente (`.claude/`,
   `.cursor/`, `.github/agents|prompts|skills`, `.agents/skills`).
