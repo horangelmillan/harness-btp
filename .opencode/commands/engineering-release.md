@@ -6,6 +6,8 @@ agent: engineering-orchestrator
 Flow E — Release: $ARGUMENTS (p. ej. `0.3.3`).
 
 1. `harness-qa`: `render --check`, triple versión, instaladores, `validate-meta.js`.
+   Sin retrieval (verificación determinista); al cierre, checklist
+   `docs/engineering/knowledge-lifecycle.md` §5 (sync solo si hubo cambio estructural).
 2. Compat multi-cliente (tabla `install --client`, `.gitignore` sin duplicados).
 3. `documentation-engineer`: changelog, README, `docs/releases/`.
 4. Versionar (`package.json`+`VERSION`+`AI/VERSION`+tag `vX.Y.Z` coinciden).

@@ -21,7 +21,8 @@ Reglas: esfuerzo proporcional (T0/T1/T2 en
 `docs/engineering/impact-guide.md`): T0 (≤5 min, 1 archivo) directo sin
 delegar; T1 un especialista; T2 diseño previo. Ante duda, sub-paso opcional
 intelligence-pack: consulta `docs/engineering/knowledge-map.md` +
-`impact-guide.md` (§4) y clasifica antes de delegar. Paralelo solo
+`impact-guide.md` (§4) y clasifica antes de delegar. Retrieval/sync previos
+según `docs/engineering/knowledge-lifecycle.md` §1 (T0 omite, T1/T2 selectivo). Paralelo solo
 independiente; integras y revisas todo con
 `git diff`/lectura directa; no delegas decisiones finales; éxito solo con
 evidencia observable (`render --check`, versiones, `validate-meta.js`).
