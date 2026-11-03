@@ -167,3 +167,18 @@ Aislamiento de fixtures + matriz de terminales R6/R7 (OPP-016):
 - QA APTO-CON-PENDIENTES (`npm test` t52 bloqueado entorno npx 90s,
   16 cancelados); reviewer APTO-CON-PENDIENTES (fix paquete ya aplicado).
 - Tests pendiente entorno; sync no requerida (solo `.md` producto, clase B).
+
+## Validación T5.4 (2026-11-03, solo-docs producto + validador solo-lectura)
+
+Orden-independencia + matriz condicional + WARNINGs de aislamiento (OPP-017):
+
+- Cambios ya aplicados (no tocados aquí): `AI/agents/qa-review.md`
+  (orden-independencia + matriz condicional), `AI/skills/cap-cli/SKILL.md`
+  (patrón suite aislada), `AI/scripts/validate-app.ps1/.sh`
+  (3 WARNING test-aislamiento).
+- Estática: `validate-meta` 54 OK, `render --check` 61 OK, triple 0.3.2.
+- Runtime local QA multi-app: Books 8/8 x2 + SD 16/16 x2 + matriz 6/6;
+  randomize Books 7/8 y SD 8/16 por diseño (orden-dependencia honesta,
+  no regresión).
+- Reviewer APTO-CON-PENDIENTES (pendiente approuter sh paridad objeto vs
+  conteo); E2E/BTP N-A; `AI/clients/` intacto.

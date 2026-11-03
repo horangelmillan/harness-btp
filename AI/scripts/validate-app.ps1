@@ -192,6 +192,26 @@ if ($allCds.Count -eq 0) {
   }
 }
 
+# --- test-aislamiento: 3 WARNING solo-lectura (regex, nunca FAIL) ---
+$testFiles = @()
+$testFiles += Find-Files "." "*.test.js"
+$testFiles += Find-Files "." "*.spec.js"
+if ($testFiles.Count -eq 0) {
+  Emit "N-A" "test" "test/*.test.js" "sin suites de test" "aislamiento no aplica" "crea suites con fixtures propias si el MVP exige matriz" "NO" "LOCAL"
+} else {
+  $allT = ""
+  foreach ($f in $testFiles) { $allT += [Environment]::NewLine + (Read-Text $f.FullName) }
+  if (($allT -match 'localhost:\d+|127\.0\.0\.1:\d+|PORT\s*=\s*\d+') -and ($allT -notmatch 'process\.env\.PORT|process\.env\[')) {
+    Emit "WARNING" "test" "test/*.test.js" "puerto fijo sin process.env.PORT" "suites colisionan en paralelo/CI" "usa const PORT = Number(process.env.PORT || 4011)" "NO" "LOCAL"
+  } else { Emit "PASS" "test" "test/*.test.js" "puerto via env o sin literal" "ninguno" "ninguno" "NO" "LOCAL" }
+  if (($allT -match 'try') -and ($allT -match 'finally') -and ($allT -match 'cleanup')) {
+    Emit "PASS" "test" "test/*.test.js" "try/finally+cleanup presentes" "ninguno" "ninguno" "NO" "LOCAL"
+  } else { Emit "WARNING" "test" "test/*.test.js" "falta try/finally+cleanup" "estado compartido entre casos" "envuelve cada it en try/finally con cleanup(DELETE)" "NO" "LOCAL" }
+  if (($allT -match 'serialNumber') -and ($allT -notmatch 'randomUUID|randomBytes|Date\.now\(\)|uuid')) {
+    Emit "WARNING" "test" "test/*.test.js" "serial hardcodeado sin unicidad" "colision unique en rerun/paralelo" "genera seriales unicos por caso (randomUUID)" "NO" "LOCAL"
+  } else { Emit "PASS" "test" "test/*.test.js" "seriales unicos o sin serial" "ninguno" "ninguno" "NO" "LOCAL" }
+}
+
 # --- LOCAL-BUILD: cds/mbt solo BLOCKED si falta herramienta (no falla) ---
 if ($isCap) {
   try {

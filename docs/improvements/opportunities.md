@@ -259,4 +259,33 @@ Un duplicado detectado se cierra como `REJECTED (duplicada de OPP-xxx)`.
   APTO-CON-PENDIENTES — `npm test` t52 bloqueado entorno npx 90s,
   16 cancelados; reviewer APTO-CON-PENDIENTES — fix paquete ya aplicado;
   Tests pendiente entorno, no bloquea el registro).
+   Deduplicación §2: sin coincidencia en backlog/log/findings/este registro.
+
+### OPP-017 · Orden-independencia + matriz condicional + WARNINGs aislamiento (T5.4)
+- Problema: suites de test orden-dependientes (fallan con `--randomize`)
+  + matriz de terminales exigida sin condicional (ruido en apps sin
+  transiciones) + `validate-app` sin señal de aislamiento.
+  Evidencia: `AI/agents/qa-review.md` (orden-independencia + matriz
+  condicional) + `AI/skills/cap-cli/SKILL.md` (patrón suite aislada) +
+  `AI/scripts/validate-app.ps1/.sh` (3 WARNING test-aislamiento).
+  Componente: `AI/agents|skills|scripts` (producto, capacidades existentes
+  mejoradas — no agentes/skills nuevos).
+  Impacto: medio-alto (todo MVP CAP con suites + puerta E5/E7).
+  Frecuencia: cada generación CAP con tests + cada `verify`.
+  Causa: fixtures compartidos/orden implícito + matriz incondicional +
+  validador sin chequeo de aislamiento.
+  Solución: patrón suite aislada + matriz terminales condicional +
+  3 WARNINGs test-aislamiento en `validate-app` (aplicado, sin tocar
+  `AI/clients/`).
+  Esfuerzo: T2. Riesgo regresión: bajo (solo-docs producto + validador
+  solo-lectura; `render --check` 61 OK, `validate-meta` 54 OK, triple 0.3.2).
+  Prioridad: Medium. Estado: COMPLETED (2026-11-03: APTO estático —
+  `validate-meta` 54 OK, `render --check` 61 OK, triple 0.3.2; runtime local
+  QA multi-app Books 8/8 x2 + SD 16/16 x2 + matriz 6/6; randomize Books 7/8
+  y SD 8/16 por diseño — orden-dependencia honesta, no regresión; reviewer
+  APTO-CON-PENDIENTES — pendiente approuter sh paridad objeto vs conteo;
+  E2E/BTP N-A).
+  Deduplicación §2: sin coincidencia en backlog/log/findings/este registro
+  (OPP-016 cubre fixtures+matriz base; OPP-017 añade orden-independencia,
+  matriz condicional y WARNINGs multi-app).
   Deduplicación §2: sin coincidencia en backlog/log/findings/este registro.

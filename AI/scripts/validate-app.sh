@@ -185,6 +185,30 @@ else
   if echo "$cds" | while IFS= read -r c; do [ -s "$c" ] || echo FAIL; done | grep -q FAIL; then HAS_FAIL=1; fi
 fi
 
+# --- test-aislamiento: 3 WARNING solo-lectura (regex, nunca FAIL) ---
+testfiles=$(find "$TARGET" \( -name '*.test.js' -o -name '*.spec.js' \) 2>/dev/null)
+if [ -z "$testfiles" ]; then
+  emit N-A test "test/*.test.js" "sin suites de test" "aislamiento no aplica" "crea suites con fixtures propias si el MVP exige matriz" NO LOCAL
+else
+  all_t=$(find "$TARGET" \( -name '*.test.js' -o -name '*.spec.js' \) -exec cat {} + 2>/dev/null)
+  if echo "$all_t" | grep -qE 'localhost:[0-9]+|127\.0\.0\.1:[0-9]+|PORT *= *[0-9]+' \
+    && ! echo "$all_t" | grep -qE 'process\.env\.PORT|process\.env\['; then
+    emit WARNING test "test/*.test.js" "puerto fijo sin process.env.PORT" "suites colisionan en paralelo/CI" "usa const PORT = Number(process.env.PORT || 4011)" NO LOCAL
+  else
+    emit PASS test "test/*.test.js" "puerto via env o sin literal" ninguno ninguno NO LOCAL
+  fi
+  if echo "$all_t" | grep -q 'try' && echo "$all_t" | grep -q 'finally' && echo "$all_t" | grep -q 'cleanup'; then
+    emit PASS test "test/*.test.js" "try/finally+cleanup presentes" ninguno ninguno NO LOCAL
+  else
+    emit WARNING test "test/*.test.js" "falta try/finally+cleanup" "estado compartido entre casos" "envuelve cada it en try/finally con cleanup(DELETE)" NO LOCAL
+  fi
+  if echo "$all_t" | grep -q 'serialNumber' && ! echo "$all_t" | grep -qE 'randomUUID|randomBytes|Date\.now\(\)|uuid'; then
+    emit WARNING test "test/*.test.js" "serial hardcodeado sin unicidad" "colision unique en rerun/paralelo" "genera seriales unicos por caso (randomUUID)" NO LOCAL
+  else
+    emit PASS test "test/*.test.js" "seriales unicos o sin serial" ninguno ninguno NO LOCAL
+  fi
+fi
+
 # --- LOCAL-BUILD: BLOCKED sin fallar ---
 if [ "$is_cap" -eq 1 ]; then
   command -v cds >/dev/null 2>&1 \

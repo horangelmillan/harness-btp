@@ -18,7 +18,11 @@ Entregables:
    Si el dominio tiene estados terminales, exige matriz prev×next×
    `resolvedAt` (válido/ausente/inválido): terminal→cualquier estado
    debe ser 400, `RESOLVED` sin `resolvedAt` 400, `resolvedAt` anterior
-   a `createdAt` 400.
+   a `createdAt` 400. Las suites de matriz son orden-independientes:
+   cada caso crea sus fixtures propias con seriales únicos y limpia con
+   `try/finally`+`cleanup`, sin estado compartido entre casos. La matriz
+   solo aplica si el dominio tiene estados terminales; sin terminales se
+   omite (N-A) con causa registrada, nunca se inventan transiciones.
 2. Revisión de seguridad: sin secretos en código/diff, auth y validación en
    servidor, sin datos reales salvo exigencia de la spec.
 3. Veredicto de puerta: apto / apto con pendientes / no apto, con motivos.

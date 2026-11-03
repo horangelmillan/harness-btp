@@ -27,3 +27,17 @@ paquete `@cap-js/cds-dk` **no existe** — el correcto es `@sap/cds-dk`):
   sin salidas) + guarda `RESOLVED` exige `resolvedAt >= createdAt`, resto
   rechaza `resolvedAt/resolutionNotes` (400). Ejemplo de forma, no copiar
   datos de la app de referencia.
+
+## Patrón suite aislada (forma, no copiar datos)
+
+- Puerto propio: `const PORT = Number(process.env.PORT || 4011)` (env con
+  fallback; nunca literal fijo sin env).
+- Arranque: `spawn('npx', ['-p', '@sap/cds-dk', 'cds', 'serve', '--port',
+  String(PORT), '--in-memory'], { ..., shell: process.platform === 'win32' })`.
+- Espera lista: bucle `GET /Assets` hasta 200 con `Array.isArray(json.value)`,
+  timeout 90 s, reintento 500 ms.
+- Fixtures propias: `mkAsset()`/`mkRequest(assetID)` con seriales únicos
+  (`randomUUID`), `cleanup(reqID, assetID)` con `DELETE` tolerante a fallos.
+- Cada `it` envuelve en `try { ... } finally { await cleanup(...) }`.
+- Cierre: `after` mata solo el PID propio (`taskkill /pid <pid> /t /f` en
+  win32, `SIGTERM` en unix; guarda `exitCode !== null`).

@@ -65,6 +65,17 @@
   pendiente entorno; sin commits (2026-11-03). Sync no requerida: solo
   `.md` producto, sin cambios estructurales (clase B); sin PEND-KNOWLEDGE.
 
+- [x] T5.4 Orden-independencia + matriz condicional + WARNINGs aislamiento:
+  `AI/agents/qa-review.md` (orden-independencia + matriz condicional) +
+  `AI/skills/cap-cli/SKILL.md` (patrón suite aislada) +
+  `AI/scripts/validate-app.ps1/.sh` (3 WARNING test-aislamiento) →
+  OPP-017 COMPLETED; estática `validate-meta` 54 OK, `render --check` 61 OK,
+  triple 0.3.2; runtime local QA multi-app Books 8/8 x2 + SD 16/16 x2 +
+  matriz 6/6; randomize Books 7/8 y SD 8/16 por diseño (no regresión);
+  reviewer APTO-CON-PENDIENTES (pendiente approuter sh paridad objeto vs
+  conteo); E2E/BTP N-A; solo `.md` producto + validador solo-lectura,
+  `AI/clients/` intacto; sin commits (2026-11-03).
+
 - [x] T4-E/F/G conocimiento: OPP-006→VALIDATING (xs-security, APTO estático
   54/61/0.3.2, sin BTP real) + OPP-008 VALIDATING (approuter) + OPP-009
   DEFERRED (HANA) + OPP-010 REJECTED (OData→mejora `cap-cli`); mapa/catálogos
