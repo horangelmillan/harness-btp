@@ -5,11 +5,13 @@
 # Uso: sh scripts/cf-safe.sh <verbo...> [--allow-write] [--what-if]
 #      [--expected-api URL] [--expected-org ORG]
 # Salida: UNA línea JSON {ok,exit,verb,output}. El crudo va a
-# temp/cf-safe/*.raw.log, nunca secretos a stdout (redactado básico).
-# Diferencias honestas vs .ps1: sin extracción de nombres de service-keys,
-# sin truncado a 4000 chars (se emiten máx 200 líneas en logs), redacción por
-# sed (clientsecret|password|BEGIN PRIVATE|eyJ...). Para JSON completo y
-# nombres, usar cf-safe.ps1 en Windows.
+# temp/cf-safe/*.raw.log, nunca secretos a stdout (redactado).
+# Garantías equivalentes a cf-safe.ps1 (ver matriz en informe R1-CLOSE):
+# denylist→allowlist→target, exit 0/1/2/3/4, WhatIf previo a red,
+# service-keys/service-key devuelven solo nombres, redacción + colapso
+# fail-closed de líneas con señales residuales. Diferencia residual honesta:
+# sin extracción de JSON anidado; ante duda la línea entera se colapsa.
+CF_BIN_RESOLVED="${CF_BIN:-cf}"
 EXPECTED_API="https://api.cf.us10-001.hana.ondemand.com"
 EXPECTED_ORG=""
 ALLOW_WRITE=0
@@ -19,8 +21,12 @@ while [ $# -gt 0 ]; do
   case "$1" in
     --allow-write) ALLOW_WRITE=1; shift ;;
     --what-if) WHAT_IF=1; shift ;;
-    --expected-api) EXPECTED_API="$2"; shift 2 ;;
-    --expected-org) EXPECTED_ORG="$2"; shift 2 ;;
+    --expected-api)
+      if [ -z "${2:-}" ]; then echo '{"ok":false,"exit":2,"verb":"","output":"FUERA DE ALLOWLIST: --expected-api sin valor."}'; exit 2; fi
+      EXPECTED_API="$2"; shift 2 ;;
+    --expected-org)
+      if [ -z "${2:-}" ]; then echo '{"ok":false,"exit":2,"verb":"","output":"FUERA DE ALLOWLIST: --expected-org sin valor."}'; exit 2; fi
+      EXPECTED_ORG="$2"; shift 2 ;;
     --expected-api=*) EXPECTED_API="${1#--expected-api=}"; shift ;;
     --expected-org=*) EXPECTED_ORG="${1#--expected-org=}"; shift ;;
     --) shift; while [ $# -gt 0 ]; do ARGS="$ARGS $1"; shift; done ;;
@@ -63,10 +69,10 @@ if [ "$WHAT_IF" -eq 1 ]; then
   echo '{"ok":true,"exit":0,"verb":"'"$VERB"'","output":"WHATIF: cf'"$ARGS"'"}'; exit 0
 fi
 if [ -z "$VERB" ]; then echo '{"ok":false,"exit":2,"verb":"","output":"FUERA DE ALLOWLIST: sin argumentos."}'; exit 2; fi
-if ! command -v cf >/dev/null 2>&1; then
+if ! command -v "$CF_BIN_RESOLVED" >/dev/null 2>&1; then
   echo '{"ok":false,"exit":4,"verb":"'"$VERB"'","output":"ERROR: cf no encontrado en PATH."}'; exit 4
 fi
-T_RAW=$(cf target 2>&1)
+T_RAW=$("$CF_BIN_RESOLVED" target 2>&1)
 case "$T_RAW" in
   *"$EXPECTED_API"*) ;;
   *) echo '{"ok":false,"exit":3,"verb":"'"$VERB"'","output":"TARGET MISMATCH: endpoint no coincide."}'; exit 3 ;;
@@ -81,10 +87,31 @@ TMPD="$(dirname "$0")/../../temp/cf-safe"
 mkdir -p "$TMPD"
 RAW="$TMPD/cf-$(date +%Y%m%d-%H%M%S)-PID$$.raw.log"
 # shellcheck disable=SC2086
-OUT=$(cf $ARGS 2>&1)
+OUT=$($CF_BIN_RESOLVED $ARGS 2>&1)
 CODE=$?
 printf '%s' "$OUT" > "$RAW"
-RED=$(printf '%s' "$OUT" | sed -E 's/(clientsecret|password)([^ ]*)/\1***REDACTED***/gI; s/eyJ[A-Za-z0-9_-]+\.eyJ[A-Za-z0-9_.-]+/***REDACTED***/g')
+# Redacción equivalente a cf-safe-patterns.ps1 (orden: asignaciones, Bearer/
+# Basic, JWT, bloque credentials, parámetros inline) + rango PEM + colapso
+# fail-closed de líneas con señales residuales (awk POSIX). Si el motor sed
+# no soporta un flag (p. ej. BSD sin `I`), se colapsa todo al marcador
+# antes que fallar en abierto.
+if ! RED1=$(printf '%s' "$OUT" | sed -E \
+  -e 's/("?(access_token|refresh_token|id_token|client_secret|clientsecret|clientSecret|secret|password|passwd|pwd|api_key|apikey|private_key)"?[[:space:]]*[:=][[:space:]]*"?)[^"&,[:space:]]+/\1***REDACTED***/gI' \
+  -e 's/\b(Bearer|Basic)[[:space:]]+[A-Za-z0-9_.~+\/=: -]+/\1 ***REDACTED***/gI' \
+  -e 's/eyJ[A-Za-z0-9_-]+\.eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_.-]+/***REDACTED***/g' \
+  -e 's/("credentials"[[:space:]]*:[[:space:]]*\{)[^}]*\}/\1***REDACTED***}/gI' \
+  -e "s/(-p[[:space:]]+|--parameters[[:space:]]+)('[^']*'|\{[^{}]*\})/\1***REDACTED***/gI" 2>/dev/null); then
+  RED='***REDACTED***'
+else
+  RED=$(printf '%s' "$RED1" \
+    | sed -e '/BEGIN .*PRIVATE KEY/,/END .*PRIVATE KEY/c\***REDACTED***' \
+    | awk '{l=tolower($0); if (l ~ /clientsecret|client_secret|begin private|bearer eyJ|basic /) print "***REDACTED***"; else print}')
+fi
+if [ "$VERB" = "service-keys" ] || [ "$VERB" = "service-key" ]; then
+  # Como cf-safe.ps1: solo nombres (primera columna sin cabeceras), nunca valores.
+  RED=$(printf '%s' "$RED" | awk 'tolower($0) ~ /^(name|getting|failed|ok)/ {next} /^[[:space:]]*$/ {next} $1 != "***REDACTED***" {print $1}')
+  if [ -z "$RED" ]; then RED='***REDACTED***'; fi
+fi
 if [ "$VERB" = "logs" ]; then RED=$(printf '%s' "$RED" | tail -n 200); fi
 ESC=$(printf '%s' "$RED" | sed 's/\\/\\\\/g; s/"/\\"/g' | tr '\n' ' ' | cut -c1-4000)
 if [ "$CODE" -ne 0 ]; then echo '{"ok":false,"exit":4,"verb":"'"$VERB"'","output":"'"$ESC"'"}'; exit 4; fi

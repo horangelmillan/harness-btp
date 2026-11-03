@@ -1,0 +1,11 @@
+# R1-CLOSE: el paquete npm solo distribuye producto (AI/, bin/, templates/,
+# install.*, README, VERSION). Esto excluye transitorios y dependencias
+# de ejemplo aunque vivan bajo AI/ (npm no respeta .gitignore).
+AI/temp/
+node_modules/
+node_modules/**
+*.raw.log
+temp/
+graphify-out/
+evidencia/
+.playwright-mcp/
