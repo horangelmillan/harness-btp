@@ -23,3 +23,7 @@ paquete `@cap-js/cds-dk` **no existe** — el correcto es `@sap/cds-dk`):
 - `cds add` es aditivo y genera `mta.yaml`/`xs-security.json`: revisar el
   diff antes de aceptar lo generado (nombres de instancia deben coincidir
   con las existentes en la subcuenta).
+- Estados terminales: mapa `TRANSITIONS = { OPEN: [...], ... }` (terminales
+  sin salidas) + guarda `RESOLVED` exige `resolvedAt >= createdAt`, resto
+  rechaza `resolvedAt/resolutionNotes` (400). Ejemplo de forma, no copiar
+  datos de la app de referencia.

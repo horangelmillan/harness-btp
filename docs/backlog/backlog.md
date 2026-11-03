@@ -54,6 +54,17 @@
   → OPP-015 (nota SQLite en cap-cli + render) ; `render` 61 OK,
   `validate-meta` 54 OK, triple 0.3.2; sin commits (2026-11-03).
 
+- [x] T5.3 Aislamiento fixtures + matriz terminales R6/R7:
+  `AI/agents/backend-cap.md` (fixtures + fix paquete `@sap/cds` vía
+  `cap-cli`) + `AI/agents/qa-review.md` (matriz terminales) +
+  `AI/skills/cap-cli/SKILL.md` (TRANSITIONS) → OPP-016 COMPLETED;
+  evidencia `temp/t52-servicedesk` test:119-150 + srv:78-90; QA
+  APTO-CON-PENDIENTES (`npm test` t52 bloqueado entorno npx 90s,
+  16 cancelados) + reviewer APTO-CON-PENDIENTES (fix paquete ya aplicado);
+  `render --check` 61 OK, `validate-meta` 54 OK, triple 0.3.2; Tests
+  pendiente entorno; sin commits (2026-11-03). Sync no requerida: solo
+  `.md` producto, sin cambios estructurales (clase B); sin PEND-KNOWLEDGE.
+
 - [x] T4-E/F/G conocimiento: OPP-006→VALIDATING (xs-security, APTO estático
   54/61/0.3.2, sin BTP real) + OPP-008 VALIDATING (approuter) + OPP-009
   DEFERRED (HANA) + OPP-010 REJECTED (OData→mejora `cap-cli`); mapa/catálogos

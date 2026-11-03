@@ -235,3 +235,28 @@ Un duplicado detectado se cierra como `REJECTED (duplicada de OPP-xxx)`.
   handlers (aplicado). Esfuerzo: T0. Riesgo regresión: nulo (docs;
   `render --check` 61 OK, `validate-meta` 54 OK).
   Prioridad: Medium. Estado: COMPLETED (2026-11-03).
+
+### OPP-016 · Aislamiento fixtures + matriz terminales R6/R7 (T5.3)
+- Problema: fixtures de test sin aislamiento entre casos y transiciones a
+  estados terminales sin matriz de validación exigible en revisión.
+  Evidencia: `temp/t52-servicedesk/test:119-150` (fixtures) y
+  `temp/t52-servicedesk/srv:78-90` (terminales) + `AI/agents/backend-cap.md`
+  (fixtures + fix paquete `@sap/cds` vía `cap-cli`) +
+  `AI/agents/qa-review.md` (matriz terminales R6/R7) +
+  `AI/skills/cap-cli/SKILL.md` (TRANSITIONS).
+  Componente: `AI/agents|skills` (producto, capacidades existentes mejoradas —
+  no agentes/skills nuevos).
+  Impacto: medio (todo MVP CAP con estados terminales + tests con fixtures).
+  Frecuencia: cada generación CAP con transiciones de estado.
+  Causa: aislamiento no exigido en generación y matriz prev×next×`resolvedAt`
+  solo documentada fuera de la puerta de revisión.
+  Solución: fixtures aislados + fix paquete `@sap/cds` vía `cap-cli` +
+  matriz terminales R6/R7 exigible en `qa-review` (aplicado).
+  Esfuerzo: T2. Riesgo regresión: bajo (solo-docs producto;
+  `render --check` 61 OK, `validate-meta` 54 OK, triple 0.3.2).
+  Prioridad: Medium. Estado: COMPLETED (2026-11-03: APTO estático —
+  `validate-meta` 54 OK, `render --check` 61 OK, triple 0.3.2; QA
+  APTO-CON-PENDIENTES — `npm test` t52 bloqueado entorno npx 90s,
+  16 cancelados; reviewer APTO-CON-PENDIENTES — fix paquete ya aplicado;
+  Tests pendiente entorno, no bloquea el registro).
+  Deduplicación §2: sin coincidencia en backlog/log/findings/este registro.

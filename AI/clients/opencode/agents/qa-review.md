@@ -15,6 +15,10 @@ Herramientas: skill `verification-before-completion` antes de dictaminar;
 Entregables:
 
 1. Resultado por criterio (comando + salida real, no solo "compila").
+   Si el dominio tiene estados terminales, exige matriz prev×next×
+   `resolvedAt` (válido/ausente/inválido): terminal→cualquier estado
+   debe ser 400, `RESOLVED` sin `resolvedAt` 400, `resolvedAt` anterior
+   a `createdAt` 400.
 2. Revisión de seguridad: sin secretos en código/diff, auth y validación en
    servidor, sin datos reales salvo exigencia de la spec.
 3. Veredicto de puerta: apto / apto con pendientes / no apto, con motivos.

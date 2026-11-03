@@ -153,3 +153,17 @@ limpios y recuperables (D5).
   `check-update` en silencio → correctamente sin `update`.
 - Fallo de herramienta → `PEND-KNOWLEDGE` en backlog + APTO-CON-PENDIENTE,
   nunca bloqueo (escenario G, política del ciclo).
+
+## Validación T5.3 (2026-11-03, solo-docs producto)
+
+Aislamiento de fixtures + matriz de terminales R6/R7 (OPP-016):
+
+- Cambios ya aplicados (no tocados aquí): `AI/agents/backend-cap.md`
+  (fixtures + fix paquete `@sap/cds` vía `cap-cli`),
+  `AI/agents/qa-review.md` (matriz terminales R6/R7),
+  `AI/skills/cap-cli/SKILL.md` (TRANSITIONS).
+- Evidencia: `temp/t52-servicedesk` test:119-150 + srv:78-90.
+- Estática: `validate-meta` 54 OK, `render --check` 61 OK, triple 0.3.2.
+- QA APTO-CON-PENDIENTES (`npm test` t52 bloqueado entorno npx 90s,
+  16 cancelados); reviewer APTO-CON-PENDIENTES (fix paquete ya aplicado).
+- Tests pendiente entorno; sync no requerida (solo `.md` producto, clase B).
