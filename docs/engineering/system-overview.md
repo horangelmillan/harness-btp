@@ -53,11 +53,14 @@ Composables, reutilizan etapas comunes. Inteligencia previa opcional:
 transversal retrieve → verify: `knowledge-lifecycle.md` (referenciado en
 cada flujo, checklist al cierre).
 
-## Automejora
+## Automejora (T3: Flow D autónomo)
 
-OBSERVAR → ANALIZAR → IDENTIFICAR → PROPONER → IMPLEMENTAR → VALIDAR →
-DOCUMENTAR. Solo mejoras verificables con regresión (`validate-meta.js` +
-`render --check` + versiones). Sin nuevas aprobaciones manuales.
+OBSERVE → DETECT → INVESTIGATE → PRIORITIZE → DESIGN → IMPLEMENT → TEST →
+REVIEW → DOCUMENT → SYNCHRONIZE (detalle en
+`.opencode/commands/engineering-improvement.md`; oportunidades trazables en
+`docs/improvements/opportunities.md`). Solo mejoras verificables con
+regresión (`validate-meta.js` + `render --check` + versiones). Sin nuevas
+aprobaciones manuales; delegación selectiva; sin agentes nuevos.
 
 ## Eficiencia (prioridad arquitectónica)
 

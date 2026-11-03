@@ -7,3 +7,17 @@ temp/
 graphify-out/
 .DS_Store
 Thumbs.db
+evidencia/
+.playwright-mcp/
+mta_archives/
+*.mtar
+.env*
+default-env.json
+default-services.json
+AI.bak-v1.0/
+AI*.bak/
+*.bak/
+*.orig/
+.opencode/
+AI/.opencode/
+opencode.jsonc

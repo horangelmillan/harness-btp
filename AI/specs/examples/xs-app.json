@@ -1,0 +1,17 @@
+{
+  "welcomeFile": "/index.html",
+  "authenticationMethod": "route",
+  "routes": [
+    {
+      "source": "^/api/(.*)$",
+      "target": "/$1",
+      "destination": "mvp-backend",
+      "scope": "$XSAPPNAME.Viewer"
+    },
+    {
+      "source": "^(.*)$",
+      "target": "$1",
+      "localDir": "resources/"
+    }
+  ]
+}

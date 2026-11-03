@@ -1,0 +1,23 @@
+{
+  "xsappname": "mvp-app",
+  "scopes": [
+    {
+      "name": "$XSAPPNAME.Viewer",
+      "description": "Lectura del MVP"
+    },
+    {
+      "name": "$XSAPPNAME.Editor",
+      "description": "Lectura y escritura del MVP"
+    }
+  ],
+  "role-templates": [
+    {
+      "name": "Viewer",
+      "scope-references": ["$XSAPPNAME.Viewer"]
+    },
+    {
+      "name": "Editor",
+      "scope-references": ["$XSAPPNAME.Viewer", "$XSAPPNAME.Editor"]
+    }
+  ]
+}

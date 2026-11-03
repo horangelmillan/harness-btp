@@ -25,3 +25,5 @@ una de estas categorías, con fuente y fecha:
   documentarlo en la spec; capa gratuita por defecto.
 - Bloqueos externos no paran el MVP: documentar evidencia y continuar con
   mocks o adaptador local.
+- Seguridad: todo scope usado en código o rutas `xs-app.json` debe existir en
+  `AI/docs/xs-security-checklist.md` / `xs-security.json` del MVP.

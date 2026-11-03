@@ -1,0 +1,40 @@
+# Snippet MTA: approuter + destination + xsuaa (OPP-008, sin credenciales)
+# Pegar los recursos/módulos que falten en el mta.yaml del MVP.
+resources:
+  - name: mvp-xsuaa
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: xsuaa
+      service-plan: application
+      path: ./xs-security.json
+  - name: mvp-destination
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: destination
+      service-plan: lite
+  - name: mvp-html5-host
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: html5-apps-repo
+      service-plan: app-host
+  - name: mvp-html5-runtime
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: html5-apps-repo
+      service-plan: app-runtime
+  - name: mvp-backend-key
+    type: org.cloudfoundry.existing-service
+    parameters:
+      service-name: mvp-backend-key
+modules:
+  - name: mvp-approuter
+    type: approuter.nodejs
+    path: approuter/
+    parameters:
+      disk-quota: 256M
+      memory: 256M
+    requires:
+      - name: mvp-xsuaa
+      - name: mvp-destination
+      - name: mvp-html5-host
+      - name: mvp-html5-runtime

@@ -26,6 +26,20 @@
 
 ## Hecho
 
+- [x] T4-E/F/G conocimiento: OPP-006→VALIDATING (xs-security, APTO estático
+  54/61/0.3.2, sin BTP real) + OPP-008 VALIDATING (approuter) + OPP-009
+  DEFERRED (HANA) + OPP-010 REJECTED (OData→mejora `cap-cli`); mapa/catálogos
+  intactos; sin reindex (2026-11-03).
+- [x] T3.1 Operational Validation: B1–B3 + C1–C2 + D1–D6 en vivo
+  (grafo 557/417 = HEAD 57d3bf2; CBM 770/813 ready; probes restaurados) +
+  OPP-007 (1 párrafo §4 lifecycle) + reviewer APTO; `AI/` intacto,
+  sin commits (2026-11-03).
+- [x] T3 Autonomous Engineering: Flow D 10 etapas
+  (`OBSERVE→…→SYNCHRONIZE`) + `docs/improvements/opportunities.md`
+  (OPP-001…006, escenarios A–H verificados) + checks T3 en
+  `validate-meta.js` (54 en verde) + delegación selectiva en orquestador;
+  11 agentes (sin nuevos), `AI/` intacto (2026-11-03).
+
 - [x] P0 auditoría + `docs/engineering/initial-assessment.md` (2026-11-03).
 - [x] P1-P5 meta mínimo: orquestador + 10 especialistas, 5 flujos, contratos,
   catálogos, ADR-001, backlog (2026-11-03).

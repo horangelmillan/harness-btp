@@ -19,7 +19,10 @@ Especialistas: `harness-researcher`, `harness-architect`,
 
 Reglas: esfuerzo proporcional (T0/T1/T2 en
 `docs/engineering/impact-guide.md`): T0 (≤5 min, 1 archivo) directo sin
-delegar; T1 un especialista; T2 diseño previo. Ante duda, sub-paso opcional
+delegar; T1 un especialista; T2 diseño previo. Mejora autónoma (Flow D):
+oportunidades en `docs/improvements/opportunities.md` (deduplicar antes de
+registrar); delegación selectiva por naturaleza (p. ej. trivial de docs →
+solo `documentation-engineer`; nunca todos por defecto; sin recursión). Ante duda, sub-paso opcional
 intelligence-pack: consulta `docs/engineering/knowledge-map.md` +
 `impact-guide.md` (§4) y clasifica antes de delegar. Retrieval/sync previos
 según `docs/engineering/knowledge-lifecycle.md` §1 (T0 omite, T1/T2 selectivo). Paralelo solo

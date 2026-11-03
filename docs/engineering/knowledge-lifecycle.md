@@ -78,6 +78,13 @@ Clasificar (orquestador o qa):
 Sin metadatos redundantes (`last_sync`, timestamps manuales): el commit ya
 vive en `graph_stats`. "MCP responde" ≠ actualizado; solo `commit == HEAD`
 prueba frescura.
+Límites verificados en vivo (T3.1): `detect_changes` compara el árbol de
+trabajo contra `HEAD` (estilo `git status`): tras reindexar con cambios sin
+commitear sigue `>0` → no reindexar dos veces por tarea por ese conteo;
+una sola sync por tarea basta. `built_at_commit` registra el commit, no el
+contenido: con cambios sin commitear indexados, `commit == HEAD` no prueba
+frescura del árbol. `search_graph` (BM25) no recupera contenido `.md`
+documental; para `.md` usar `search_code` (verificado).
 
 ## 5. Checklist de cierre (referenciado por los 5 flujos)
 

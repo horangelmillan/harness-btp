@@ -35,10 +35,50 @@ for (const c of ["engineering-feature", "engineering-research", "engineering-ref
   need(".opencode/commands/" + c + ".md", "meta flow " + c);
 }
 for (const d of ["docs/engineering/knowledge-map.md",
-  "docs/engineering/impact-guide.md", "docs/engineering/metrics/baseline-P1.md"]) {
+  "docs/engineering/impact-guide.md", "docs/engineering/metrics/baseline-P1.md",
+  "docs/engineering/knowledge-lifecycle.md", "docs/mcp/graphify-local.md",
+  "docs/improvements/opportunities.md"]) {
   need(d, d);
   if (fs.existsSync(path.join(ROOT, d))) fm(d, ["title", "date", "status"]);
 }
+// Gobernanza T3: 11 agentes meta (sin agentes nuevos salvo necesidad
+// demostrada) y Flow D autónomo de 10 etapas.
+// Fuente verdad: array `agents[11]`; ignorados locales exentos (solo
+// lectura fs + ls-files; nunca clean/reset/checkout/stash/borrar).
+try {
+  const dir = path.join(ROOT, ".opencode", "agents");
+  const files = fs.readdirSync(dir).filter((f) => f.endsWith(".md"));
+  const want = new Set(agents.map((a) => a.toLowerCase()));
+  const seen = new Set(); const dups = new Set();
+  for (const f of files) {
+    const k = f.toLowerCase();
+    if (seen.has(k)) dups.add(f); else seen.add(k);
+  }
+  for (const d of dups) fail.push("AGENTE-DUPLICADO: " + d);
+  const onDisk = new Set(files.map((f) => f.toLowerCase()));
+  for (const a of agents)
+    if (!onDisk.has((a + ".md").toLowerCase())) fail.push("AGENTE-CANONICO-FALTA: " + a);
+  let tracked = null;
+  try {
+    const out = cp.execSync('git ls-files -- ".opencode/agents/*.md"', { cwd: ROOT, encoding: "utf8", stdio: "pipe" });
+    tracked = new Set(out.split("\n").map((s) => s.trim()).filter(Boolean).map((s) => path.basename(s).toLowerCase()));
+  } catch (e) { tracked = null; }
+  if (tracked === null) {
+    ok.push("OK: 11 agentes meta (SIN-GIT: extras no auditables)");
+  } else {
+    for (const f of files)
+      if (!want.has(f.toLowerCase().replace(/\.md$/, "")) && tracked.has(f.toLowerCase()))
+        fail.push("AGENTE-NO-REGISTRADO: " + f);
+    if (!dups.size && !fail.some((m) => /^AGENTE-/.test(m)))
+      ok.push("OK: 11 agentes meta (ignorados locales exentos)");
+  }
+} catch (e) { fail.push("AGENTES-ILEGIBLE"); }
+try {
+  const flow = fs.readFileSync(path.join(ROOT, ".opencode/commands/engineering-improvement.md"), "utf8");
+  for (const k of ["OBSERVE", "PRIORITIZE", "SYNCHRONIZE", "opportunities.md", "PEND-KNOWLEDGE"])
+    if (!flow.includes(k)) fail.push("FLOW-D-SIN-" + k);
+  ok.push("OK: Flow D autónomo");
+} catch (e) { fail.push("FLOW-D-ILEGIBLE"); }
 // Gobernanza: sin dependencias runtime nuevas (meta sin deps).
 try {
   const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, "package.json"), "utf8"));

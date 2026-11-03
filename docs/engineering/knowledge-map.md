@@ -20,6 +20,7 @@ No duplica contenido: el detalle vive en cada catálogo/fuente.
 | Ciclo conocimiento (retrieve → verify) | `docs/engineering/knowledge-lifecycle.md` |
 | Skills producto (4) + globales + meta | `docs/skills/catalog.md` |
 | Flujos (5: feature/research/refactor/improvement/release) | `docs/engineering/system-overview.md` § Flujos |
+| Oportunidades de mejora (registro trazable T3) | `docs/improvements/opportunities.md` |
 | Contratos delegación/respuesta | `docs/engineering/contracts.md` |
 | Separación producto/meta | `docs/architecture/decisions/ADR-001-meta-separation.md` |
 | Diagnóstico P0 + addendum P1 | `docs/engineering/initial-assessment.md` |

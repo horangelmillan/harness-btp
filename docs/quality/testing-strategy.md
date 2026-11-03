@@ -77,6 +77,70 @@ del orquestador; subagentes sin shell/escritura → ejecución directa):
 - Config solo usuario (`~/.config/opencode/opencode.jsonc`,
   `graphify-local`, aditiva); nada versionado que obligue a otros devs.
 
+## Validación T3 (2026-11-03)
+
+Evidencia verificada, no simulada (oportunidades en
+`docs/improvements/opportunities.md`):
+
+- A (deuda real): OPP-001, frontmatter sin CI en 2 docs canónicos.
+- B (arch): OPP-002, Flow D 7→10 etapas con diseño en el propio flujo.
+- C (priorización): OPP-003, impacto/esfuerzo/riesgo por candidato.
+- D (implementación): diff de este ciclo; `validate-meta.js` 54 checks
+  exit 0, `render --check` 61 OK, triple 0.3.2.
+- E (revisión independiente): `reviewer` (subagente distinto) sobre el diff.
+- F (preservación): log + registro + backlog + mapa + overview + strategy.
+- G (duplicados): re-registro de OPP-001 → `REJECTED (duplicada de OPP-001)`.
+- H (SAP BTP): OPP-006 `xsuaa-ias` en `INVESTIGATING`; nada incorporado
+  sin fuentes oficiales (separación meta/producto/consumidor intacta).
+- Métricas: 6 oportunidades (4 completadas, 1 validando, 1 investigando),
+  0 regresiones, 1 delegación (reviewer), `AI/` intacto.
+  Codebase Memory / Graphify: verificación en vivo n/d en este turno
+  (sin MCP en sesión); último estado documentado 2026-11-03
+  (726/790 ready; grafo 517/381). Sync omitida: solo `.md` meta + 1 `.js`
+  de validación, sin cambios estructurales que la exijan.
+
+## Validación T3.1 (2026-11-03, operativa en vivo)
+
+Herramientas verificadas en vivo: `graphify` CLI 0.9.97 + MCP
+`graphify-local` (10 herramientas) + MCP `codebase-memory`
+(`index_status`/`detect_changes`/`search_graph`/`search_code`/
+`index_repository` full). `query_graph` exige `question` (no `query`);
+`search_code` exige `pattern` (no `query`) — ambos fallos de argumento
+limpios y recuperables (D5).
+
+- B1 PASS: `graph_stats` 544/405/162 (build 024a316, stale) →
+  `get_node`/`get_neighbors` `render-clients.js` con funciones y líneas
+  reales (`collectActual`, `diffMaps`).
+- B2 PASS: probe `scripts/__t31-probe.js` (`t31ProbeMarkerAlpha`) →
+  `graphify update .` (92% caché AST, rebuild 559/418) → `get_node` lo
+  localiza (`L3`); `render-clients.js` intacto (sin sustitución
+  incompleta); probe eliminado. Incremental soportado (caché AST).
+- B3 PASS: `get_neighbors validate-meta.js` (`fs`/`path`/`cp` L4–6,
+  `need()` L10, `fm()` L14) contrastado con fuente — coincide.
+  `query_graph` por keywords es ruidoso (arranca por tokens, trunca por
+  budget); para impacto de archivo usar `get_node`/`get_neighbors`.
+- C1 PASS: `index_status` ready 726/790; `search_graph` halla código real
+  (`need`/`fm`); 0 resultados para contenido T3 nuevo → índice
+  desactualizado (honesto, no fresco).
+- C2 PASS: marcador `t31CbmProbeZeta` en `findings.md` → `index_repository`
+  full (774/816) → `search_code` lo recupera (`findings.md:7`, 285 ms) →
+  restaurado → reindex (770/813) → 0 resultados. Límite: `search_graph`
+  BM25 no recupera `.md` documental (usar `search_code`).
+- D1 PASS (B2+C2 combinados, 1 sync por índice). D2 PASS (edición `.md`
+  no exigió rebuild del grafo). D3 PASS (probe de código no exigió
+  reindex documental — se hizo después, por C2). D4 PASS (`check-update`
+  silencio, exit 0, cero syncs). D5 PASS (fallos de argumento limpios,
+  tarea no bloqueada, reintento OK). D6 PASS (ciclo 2 refleja lo último:
+  probes 0, 770/813; sin duplicados).
+- E: `detect_changes` es git-backed (árbol vs `HEAD`): con cambios T3 sin
+  commitear queda en 8 tras reindexar → corrección mínima OPP-007 (1
+  párrafo §4 lifecycle). `built_at_commit` no cubre contenido sin
+  commitear. Sin falsos positivos adicionales.
+- F: reviewer APTO (probes 0, §4 fiel, `AI/` intacto aparente;
+  runtime como supuesto ajeno — confirmado abajo).
+- Coste: 2×`graphify update` (caché 92%) + 2×`index_repository` full en
+  repo pequeño; sin telemetría no hay tokens/tiempos.
+
 ## Freshness Knowledge Lifecycle (2026-11-03, ver `knowledge-lifecycle.md` §4–§6)
 
 - `detect_changes` proyecto `C-Users-Horan-Desktop-harness-btp`:

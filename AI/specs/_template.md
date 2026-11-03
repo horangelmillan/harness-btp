@@ -18,6 +18,9 @@ lo resolverá o lo pedirá en la etapa 0.
 - **Organización:**
 - **Espacio:**
 - **Servicios necesarios (plan si se conoce):** p. ej. XSUAA, HANA Cloud, HTML5 Repo, Destination
+- **Destino/consumo (si aplica, ver `AI/docs/destination-approuter-checklist.md`):** [nombre destino / `TODO(<paisaje>)` si URL desconocida]
+- **Seguridad (si aplica, ver `AI/docs/xs-security-checklist.md`):** [roles/scopes o TBD]
+- **MTA (si aplica):** [`managed-service` vs `existing-service`, `.mtaext` por paisaje]
 
 ## 3. Alcance funcional (*)
 
