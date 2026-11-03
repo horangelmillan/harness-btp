@@ -1,0 +1,11 @@
+{
+  "authenticationMethod": "route",
+  "routes": [
+    {
+      "source": "^/catalog/(.*)$",
+      "target": "/odata/v4/catalog/$1",
+      "destination": "srv",
+      "scope": "$XSAPPNAME.Viewer"
+    }
+  ]
+}

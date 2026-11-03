@@ -1,0 +1,14 @@
+{
+  "sap.app": {
+    "id": "app-local-demo",
+    "type": "application",
+    "title": "App local demo",
+    "dataSources": {
+      "catalog": {
+        "uri": "/odata/v4/catalog/",
+        "type": "OData",
+        "settings": { "odataVersion": "4.0" }
+      }
+    }
+  }
+}

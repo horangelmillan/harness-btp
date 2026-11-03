@@ -1,0 +1,29 @@
+{
+  "name": "app-local-demo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Demo local CAP + SQLite (sin BTP)",
+  "dependencies": {
+    "@sap/cds": "^10.2.2",
+    "@cap-js/sqlite": "^3.1.2"
+  },
+  "scripts": {
+    "test": "node --test test/books.test.js",
+    "build": "cds build"
+  },
+  "cds": {
+    "requires": {
+      "db": "sqlite"
+    },
+    "[development]": {
+      "requires": {
+        "auth": {
+          "users": {
+            "reader": { "password": "reader", "roles": ["Viewer"] },
+            "writer": { "password": "writer", "roles": ["Viewer", "Editor"] }
+          }
+        }
+      }
+    }
+  }
+}

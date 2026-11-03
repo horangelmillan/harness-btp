@@ -1,0 +1,19 @@
+_schema-version: "3.1"
+ID: app-local-demo
+version: 0.1.0
+modules:
+  - name: srv
+    type: nodejs
+    path: .
+    requires:
+      - name: uaa
+resources:
+  # NOTA: SQLite (@cap-js/sqlite) es solo dev local (cds.requires.db) y NO
+  # es un servicio CF: no va en resources. En BTP real se sustituye por HANA
+  # (hdi-container) via perfil hibrido, sin cambiar el modelo CDS.
+  - name: uaa
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: xsuaa
+      service-plan: application
+      path: ./xs-security.json

@@ -1,0 +1,11 @@
+{
+  "xsappname": "app-local-demo",
+  "scopes": [
+    { "name": "$XSAPPNAME.Viewer", "description": "Lectura" },
+    { "name": "$XSAPPNAME.Editor", "description": "Lectura y escritura" }
+  ],
+  "role-templates": [
+    { "name": "Viewer", "scope-references": ["$XSAPPNAME.Viewer"] },
+    { "name": "Editor", "scope-references": ["$XSAPPNAME.Viewer", "$XSAPPNAME.Editor"] }
+  ]
+}
