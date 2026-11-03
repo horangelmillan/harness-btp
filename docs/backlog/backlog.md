@@ -2,10 +2,6 @@
 
 ## Ahora (P-siguiente)
 
-- [ ] P1/T5.6: E2E honesto con ensure/cleanup (`temp/` + `cds` vía `npx`,
-  sin afirmar E2E/BTP no ejecutados).
-- [ ] P1/T5.6: paridad approuter ps1/sh (conteo vs objeto — WARNING conocido
-  no bloqueante de T5.5, ver OPP-018).
 - [ ] Branch protection: marcar job `validate` como required en `main`.
 - [ ] Pin SHA acciones (recomendación security, hoy `@v6` por convención).
 - [x] Indexar `harness-btp` en `codebase-memory` → proyecto
@@ -29,6 +25,18 @@
 - [ ] Métricas reales de eficiencia cuando el cliente exponga telemetría.
 
 ## Hecho
+
+- [x] T5.5-CLOSE E2E + paridad + OPP-014 (2026-11-03): E2E navegador real
+  18/18 vía CDP (`ensure` operativo, pestaña propia, `cleanup` pendiente al
+  cierre) — lista, crear→detalle, PATCH 7→12, DELETE→404, 404 directo con
+  texto, filtro contains + 4 PNG en `temp/`; fixes solo-temp (CDN 1.120,
+  contenedor ComponentSupport, App raíz mínima, 404 vía requestObject);
+  paridad approuter exacta (ps1 fallback conteo→WARNING, caso normal
+  PASS/PASS ambos, exit 0); OPP-014 COMPLETED (`node_modules/` en fragment,
+  `install.ps1 -Dest temp/` lo fusiona); QUnit/OPA5 NO ejecutado (solo stub);
+  BTP N-A (sin entorno real); `validate-meta` 54 OK, `render --check` 61 OK,
+  triple 0.3.2, `npm test` 8/8, originales intactos, `temp/` ignorado;
+  sin commit/push/release.
 
 - [x] T5.5 Demo full-stack Books+UI5 + fix `Test-JsonValid`: auditoría
   T5.5-A + diseño T5.5-B (3 mejoras trazables) + demo `temp/t55-demo`

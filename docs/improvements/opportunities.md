@@ -216,9 +216,11 @@ Un duplicado detectado se cierra como `REJECTED (duplicada de OPP-xxx)`.
   debe versionarse para reproducibilidad) y caso de prueba en instalador.
   Esfuerzo: T0 (1 línea + verificación `bin/harness-btp.js --help`/
   install en `temp/`). Riesgo regresión: bajo (solo ignora más).
-  Prioridad: Medium. Estado: PROPOSED (2026-11-03: deduplicado — sin
-  coincidencia en backlog/log/findings/este registro; temáticamente
-  cercano al item P2 multi-cliente del backlog, pero distinto alcance).
+  Prioridad: Medium. Estado: COMPLETED (2026-11-03 T5.5-CLOSE: línea
+  `node_modules/` añadida a `AI/.gitignore.fragment` + verificación
+  `install.ps1 -Dest temp/t55close-install` fusiona `node_modules/` en el
+  `.gitignore` destino; `validate-meta` 54 OK, `render --check` 61 OK,
+  triple 0.3.2; sin commit).
 
 ### OPP-015 · Nota SQLite enum/unique en skill `cap-cli` (T5.2)
 - Problema: MVPs CAP+SQLite asumen que `String enum` y `@assert.unique`
@@ -326,3 +328,15 @@ Un duplicado detectado se cierra como `REJECTED (duplicada de OPP-xxx)`.
   Deduplicación §2: sin coincidencia en backlog/log/findings/este registro
   (OPP-012 demo solo-backend; OPP-011/017 validador sin fix JSON;
   OPP-014/006/008 alcance distinto).
+  Cierre T5.5-CLOSE (2026-11-03): E2E navegador real VERIFIED 18/18 vía CDP
+  (`temp/t55close-cdp.js`: carga lista, crear→detalle, PATCH 7→12, DELETE→404,
+  404 directo "Libro no existe (404)", filtro contains + 4 capturas PNG;
+  `ensure`/`cleanup` higiene CDP). Fixes solo-temp (original intacto):
+  CDN `1.120.0`→`1.120` (el exacto devuelve 404), contenedor ComponentSupport
+  en `index.html`, `App.view.xml` raíz mínima, 404 vía
+  `getBoundContext().requestObject()` (bindElement a inexistente no emite
+  eventos en UI5 1.120). Paridad approuter RESUELTA: caso degradado
+  (JSON con clave `""` / sin parsers) era ps1 PASS vs sh WARNING —
+  `AI/scripts/validate-app.ps1` fallback ahora WARNING (paridad exacta;
+  caso normal PASS/PASS en ambos). QUnit/OPA5: solo stub, NO ejecutado
+  (sin runner; no se afirma).

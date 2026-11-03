@@ -9,6 +9,7 @@ mta_archives/
 .env*
 default-env.json
 default-services.json
+node_modules/
 
 # Harness: generados/locales del cliente — nunca se versionan en el MVP.
 # (El instalador agrega las que falten; no borra nada existente.)

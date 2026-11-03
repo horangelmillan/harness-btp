@@ -142,7 +142,7 @@ if (-not (Test-Path $xaPath)) {
     $nDst = ([regex]::Matches($t, '"(destination|localDir)"\s*:')).Count
     if (($t -match '"routes"\s*:') -and ($nSrc -gt 0) -and ($nDst -ge $nSrc)) {
       Emit "PASS" "approuter" "xs-app.json" "routes[] presente" "ninguno" "ninguno" "NO" "LOCAL"
-      Emit "PASS" "approuter" "xs-app.json" "rutas con source y destination|localDir" "ninguno" "ninguno" "NO" "LOCAL"
+      Emit "WARNING" "approuter" "xs-app.json" "rutas con source y destination|localDir (conteo sin bindeo PS5.1)" "chequeo por objeto no verificable" "valida cada ruta o renombra claves '' para bindeo" "NO" "LOCAL"
     } else {
       Emit "FAIL" "approuter" "xs-app.json" "routes[] vacio o ausente" "sin rutas" "declara al menos una ruta" "NO" "LOCAL"
     }
