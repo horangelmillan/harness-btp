@@ -2,6 +2,10 @@
 
 ## Ahora (P-siguiente)
 
+- [ ] P1/T5.6: E2E honesto con ensure/cleanup (`temp/` + `cds` vía `npx`,
+  sin afirmar E2E/BTP no ejecutados).
+- [ ] P1/T5.6: paridad approuter ps1/sh (conteo vs objeto — WARNING conocido
+  no bloqueante de T5.5, ver OPP-018).
 - [ ] Branch protection: marcar job `validate` como required en `main`.
 - [ ] Pin SHA acciones (recomendación security, hoy `@v6` por convención).
 - [x] Indexar `harness-btp` en `codebase-memory` → proyecto
@@ -26,6 +30,20 @@
 
 ## Hecho
 
+- [x] T5.5 Demo full-stack Books+UI5 + fix `Test-JsonValid`: auditoría
+  T5.5-A + diseño T5.5-B (3 mejoras trazables) + demo `temp/t55-demo`
+  T5.5-C (backend 8/8, EDMX `Books`, CRUD manual, UI freestyle) + QA
+  T5.5-D (integración HTTP verde; E2E/BTP no ejecutados, no afirmados) +
+  fix T5.5-E (`AI/scripts/validate-app.ps1` `Test-JsonValid`, 1 archivo,
+  `validate-app` ps1 exit 0 en `app-local-demo` y `temp/t55-demo`) +
+  reviewer APTO-CON-PENDIENTES (P1 approuter conteo, P2 `node_modules`→OPP-014,
+  P3 trazabilidad 3 mejoras, P4 evidencia aportada, P5 duplicado opp:296+299
+  colapsado); `validate-meta` 54 OK, `render --check` 61 OK, triple 0.3.2;
+  `git status` solo `M AI/scripts/validate-app.ps1`, originales intactos,
+  `temp/` ignorado, secret scan 0; OPP-018 COMPLETED; OPP-014 PROPOSED y
+  OPP-006/008 VALIDATING intactos. Sync no requerida: solo `.md`
+  backlog/improvements + 1 archivo producto ya validado (clase B/C);
+  sin PEND-KNOWLEDGE (sin stale verificado); sin commits (2026-11-03).
 - [x] T5 Application Engineering & Verification: auditoría A/B real
   (research T5-C + diseño T5-D reutilizando `/flow`+`/verify`+`qa-review`,
   sin agentes/comandos/skills nuevos) + `AI/scripts/validate-app.ps1/.sh`

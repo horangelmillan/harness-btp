@@ -296,4 +296,33 @@ Un duplicado detectado se cierra como `REJECTED (duplicada de OPP-xxx)`.
   Deduplicación §2: sin coincidencia en backlog/log/findings/este registro
   (OPP-016 cubre fixtures+matriz base; OPP-017 añade orden-independencia,
   matriz condicional y WARNINGs multi-app).
-  Deduplicación §2: sin coincidencia en backlog/log/findings/este registro.
+
+### OPP-018 · Demo full-stack Books+UI5 freestyle + fix `Test-JsonValid` ps1 (T5.5)
+- Problema: sin demo full-stack CAP+UI5 freestyle verificable por HTTP y
+  `validate-app.ps1` fallaba ante JSON con BOM/comentarios (`Test-JsonValid`
+  con `Get-Content -Raw` + `ConvertFrom-Json` estricto).
+  Evidencia: auditoría T5.5-A + diseño T5.5-B (3 mejoras trazables) +
+  demo `temp/t55-demo` T5.5-C (backend 8/8, EDMX `Books`, CRUD manual,
+  UI freestyle) + QA T5.5-D (integración HTTP verde; E2E/BTP no ejecutados,
+  no afirmados) + fix T5.5-E (`AI/scripts/validate-app.ps1` `Test-JsonValid`,
+  1 archivo) + reviewer APTO-CON-PENDIENTES + validaciones orquestador
+  (`git status` solo `M AI/scripts/validate-app.ps1`, originales intactos,
+  `temp/` ignorado, secret scan 0).
+  Componente: `temp/t55-demo` (evidencia no versionada) +
+  `AI/scripts/validate-app.ps1` (producto, 1 archivo).
+  Impacto: medio-alto (primera demo full-stack + validador JSON robusto).
+  Frecuencia: cada MVP full-stack + cada `verify` con JSON no canónico.
+  Causa: demos previas solo-backend (OPP-012 `app-local-demo`) + parseo JSON
+  estricto sin tolerancia BOM.
+  Solución: demo full-stack + `Test-JsonValid` tolerante (aplicado).
+  Esfuerzo: T2 demo + T1 fix. Riesgo regresión: bajo (solo-lectura;
+  `validate-meta` 54 OK, `render --check` 61 OK, triple 0.3.2;
+  `validate-app` ps1 exit 0 en `app-local-demo` y `temp/t55-demo`).
+  Prioridad: Medium. Estado: COMPLETED (2026-11-03: fix COMPLETED +
+  demo COMPLETED en integración HTTP; E2E pendiente no hecho, no afirmado).
+  P1 (paridad approuter ps1 PASS vs sh WARNING): WARNING conocido no
+  bloqueante, va a backlog P1/T5.6. P2 (`node_modules/` bajo demo): cubierto
+  por OPP-014 PROPOSED existente, no se duplica (§2).
+  Deduplicación §2: sin coincidencia en backlog/log/findings/este registro
+  (OPP-012 demo solo-backend; OPP-011/017 validador sin fix JSON;
+  OPP-014/006/008 alcance distinto).

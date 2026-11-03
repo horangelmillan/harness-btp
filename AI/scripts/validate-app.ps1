@@ -24,6 +24,22 @@ function Emit($r, $ambito, $archivo, $problema, $impacto, $fix, $auto, $ev) {
 function Read-Text($p) {
   try { return [System.IO.File]::ReadAllText($p) } catch { return "" }
 }
+function Test-JsonValid($text) {
+  # Valida sintaxis JSON sin depender solo de ConvertFrom-Json (PS 5.1 no
+  # puede bindear nombres de propiedad vacios, p.ej. "models":{"":...} en
+  # manifest.json UI5 -> falso "JSON invalido"). BOM U+FEFF se ignora.
+  if ([string]::IsNullOrEmpty($text)) { return $false }
+  $s = $text
+  if ($s[0] -eq [char]0xFEFF) { $s = $s.Substring(1) }
+  try { $null = $s | ConvertFrom-Json -ErrorAction Stop; return $true } catch { }
+  try {
+    Add-Type -AssemblyName System.Web.Extensions -ErrorAction Stop
+    $ser = New-Object System.Web.Script.Serialization.JavaScriptSerializer -ErrorAction Stop
+    $ser.MaxJsonLength = 10485760
+    $null = $ser.DeserializeObject($s)
+    return $true
+  } catch { return $false }
+}
 function Find-Files($rel, $pattern) {
   try { return @(Get-ChildItem -Path (Join-Path $Target $rel) -Filter $pattern -File -Recurse -ErrorAction SilentlyContinue) } catch { return @() }
 }
@@ -91,8 +107,7 @@ if (-not (Test-Path $xsPath)) {
   Emit "N-A" "xsuaa" "xs-security.json" "sin xs-security.json" "auth XSUAA no aplica" "crealo si el MVP exige xsuaa" "NO" "LOCAL"
 } else {
   $t = Read-Text $xsPath
-  $okJson = $true
-  try { $null = $t | ConvertFrom-Json -ErrorAction Stop } catch { $okJson = $false }
+  $okJson = Test-JsonValid $t
   if (-not $okJson) { Emit "FAIL" "xsuaa" "xs-security.json" "JSON invalido" "deploy xsuaa falla" "valida el JSON" "NO" "LOCAL" }
   else { Emit "PASS" "xsuaa" "xs-security.json" "JSON valido" "ninguno" "ninguno" "NO" "LOCAL" }
   if ($t -match '"xsappname"\s*:') { Emit "PASS" "xsuaa" "xs-security.json" "xsappname presente" "ninguno" "ninguno" "NO" "LOCAL" }
@@ -117,10 +132,21 @@ if (-not (Test-Path $xaPath)) {
   Emit "N-A" "approuter" "xs-app.json" "sin xs-app.json" "approuter no aplica" "crealo si el MVP exige approuter" "NO" "LOCAL"
 } else {
   $t = Read-Text $xaPath
-  $okJson = $true; $routes = $null
-  try { $routes = ($t | ConvertFrom-Json -ErrorAction Stop).routes } catch { $okJson = $false }
+  $okJson = Test-JsonValid $t; $routes = $null
+  if ($okJson) { try { $routes = ($t | ConvertFrom-Json -ErrorAction Stop).routes } catch { $routes = $null } }
   if (-not $okJson) { Emit "FAIL" "approuter" "xs-app.json" "JSON invalido" "approuter no arranca" "valida el JSON" "NO" "LOCAL" }
-  elseif (-not $routes -or $routes.Count -eq 0) { Emit "FAIL" "approuter" "xs-app.json" "routes[] vacio o ausente" "sin rutas" "declara al menos una ruta" "NO" "LOCAL" }
+  elseif (-not $routes -or $routes.Count -eq 0) {
+    # ConvertFrom-Json PS5.1 puede fallar al bindear (p.ej. claves "") aunque
+    # el JSON sea valido (ya verificado arriba): fallback por conteo como .sh.
+    $nSrc = ([regex]::Matches($t, '"source"\s*:')).Count
+    $nDst = ([regex]::Matches($t, '"(destination|localDir)"\s*:')).Count
+    if (($t -match '"routes"\s*:') -and ($nSrc -gt 0) -and ($nDst -ge $nSrc)) {
+      Emit "PASS" "approuter" "xs-app.json" "routes[] presente" "ninguno" "ninguno" "NO" "LOCAL"
+      Emit "PASS" "approuter" "xs-app.json" "rutas con source y destination|localDir" "ninguno" "ninguno" "NO" "LOCAL"
+    } else {
+      Emit "FAIL" "approuter" "xs-app.json" "routes[] vacio o ausente" "sin rutas" "declara al menos una ruta" "NO" "LOCAL"
+    }
+  }
   else {
     Emit "PASS" "approuter" "xs-app.json" "routes[] presente" "ninguno" "ninguno" "NO" "LOCAL"
     $bad = 0
@@ -141,8 +167,7 @@ if (-not (Test-Path $pkgPath)) {
   Emit "N-A" "cap" "package.json" "sin package.json" "CAP no aplica" "crealo si el MVP exige CAP" "NO" "LOCAL"
 } else {
   $t = Read-Text $pkgPath
-  $okJson = $true; $j = $null
-  try { $j = $t | ConvertFrom-Json -ErrorAction Stop } catch { $okJson = $false }
+  $okJson = Test-JsonValid $t
   if (-not $okJson) { Emit "FAIL" "cap" "package.json" "JSON invalido" "npm install falla" "valida el JSON" "NO" "LOCAL" }
   else { Emit "PASS" "cap" "package.json" "JSON valido" "ninguno" "ninguno" "NO" "LOCAL" }
   if ($isCap) {
@@ -165,8 +190,7 @@ if ($manifestHits.Count -eq 0) {
   foreach ($m in $manifestHits) {
     $rel = $m.FullName.Substring($Target.Length).TrimStart("\","/")
     $t = Read-Text $m.FullName
-    $okJson = $true; $j = $null
-    try { $j = $t | ConvertFrom-Json -ErrorAction Stop } catch { $okJson = $false }
+    $okJson = Test-JsonValid $t
     if (-not $okJson) { Emit "FAIL" "ui5" $rel "JSON invalido" "app UI5 no carga" "valida el JSON" "NO" "LOCAL"; continue }
     if ($t -match '"sap\.app"') { Emit "PASS" "ui5" $rel "sap.app presente" "ninguno" "ninguno" "NO" "LOCAL" }
     else { Emit "FAIL" "ui5" $rel "falta sap.app" "descriptor UI5 invalido" "anade sap.app" "NO" "LOCAL" }
