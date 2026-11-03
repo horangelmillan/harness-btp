@@ -4,5 +4,6 @@ AI.bak/
 AI-tmp/
 temp/
 *.log
+graphify-out/
 .DS_Store
 Thumbs.db
