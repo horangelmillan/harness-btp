@@ -8,12 +8,15 @@
 - Cliente agéntico del proyecto: detecta huellas en la raíz (`CLAUDE.md`/`.claude`→claude, `.cursor`→cursor, `.github`→copilot, `opencode.json*`/`.opencode`→opencode). Si hay huellas de varios o ninguna pista, PREGUNTA al usuario qué cliente usa antes de suponer; el instalador acepta `--client auto|all|opencode,claude,cursor,copilot,aider` (`auto` es el defecto y elige solo con huellas claras, sin huellas usa opencode).
 
 ## 1. Clonar (solo si aplica)
-- Carpeta vacía + URL dada: `git clone --depth 1 [URL] .` dentro de la carpeta. No clones en subcarpeta.
+- Carpeta totalmente vacía (incluidos ocultos) + URL dada: `git clone --depth 1 [URL] .` dentro de la carpeta. No clones en subcarpeta.
+- Si el clone falla porque la carpeta no está totalmente vacía: no fuerces; pide `git init` + remoto o clonar en temporal y mover.
 - Carpeta con proyecto existente: no borres ni muevas nada.
 
 ## 2. Instalar (versión exacta del README, nunca otra)
-- Lee https://github.com/horangelmillan/harness-btp (README, opción pnpm) y ejecuta el comando `pnpm dlx` EXACTO con la versión que ahí se indique, sin cambiarle la versión.
-- Con `--force`: verifica primero que imprima la línea `BACKUP` (respaldo real antes de reemplazar).
+- Prioriza la Opción 1 degit del README, anclada al tag (`#vX.Y.Z` de los bloques degit/clone); esa es la versión canónica y debe coincidir con `AI/VERSION`.
+- `pnpm dlx` solo si el tag existe publicado en el registry; si no existe, usa degit o clone.
+- Con `--force`: si `AI/` ya existía verifica primero que imprima la línea `BACKUP` (respaldo real antes de reemplazar); si `AI/` era nuevo exige `CREATE`.
+- Si reinstalas por cliente faltante, hazlo sin fuerza con el `--client` que corresponda (p. ej. `sh install.sh --dest . --client claude` / `install.ps1 -Dest . -Client claude`).
 
 ## 3. Verificación de adopción (obligatorio)
 - Confirma que `orchestrator` aparece entre tus agentes disponibles y que el comando `/flow` existe.
@@ -39,7 +42,7 @@ Pisar o borrar: `AGENTS.md` raíz existente, `package.json`, `mta.yaml`, lockfil
 ## 6. Verificar lo INSTALADO (obligatorio, no vale `pnpm view` ni `npm view`)
 - El archivo `AI/VERSION` debe decir exactamente la versión del comando ejecutado. Si no coincide: dilo y DETENTE, no sigas.
 - La raíz debe contener el árbol fusionado del cliente detectado/elegido (ver tabla del paso 3; `.opencode/` para opencode, `.claude/` para claude, etc.).
-- `git status` solo debe mostrar `AI/`, los dirs del cliente (`.opencode/`, `.claude/`, …), `.gitignore` (y `pnpm-lock.yaml` si migraste).
+- `git status` solo debe mostrar `AI/`, `AGENTS.md` (puntero), los dirs del cliente (`.opencode/`, `.claude/`, …), `.gitignore` (y `pnpm-lock.yaml` si migraste).
 
 ## 7. Migración npm→pnpm (solo si aplica)
 Solo con `import + install + test` en verde: borra `package-lock.json`.
@@ -51,7 +54,7 @@ Solo con `import + install + test` en verde: borra `package-lock.json`.
 
 ## 9. Cierre limpio (obligatorio)
 No dejes servidores ni observadores corriendo: detén lo que hayas iniciado y verifica que no queden procesos parados en la carpeta. Nunca intentes borrar una carpeta con procesos dentro: repórtalos.
-Si el usuario va a borrar la carpeta del proyecto: adviértele que PRIMERO debe cerrar esta sesión (quitarla de la lista no apaga sus procesos: siguen vivos, parados en la carpeta, y Windows bloqueará el borrado). Solo cuando resmon no muestre candados puede borrar.
+Si el usuario va a borrar la carpeta del proyecto: adviértele que PRIMERO debe cerrar esta sesión (quitarla de la lista no apaga sus procesos: siguen vivos, parados en la carpeta, y Windows bloqueará el borrado). Solo cuando resmon no muestre candados puede borrar (en Linux/macOS: `lsof +D .` o `fuser -v .`).
 
 ## 10. Reporte
 Comando ejecutado, salida del instalador, contenido de `AI/VERSION`, `git status` y qué quedó pendiente.

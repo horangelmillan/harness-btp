@@ -125,7 +125,7 @@ pnpm dlx create-harness-btp@0.3.2 --dest .
 ### Qué hace el instalador
 
 - `CREATE: AI/` o `SKIP: AI/ ya existe` (solo lo reemplaza con `-Force` / `--force`, con backup a `AI.bak`).
-- `CREATE: AGENTS.md` o `SKIP: AGENTS.md ya existe` (tu `AGENTS.md` propio se conserva; con `-Force` / `--force` se respalda a `AGENTS.md.bak`).
+- `CREATE: AGENTS.md` o `SKIP: AGENTS.md ya existe` (tu `AGENTS.md` propio se conserva; con fuerza también hace SKIP, sin `.bak`).
 - Fusiona el árbol del cliente agéntico (`--client`, por defecto `auto`) desde `AI/clients/<cliente>/` en la raíz (ver [Multi-cliente](#multi-cliente)): sin fuerza solo copia los archivos que falten (`SKIP: <dir>/<ruta> ya existe` por cada uno conservado); con `-Force` / `--force` respalda cada dir a `<dir>.bak` (`BACKUP: <dir>/ -> <dir>.bak`) y copia todo.
 - Fusiona `.gitignore`: añade las líneas que falten, sin duplicar ni borrar las tuyas.
 - **No toca** `package.json` ni `mta.yaml` de tu proyecto, nunca.
@@ -238,7 +238,7 @@ Nada del núcleo exige OpenCode, Windows ni ningún modelo concreto.
 
 El harness se configura para el cliente agéntico de turno desde UNA sola definición canónica:
 
-- **Canónico (`AI/`):** `AI/agents/*.md` (11 agentes), `AI/commands/*.md` (`flow`, `verify`), `AI/skills/*/SKILL.md` (4 skills). Es la única fuente que se edita a mano.
+- **Canónico (`AI/`):** `AI/agents/*.md` (11 agentes), `AI/commands/*.md` (`flow`, `verify`, `prepare`), `AI/skills/*/SKILL.md` (4 skills). Es la única fuente que se edita a mano.
 - **Render (`AI/clients/`):** generado con `node scripts/render-clients.js` (sin dependencias); `node scripts/render-clients.js --check` solo verifica. El CI lo exige en verde antes de publicar (ver `.github/workflows/publish.yml`). No edites `AI/clients/` a mano: tus cambios se pierden en el próximo render.
 
 | Cliente | `--client` | Rutas generadas en la raíz | Adaptación |
@@ -264,17 +264,19 @@ harness-btp/
 │   ├── AGENTS.md              # reglas del harness (parametrizado, sin rutas absolutas)
 │   ├── INICIO.md              # punto de entrada para el agente
 │   ├── agents/                # CANÓNICO: 11 agentes (única fuente, se edita a mano)
-│   ├── commands/              # CANÓNICO: flow + verify (única fuente)
+│   ├── commands/              # CANÓNICO: flow + verify + prepare (única fuente)
 │   ├── skills/                # CANÓNICO: 4 skills (única fuente)
 │   ├── clients/               # RENDERIZADO por scripts/render-clients.js (no editar a mano)
 │   ├── opencode.fragment.jsonc# ADAPTER opcional: ejemplo para opencode.jsonc
 │   ├── .opencode/             # ADAPTER opcional: se conserva intacto (compatibilidad)
-│   ├── scripts/               # pares .ps1 / .sh + provision-espacio.template.ps1
+│   ├── scripts/               # pares .ps1/.sh (check-prereqs, check-docs, validate-app) + cf-safe, cdp-chrome, pre-commit-check y provision-espacio.template.ps1
 │   ├── docs/                  # flujo-etapas, cf-safe, habilitacion-trial
 │   ├── specs/                 # plantilla _template.md
 │   └── .gitignore.fragment    # líneas a fusionar en tu .gitignore
 ├── scripts/
-│   └── render-clients.js      # genera AI/clients/ desde el canónico (--check en CI)
+│   ├── render-clients.js      # genera AI/clients/ desde el canónico (--check en CI)
+│   ├── validate-meta.js       # puerta local: frontmatter meta + docs + render --check + triple versión
+│   └── tests/                 # pruebas del meta-harness
 ├── templates/
 │   └── AGENTS.pointer.md      # plantilla del puntero AGENTS.md raíz
 ├── install.ps1 / install.sh   # instaladores idempotentes (SKIP / CREATE / BACKUP / OK)
@@ -298,10 +300,10 @@ Tú no configuras nada: el agente se adapta solo.
 |---|---|---|
 | `SKIP: AI/ ya existe` y quería actualizar | reinstalación sin fuerza conserva lo existente | repite con `-Force` (`.ps1`) o `--force` (`.sh`); guarda `AI.bak` |
 | No aparece `orchestrator` / no existe `/flow` | fusión a `.opencode/` raíz ausente (OpenCode solo descubre `.opencode/` en la raíz del proyecto, no `AI/.opencode/`) | reinstala sin fuerza (copia solo faltantes) o copia `AI/.opencode/` a `.opencode/` en la raíz sin pisar archivos propios |
-| Mi `AGENTS.md` propio desapareció | se instaló con fuerza | recupera `AGENTS.md.bak` |
+| Mi `AGENTS.md` propio desapareció | borrado manual (el instalador nunca lo pisa, ni con fuerza: siempre hace `SKIP`) | reinstala sin fuerza para recrear el puntero; si tenías contenido propio no hay `.bak` que recuperar |
 | Líneas duplicadas en `.gitignore` | edición manual tras la fusión | el instalador fusiona sin duplicar; borra el duplicado a mano |
 | `ExecutionPolicy` bloquea `install.ps1` | política de PowerShell | `powershell -ExecutionPolicy Bypass -File AI-tmp/install.ps1 -Dest .` (o usa `install.sh` en Git Bash) |
-| `ABORT: opción desconocida` en `install.sh` | flag inexistente | `sh install.sh --help` lista `--dest`, `--force` |
+| `ABORT: opción desconocida` en `install.sh` | flag inexistente | `sh install.sh --help` lista `--dest`, `--force`, `--client`, `--help` |
 | `degit` falla sin Node | `degit` corre sobre Node 18+ | instala Node o usa `git clone --branch v0.3.2` |
 | Tu cliente no lee los agentes de `.opencode/` | layout específico de OpenCode | son un adapter opcional; el flujo está en `AI/AGENTS.md` + `AI/INICIO.md` |
 | Mi cliente no ve los agentes (claude/cursor/copilot) | instalaste sin el `--client` que usa tu proyecto (`auto` no encontró sus huellas) | reinstala sin fuerza con `--client <tu-cliente>` (p. ej. `--client claude`) y verifica la tabla de [Multi-cliente](#multi-cliente): `.claude/`, `.cursor/commands/` + `.agents/skills/`, o `.github/agents\|prompts\|skills` según cliente; si sigue sin verlos, revisa la fusión y no dupliques archivos a mano |
