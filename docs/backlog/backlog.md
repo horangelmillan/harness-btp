@@ -38,3 +38,11 @@
   2×T0 + 1×T1 + 2×T2 verificados (2026-11-03).
 - [x] T-P2-06 cierre P2: `testing-strategy.md` § P2 + `improvement-log.md` +
   ADR-002 (inteligencia por referencias) (2026-11-03).
+- [x] Graphify local: `graphifyy[mcp]` 0.9.97 (uv, reutilizado), grafo
+  `graphify-out/graph.json` 517 nodos / 381 aristas (100% EXTRACTED,
+  commit = HEAD), MCP STDIO `graphify-local` (10 herramientas) a nivel
+  usuario, escenarios A–F verificados CLI + MCP, estrategia
+  `extract --code-only` + `update` bajo demanda; docs
+  `docs/mcp/graphify-local.md` + catálogo + knowledge-map +
+  system-overview + impact-guide + ADR-003; `AI/` intacto, npm limpio
+  (2026-11-03).

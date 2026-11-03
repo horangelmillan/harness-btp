@@ -31,6 +31,8 @@ Descubrir antes de instalar. Documentar propósito, consumidores, coste,
 alternativas. Hoy solo `graphify-code` (local, deshabilitado). En este
 entorno además: `context7`, `codebase-memory`, `github`, `playwright`,
 `eslint`, `chrome-devtools`. No inventar servidores/capacidades.
+Opt-in local: `graphify-local` (grafo estructural bajo demanda,
+detalle en `docs/mcp/graphify-local.md`; sin él todo sigue verde).
 
 ## Skills (catálogo en `docs/skills/catalog.md`)
 

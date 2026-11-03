@@ -37,6 +37,11 @@ lo medio con un especialista, lo grande con diseño previo.
 
 Regla: todo "sí" en 2–5 sube a T2. "Sí" en 6 con resto "no" = T0.
 
+> Graphify (`docs/mcp/graphify-local.md`) no cambia el dimensionamiento:
+> es fuente contextual bajo demanda, nunca paso obligatorio. T2 que toque
+> dependencias la consulta el especialista que la ejecuta, con presupuesto
+> acotado; T0/T1 no la necesitan (búsqueda directa basta).
+
 ## 5. Escenarios A–E resueltos
 
 - **A (T0):** actualizar fecha en `AI/docs/fuentes-oficiales.md` → 1 archivo,

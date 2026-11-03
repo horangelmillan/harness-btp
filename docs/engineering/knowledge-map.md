@@ -16,6 +16,7 @@ No duplica contenido: el detalle vive en cada catálogo/fuente.
 | Orquestador + especialistas (11) | `docs/agents/catalog.md` § Meta internos |
 | Agentes producto (11, reutilizar patrones) | `docs/agents/catalog.md` § Producto |
 | MCP (7, descubrir antes de instalar) | `docs/mcp/catalog.md` |
+| Grafo estructural local (Graphify, opt-in) | `docs/mcp/graphify-local.md` |
 | Skills producto (4) + globales + meta | `docs/skills/catalog.md` |
 | Flujos (5: feature/research/refactor/improvement/release) | `docs/engineering/system-overview.md` § Flujos |
 | Contratos delegación/respuesta | `docs/engineering/contracts.md` |

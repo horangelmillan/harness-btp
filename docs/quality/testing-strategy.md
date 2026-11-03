@@ -49,3 +49,30 @@ Evidencia verificada, no simulada (T-P2-04 + T-P2-05):
   (sin telemetría; `harness-btp` no indexado en `codebase-memory`,
   `index_repository` disponible pero no ejecutado).
 - Cierre: T-P2-06 (este registro) + ADR-002.
+
+## Validación Graphify local (2026-11-03)
+
+Evidencia verificada, no simulada (T2 con diseño + implementación + QA
+del orquestador; subagentes sin shell/escritura → ejecución directa):
+
+- Instalación: `graphifyy[mcp]` 0.9.97 vía `uv tool` (reutilizado;
+  `pipx` ausente, `python -m graphify` no aplica — paquete aislado).
+- Grafo: `extract . --code-only` → 152 nodos; `update .` → 517 nodos /
+  381 aristas / 159 comunidades / 161 archivos, 100% EXTRACTED (sin LLM,
+  sin key), `graph_stats` con commit = HEAD.
+- MCP STDIO: handshake `initialize` + `tools/list` (10 herramientas:
+  `query_graph`, `get_node`, `get_neighbors`, `get_community`,
+  `god_nodes`, `graph_stats`, `shortest_path`, `list_prs`,
+  `get_pr_impact`, `triage_prs`) y `tools/call` reales desde OpenCode.
+- Escenarios: A (orchestrator → `engineering-orchestrator.md` +
+  `orchestrator.agent.md` copilot + `engineering-feature.md`, cross-capa
+  meta/producto) OK; B (comandos `.md` → vacío documentado: nodos de
+  archivo sin aristas de llamada) OK-con-limitación; C (instaladores:
+  `merge_tree`/`resolve_clients`, `Merge-Tree`/`Get-ClientList`,
+  `cdp-chrome.ps1` 5 funciones) OK; D (`affected` exige símbolo, no ruta)
+  OK-con-limitación; E (`render-clients.js`, grado 23, 48–63 nodos) OK;
+  F (workflows `validate-meta.yml`/`publish.yml` + scripts) OK.
+- `AI/` intacto (`git status` solo `graphify-out/` + docs + `.gitignore`);
+  triple versión 0.3.2; npm `files` excluye `graphify-out/`.
+- Config solo usuario (`~/.config/opencode/opencode.jsonc`,
+  `graphify-local`, aditiva); nada versionado que obligue a otros devs.

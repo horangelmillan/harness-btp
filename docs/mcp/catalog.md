@@ -6,6 +6,7 @@ coste, alternativas. No inventar servidores.
 | MCP | Propósito | Consumidores | Estado |
 |---|---|---|---|
 | `graphify-code` (local, `AI/opencode.fragment.jsonc`) | índice de código | implementer, qa | `enabled:false`, opcional |
+| `graphify-local` (local, solo usuario, ver `docs/mcp/graphify-local.md`) | grafo estructural harness-btp (517 nodos, STDIO) | orchestrator, architect, implementer, qa | opt-in, esta máquina |
 | `context7` | docs vigentes (CAP/UI5/CF/MTA) | researcher, specialists | entorno, por fase |
 | `codebase-memory` | grafo del repo indexado | orchestrator, implementer | entorno, sin reindex redundante |
 | `github` | repos remotos/PRs | orchestrator (solo si spec lo pide) | entorno |
