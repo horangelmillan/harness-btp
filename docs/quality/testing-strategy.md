@@ -31,3 +31,21 @@ Evidencia verificada, no simulada:
   repo; `harness-btp` NO indexado en `codebase-memory`; `graphify-code`
   deshabilitada; `Neon` / `browser` fuera de catálogo.
 - Prueba negativa por inspección: todas las ramas fail → exit 1.
+
+## Validación P2 (2026-11-03)
+
+Evidencia verificada, no simulada (T-P2-04 + T-P2-05):
+
+- Implementado: 3 creados (`knowledge-map.md`, `impact-guide.md`,
+  `metrics/baseline-P1.md`) + 7 modificados (checks mapa/governance en
+  `validate-meta.js`, intelligence-pack en `engineering-feature`,
+  `engineering-refactor`, `engineering-improvement`).
+- `node scripts/validate-meta.js`: 46 checks exit 0 (38 P1 + 8 P2).
+- `node scripts/render-clients.js --check`: 61 archivos OK.
+- Triple versión OK: 0.3.2 (`package.json` = `VERSION` = `AI/VERSION`).
+- QA (`harness-qa`): APTO, 0 falsos positivos; 2×T0 + 1×T1 + 2×T2
+  verificados contra `impact-guide.md` escenarios A–E.
+- Métricas: tiempos n/d salvo que el repo los documente; tokens n/d
+  (sin telemetría; `harness-btp` no indexado en `codebase-memory`,
+  `index_repository` disponible pero no ejecutado).
+- Cierre: T-P2-06 (este registro) + ADR-002.

@@ -34,6 +34,42 @@ for (const c of ["engineering-feature", "engineering-research", "engineering-ref
   "engineering-improvement", "engineering-release"]) {
   need(".opencode/commands/" + c + ".md", "meta flow " + c);
 }
+for (const d of ["docs/engineering/knowledge-map.md",
+  "docs/engineering/impact-guide.md", "docs/engineering/metrics/baseline-P1.md"]) {
+  need(d, d);
+  if (fs.existsSync(path.join(ROOT, d))) fm(d, ["title", "date", "status"]);
+}
+// Gobernanza: sin dependencias runtime nuevas (meta sin deps).
+try {
+  const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, "package.json"), "utf8"));
+  if (pkg.dependencies && Object.keys(pkg.dependencies).length)
+    fail.push("DEPENDENCIAS-NUEVAS: package.json dependencies debe seguir vacío");
+  else ok.push("OK: sin dependencias runtime");
+} catch (e) { fail.push("PACKAGE-JSON-ILEGIBLE"); }
+// Gobernanza: anti-duplicación MCP (todo MCP citado en .opencode/ listado en catálogo).
+try {
+  const known = ["graphify-code", "context7", "codebase-memory", "github",
+    "playwright", "chrome-devtools", "eslint"];
+  const cat = fs.readFileSync(path.join(ROOT, "docs/mcp/catalog.md"), "utf8");
+  for (const m of known) if (!cat.includes(m)) fail.push("MCP-NO-CATALOGADO: " + m);
+  const metaFiles = [];
+  for (const sub of ["agents", "commands"]) {
+    const dir = path.join(ROOT, ".opencode", sub);
+    if (fs.existsSync(dir)) for (const f of fs.readdirSync(dir))
+      if (f.endsWith(".md")) metaFiles.push(path.join(dir, f));
+  }
+  const seen = new Set();
+  for (const f of metaFiles) {
+    const t = fs.readFileSync(f, "utf8");
+    const toks = t.match(/`[a-z0-9][a-z0-9-]*`/g) || [];
+    for (const tok of toks) {
+      const w = tok.slice(1, -1);
+      if (/mcp/i.test(w) && !/engineer|orchestrator|specialist|reviewer|implementer|architect|researcher/i.test(w) && !known.includes(w)) seen.add(w + " en " + path.basename(f));
+    }
+  }
+  if (seen.size) for (const s of seen) fail.push("MCP-NO-LISTADO: " + s);
+  else ok.push("OK: MCP meta catalogados");
+} catch (e) { fail.push("MCP-CHECK-ERROR: " + e.message); }
 for (const d of ["AGENTS.md", "docs/engineering/initial-assessment.md",
   "docs/engineering/system-overview.md", "docs/engineering/contracts.md",
   "docs/agents/catalog.md", "docs/mcp/catalog.md", "docs/skills/catalog.md",

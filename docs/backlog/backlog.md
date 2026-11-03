@@ -28,3 +28,11 @@
 - [x] P1-P5 meta mínimo: orquestador + 10 especialistas, 5 flujos, contratos,
   catálogos, ADR-001, backlog (2026-11-03).
 - [x] P1 gate CI `validate-meta.yml` + `publish` unificado (2026-11-03).
+- [x] T-P2-04 Project Intelligence: `knowledge-map.md` + `impact-guide.md`
+  (T0/T1/T2, escenarios A–E) + `metrics/baseline-P1.md` + checks
+  mapa/governance en `validate-meta.js` + intelligence-pack en 3 flujos
+  (2026-11-03).
+- [x] T-P2-05 QA Project Intelligence: APTO, 0 falsos positivos,
+  2×T0 + 1×T1 + 2×T2 verificados (2026-11-03).
+- [x] T-P2-06 cierre P2: `testing-strategy.md` § P2 + `improvement-log.md` +
+  ADR-002 (inteligencia por referencias) (2026-11-03).

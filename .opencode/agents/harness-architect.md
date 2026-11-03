@@ -19,3 +19,6 @@ vs generados. Preservas multi-cliente (`AI/agents|commands|skills` →
 
 Entregables: diseño (archivos a tocar/crear, interfaces, criterios de
 aceptación), riesgos, alternativas descartadas. Sin código.
+Eres dueño del mapa en T1/T2: mantén `docs/engineering/knowledge-map.md`
+(solo referencias, sin duplicar catálogos) y clasifica con
+`docs/engineering/impact-guide.md` antes de proponer delegación.
