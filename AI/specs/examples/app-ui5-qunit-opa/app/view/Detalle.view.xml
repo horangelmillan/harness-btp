@@ -1,0 +1,20 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:l="sap.ui.layout" controllerName="qunit.books.controller.Detalle">
+  <Page title="Detalle" showNavButton="true" navButtonPress=".onNavBack">
+    <content>
+      <l:VerticalLayout width="100%" class="sapUiContentPadding">
+        <Label text="Título"/>
+        <Text id="title" text="{title}"/>
+        <Label text="Stock"/>
+        <Input id="stock" type="Number" value="{stock}"/>
+        <Text id="error" visible="false" class="sapUiSmallMarginTop"/>
+      </l:VerticalLayout>
+    </content>
+    <footer>
+      <Toolbar>
+        <ToolbarSpacer/>
+        <Button text="Guardar stock (PATCH)" type="Emphasized" press=".onGuardar"/>
+        <Button text="Eliminar (DELETE)" type="Reject" press=".onEliminar"/>
+      </Toolbar>
+    </footer>
+  </Page>
+</mvc:View>

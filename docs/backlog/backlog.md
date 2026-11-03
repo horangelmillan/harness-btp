@@ -26,6 +26,24 @@
 
 ## Hecho
 
+- [x] R2.2 fixture QUnit+OPA5 con runner default VERDE (2026-11-03):
+  fixture nueva `AI/specs/examples/app-ui5-qunit-opa/` (CAP+SQLite Books,
+  UI5 freestyle OData V4 CDN 1.120.x, QUnit unit 13 asserts puros, OPA5
+  journey CRUD carga→lista→crear→detalle→editar→eliminar, runners ps1/sh
+  ensure→CAP→HTTP→QUnit→OPA5→cleanup finally/trap, helper
+  `scripts/cdp-eval.js`); fixes R1+R2 (`cdp-chrome.ps1` Get-Listener excluye
+  TimeWait+PID 0, `.npmignore` +2 `**/node_modules`, `package.json` files
+  +2 negaciones, README 13 asserts, `run-ui5-tests.sh` comentario
+  cdp-eval.js, fixture engines node>=22, `node_modules` borrado); QA2 APTO
+  (HTTP 4/4 + QUnit 13/0 + OPA5 5/0, cleanup puertos libres,
+  `validate-meta` 55 OK, `render` 61 OK, triple 0.3.2) + reviewer
+  APTO-CON-PENDIENTES (solo P2, aplicados arriba); decisiones:
+  `package-lock.json` fixture SE CONSERVA en repo y tgz (reproducibilidad,
+  bloat menor asumido), `node_modules` nunca se versiona (gitignore) ni se
+  distribuye (doble negación), CDN 1.120.x sin patch fijo (no congelar
+  parches seguridad), paridad sh/ps1 vía cdp-eval.js (no dump-dom);
+  sin commit/push, sin version bump, `AI/clients/` intacto.
+
 - [x] T5.5-CLOSE E2E + paridad + OPP-014 (2026-11-03): E2E navegador real
   18/18 vía CDP (`ensure` operativo, pestaña propia, `cleanup` pendiente al
   cierre) — lista, crear→detalle, PATCH 7→12, DELETE→404, 404 directo con

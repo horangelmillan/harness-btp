@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Testsuite QUnit + OPA5 (qunit.books)</title>
+  <script id="sap-ui-bootstrap"
+    src="https://ui5.sap.com/1.120/resources/sap-ui-core.js"
+    data-sap-ui-theme="sap_horizon"></script>
+  <script>
+    sap.ui.require(["sap/ui/test/TestSuite"], function (TestSuite) {
+      var oSuite = new TestSuite({
+        name: "qunit.books",
+        defaults: { qunit: { version: 2 }, ui5: { theme: "sap_horizon" } },
+        tests: {
+          unit: { title: "unit puro (formatter, 0 fetch)", page: "unit/unitTests.qunit.html" },
+          opa: { title: "journey CRUD contra CAP local", page: "integration/opaTests.qunit.html" }
+        }
+      });
+      oSuite.show();
+    });
+    window.addEventListener("load", function () {
+      var el = document.createElement("div");
+      el.innerHTML = '<p><a href="unit/unitTests.qunit.html">unit puro</a> · ' +
+        '<a href="integration/opaTests.qunit.html">journey OPA5</a></p>';
+      document.body.appendChild(el);
+    });
+  </script>
+</head>
+<body></body>
+</html>

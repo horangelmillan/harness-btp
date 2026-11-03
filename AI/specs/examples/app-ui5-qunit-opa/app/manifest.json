@@ -1,0 +1,62 @@
+{
+  "sap.app": {
+    "id": "qunit.books",
+    "type": "application",
+    "title": "Books QUnit/OPA (OData V4)",
+    "dataSources": {
+      "catalog": {
+        "uri": "/odata/v4/catalog/",
+        "type": "OData",
+        "settings": { "odataVersion": "4.0" }
+      }
+    }
+  },
+  "sap.ui": {
+    "technology": "UI5",
+    "deviceTypes": { "desktop": true, "tablet": true, "phone": true }
+  },
+  "sap.ui5": {
+    "rootView": {
+      "viewName": "qunit.books.view.App",
+      "type": "XML",
+      "async": true,
+      "id": "app"
+    },
+    "dependencies": {
+      "minUI5Version": "1.120.0",
+      "libs": { "sap.m": {}, "sap.ui.core": {} }
+    },
+    "models": {
+      "": {
+        "dataSource": "catalog",
+        "settings": {
+          "serviceUrl": "/odata/v4/catalog/",
+          "synchronizationMode": "None",
+          "operationMode": "Server",
+          "autoExpandSelect": true
+        },
+        "type": "sap.ui.model.odata.v4.ODataModel"
+      }
+    },
+    "routing": {
+      "config": {
+        "routerClass": "sap.m.routing.Router",
+        "viewType": "XML",
+        "viewPath": "qunit.books.view",
+        "controlId": "app",
+        "controlAggregation": "pages",
+        "async": true
+      },
+      "routes": [
+        { "name": "lista", "pattern": "", "target": "lista" },
+        { "name": "detalle", "pattern": "detail/{ID}", "target": "detalle" },
+        { "name": "crear", "pattern": "create", "target": "crear" }
+      ],
+      "targets": {
+        "lista": { "viewName": "Lista", "viewLevel": 1 },
+        "detalle": { "viewName": "Detalle", "viewLevel": 2 },
+        "crear": { "viewName": "Crear", "viewLevel": 2 }
+      }
+    }
+  }
+}

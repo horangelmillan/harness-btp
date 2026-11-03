@@ -1,0 +1,19 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:l="sap.ui.layout" controllerName="qunit.books.controller.Crear">
+  <Page title="Crear libro" showNavButton="true" navButtonPress=".onNavBack">
+    <content>
+      <l:VerticalLayout width="100%" class="sapUiContentPadding">
+        <Label text="Título" required="true"/>
+        <Input id="title" placeholder="p. ej. QUnit"/>
+        <Label text="Stock"/>
+        <Input id="stock" type="Number" value="0"/>
+        <Text id="error" visible="false"/>
+      </l:VerticalLayout>
+    </content>
+    <footer>
+      <Toolbar>
+        <ToolbarSpacer/>
+        <Button text="Crear (POST)" type="Emphasized" press=".onCrear"/>
+      </Toolbar>
+    </footer>
+  </Page>
+</mvc:View>

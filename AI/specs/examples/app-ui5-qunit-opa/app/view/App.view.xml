@@ -1,0 +1,3 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" controllerName="qunit.books.controller.Lista">
+  <App id="app"/>
+</mvc:View>

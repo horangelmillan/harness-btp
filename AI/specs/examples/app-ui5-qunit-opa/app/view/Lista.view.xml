@@ -1,0 +1,24 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" controllerName="qunit.books.controller.Lista">
+  <Page title="Books" showNavButton="false">
+    <headerContent>
+      <Button text="Crear" press=".onCrear" type="Emphasized"/>
+    </headerContent>
+    <content>
+      <SearchField id="search" width="100%" placeholder="Buscar por título…" search=".onSearch"/>
+      <Table id="table" items="{/Books}" growing="true" growingThreshold="20">
+        <columns>
+          <Column><Text text="Título"/></Column>
+          <Column><Text text="Stock"/></Column>
+        </columns>
+        <items>
+          <ColumnListItem type="Navigation" press=".onDetalle">
+            <cells>
+              <Text text="{title}"/>
+              <Text text="{stock}"/>
+            </cells>
+          </ColumnListItem>
+        </items>
+      </Table>
+    </content>
+  </Page>
+</mvc:View>

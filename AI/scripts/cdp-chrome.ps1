@@ -39,10 +39,15 @@ $Endpoint = "http://localhost:$Port/json/version"
 function Get-Listener {
   # Sin filtro -State: en este equipo los sockets Bound (Chrome headless y
   # node) muestran State vacio y -State Listen los pierde (R2.1). Cualquier
-  # fila con LocalPort=$Port es ocupacion (los TIME_WAIT usan puerto local
-  # efimero y quedan excluidos).
+  # fila con LocalPort=$Port es ocupacion (los TIME_WAIT con puerto local
+  # efimero quedan excluidos). EXCEPCION R2.2: los TimeWait con puerto
+  # LOCAL $Port son restos del kernel (PID 0) de conexiones ya cerradas
+  # que nunca aceptan nada; sin excluirlos, un ensure tras un cleanup
+  # falla hasta 120 s. Los Bound con State vacio (R2.1) siguen contando.
+  # R2.2-QA: ademas se excluye todo OwningProcess 0 (kernel: Closed,
+  # FinWait1, etc. con LocalPort=$Port pero sin aceptador real).
   Get-NetTCPConnection -LocalPort $Port -ErrorAction SilentlyContinue |
-    Where-Object { $_.LocalPort -eq $Port } |
+    Where-Object { $_.LocalPort -eq $Port -and $_.State -ne "TimeWait" -and $_.OwningProcess -ne 0 } |
     Select-Object -First 1
 }
 
