@@ -113,11 +113,25 @@ else
   json_ok "$f" || emit FAIL approuter xs-app.json "JSON invalido" "approuter no arranca" "valida el JSON" NO LOCAL
   if grep -q '"routes"' "$f" && grep -q '"source"' "$f"; then
     emit PASS approuter xs-app.json "routes[] presente" ninguno ninguno NO LOCAL
-    nsrc=$(grep -c '"source"' "$f"); ndst=$(grep -cE '"destination"|"localDir"' "$f")
-    if [ "$ndst" -ge "$nsrc" ] && [ "$nsrc" -gt 0 ]; then
-      emit PASS approuter xs-app.json "rutas con source y destination|localDir" ninguno ninguno NO LOCAL
+    bad=""
+    if [ "$have_py" -eq 1 ]; then
+      bad=$(python3 -c "import json,sys; d=json.load(open(sys.argv[1], encoding='utf-8-sig')); rs=d.get('routes', []); print(sum(1 for r in rs if not r.get('source') or not (r.get('destination') or r.get('localDir'))))" "$f" 2>/dev/null) || bad=""
+    elif [ "$have_node" -eq 1 ]; then
+      bad=$(node -e "var s=require('fs').readFileSync(process.argv[1],'utf8'); if(s.charCodeAt(0)===65279)s=s.slice(1); var rs=JSON.parse(s).routes||[]; console.log(rs.filter(function(r){return !r.source || !(r.destination||r.localDir)}).length)" "$f" 2>/dev/null) || bad=""
+    fi
+    if [ -n "$bad" ]; then
+      if [ "$bad" -eq 0 ]; then
+        emit PASS approuter xs-app.json "rutas con source y destination|localDir" ninguno ninguno NO LOCAL
+      else
+        emit FAIL approuter xs-app.json "$bad ruta(s) sin source o destino" "ruta 404/500" "anade source y destination|localDir" NO LOCAL
+      fi
     else
-      emit FAIL approuter xs-app.json "ruta(s) sin source o destino" "ruta 404/500" "anade source y destination|localDir" NO LOCAL
+      nsrc=$(grep -c '"source"' "$f"); ndst=$(grep -cE '"destination"|"localDir"' "$f")
+      if [ "$ndst" -ge "$nsrc" ] && [ "$nsrc" -gt 0 ]; then
+        emit WARNING approuter xs-app.json "rutas con source y destination|localDir (conteo sin python3/node)" "chequeo por objeto no verificable" "instala python3 o node para validar cada ruta" NO LOCAL
+      else
+        emit FAIL approuter xs-app.json "ruta(s) sin source o destino" "ruta 404/500" "anade source y destination|localDir" NO LOCAL
+      fi
     fi
   else
     emit FAIL approuter xs-app.json "routes[] vacio o ausente" "sin rutas" "declara al menos una ruta" NO LOCAL
@@ -156,7 +170,8 @@ manifests=$(find "$TARGET" -name 'manifest.json' 2>/dev/null)
 if [ -z "$manifests" ]; then
   emit N-A ui5 manifest.json "sin manifest.json" "UI5 no aplica" "crealo si el MVP exige UI5" NO LOCAL
 else
-  echo "$manifests" | while IFS= read -r m; do
+  while IFS= read -r m; do
+    [ -z "$m" ] && continue
     rel="${m#"$TARGET"/}"; [ "$rel" = "$m" ] && rel=$(basename "$m")
     if ! json_ok "$m"; then emit FAIL ui5 "$rel" "JSON invalido" "app UI5 no carga" "valida el JSON" NO LOCAL; continue; fi
     grep -q '"sap\.app"' "$m" \
@@ -168,7 +183,7 @@ else
     grep -q '"type"' "$m" \
       && emit PASS ui5 "$rel" "type presente" ninguno ninguno NO LOCAL \
       || emit WARNING ui5 "$rel" "falta type" "tooling incompleto" "anade sap.app.type=application" NO LOCAL
-  done
+  done <<< "$manifests"
 fi
 
 # --- db/srv *.cds no vacios ---
@@ -176,13 +191,12 @@ cds=$(find "$TARGET/db" "$TARGET/srv" -name '*.cds' 2>/dev/null)
 if [ -z "$cds" ]; then
   emit N-A db "db/*.cds" "sin modelos CDS" "CAP/HANA no aplica" "crea db/schema.cds si el MVP exige CAP" NO LOCAL
 else
-  echo "$cds" | while IFS= read -r c; do
+  while IFS= read -r c; do
+    [ -z "$c" ] && continue
     rel="${c#"$TARGET"/}"
     if [ -s "$c" ]; then emit PASS db "$rel" "CDS no vacio" ninguno ninguno NO LOCAL
     else emit FAIL db "$rel" "CDS vacio" "modelo sin entidades" "declara entidades" NO LOCAL; fi
-  done
-  # propaga FAIL de subshell via marcador
-  if echo "$cds" | while IFS= read -r c; do [ -s "$c" ] || echo FAIL; done | grep -q FAIL; then HAS_FAIL=1; fi
+  done <<< "$cds"
 fi
 
 # --- test-aislamiento: 3 WARNING solo-lectura (regex, nunca FAIL) ---

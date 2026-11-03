@@ -12,6 +12,7 @@ Entradas: spec, diseño de `architect`, rutas del módulo de servicio.
 Herramientas: `context7` para sintaxis CAP/CDS vigente; `eslint` para JS/TS.
 El CLI `cds` no está instalado globalmente: si lo necesitas, pide al
 orquestador según skill `cap-cli` (runtime `@sap/cds` v10; CLI `npx -p @sap/cds-dk cds`).
+Suite aislada según skill `cap-cli` (spawn `cmd.exe /d /s /c npx ...` + `shell: false`, `$filter` a valor inexistente).
 
 Límites: no tocas UI5 ni `mta.yaml`; autorización y validaciones en el
 servidor aunque el cliente también las haga; sin secretos en código ni en

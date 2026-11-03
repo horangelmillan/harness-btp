@@ -1,9 +1,9 @@
 <# Verificación de prerrequisitos del harness BTP (PowerShell 5.1).
    Uso:
-     powershell -ExecutionPolicy Bypass -File AI/scripts/check-prereqs.ps1 [-WarnOnly] [-NeedMtar] [-NeedJava] [-NeedCds] [-NeedGh] [-NeedOp]
+     powershell -ExecutionPolicy Bypass -File AI/scripts/check-prereqs.ps1 [-WarnOnly] [-NeedMtar] [-NeedJava] [-NeedCds] [-NeedUi5] [-NeedGh] [-NeedOp]
    - Sin parámetros: comprueba REQUERIDO siempre + OPCIONAL como aviso.
-   - -NeedMtar/-NeedJava/-NeedCds/-NeedGh/-NeedOp: promocionan ese opcional a
-     REQUERIDO (usar cuando la spec del MVP lo exija).
+   - -NeedMtar/-NeedJava/-NeedCds/-NeedUi5/-NeedGh/-NeedOp: promocionan ese opcional a
+     REQUERIDO (usar cuando la spec del MVP lo exija; -NeedCds no promociona ui5).
    - -WarnOnly: nunca falla (exit 0); lo usan install.ps1/install.sh al final.
    NUNCA imprime secretos: solo ejecuta "<comando> --version" y cuenta archivos.
    REQUERIDO faltante -> exit 1 (salvo -WarnOnly). Solo opcionales -> exit 0. #>
@@ -12,6 +12,7 @@ param(
   [switch]$NeedMtar,
   [switch]$NeedJava,
   [switch]$NeedCds,
+  [switch]$NeedUi5,
   [switch]$NeedGh,
   [switch]$NeedOp
 )
@@ -78,11 +79,17 @@ $r = Test-Tool "java" @("-version")
 Add-Row "java" "builds MTA Java (solo si la spec los pide)" (Opt-Level $NeedJava) $(if ($r.Found) { "OK" } else { "FALTA" }) $r.Detail "https://adoptium.net/"
 
 $r = Test-Tool "cds" @("--version")
-if (-not $r.Found) { $r.Detail = "no global; valido via npx -p @sap/cds-dk (solo si la spec exige CAP)" }
+if ($r.Found) {
+  $r.Detail = "$($r.Detail) (global; el harness usa npx -p @sap/cds-dk cds)"
+} elseif ((Test-Tool "npx" @("--version")).Found) {
+  $r = @{ Found = $true; Detail = "valido via npx -p @sap/cds-dk cds (sin instalacion global)" }
+} else {
+  $r.Detail = "no global ni npx; valido via npx -p @sap/cds-dk (solo si la spec exige CAP)"
+}
 Add-Row "cds" "proyectos CAP (solo si la spec lo exige)" (Opt-Level $NeedCds) $(if ($r.Found) { "OK" } else { "FALTA" }) $r.Detail "https://cap.cloud.sap/docs/get-started/"
 
 $r = Test-Tool "ui5" @("--version")
-Add-Row "ui5" "proyectos UI5/Fiori (solo si la spec lo exige)" $(if ($NeedCds) { "REQ" } else { "OPT" }) $(if ($r.Found) { "OK" } else { "FALTA" }) $r.Detail "https://ui5.github.io/cli/"
+Add-Row "ui5" "proyectos UI5/Fiori (solo si la spec lo exige)" (Opt-Level $NeedUi5) $(if ($r.Found) { "OK" } else { "FALTA" }) $r.Detail "https://ui5.github.io/cli/"
 
 $r = Test-Tool "gh" @("--version")
 Add-Row "gh" "repo remoto/PR (solo si la spec pide remoto)" (Opt-Level $NeedGh) $(if ($r.Found) { "OK" } else { "FALTA" }) $r.Detail "https://cli.github.com/"

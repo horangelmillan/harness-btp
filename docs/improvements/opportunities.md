@@ -285,6 +285,14 @@ Un duplicado detectado se cierra como `REJECTED (duplicada de OPP-xxx)`.
   y SD 8/16 por diseño — orden-dependencia honesta, no regresión; reviewer
   APTO-CON-PENDIENTES — pendiente approuter sh paridad objeto vs conteo;
   E2E/BTP N-A).
+  Cierre T5.4-CLOSE (2026-11-03, sin cambio de estado — sigue COMPLETED):
+  fixes aplicados sobre pendientes del reviewer inicial (APTO-CON-PENDIENTES)
+  — DEP0190 eliminado vía `cmd.exe shell:false`, approuter `.sh` por objeto
+  (paridad con `.ps1`), `check-prereqs -NeedUi5` + `cds` vía `npx`,
+  subshell `sh` corregido, `backend-cap` alineado; copias `temp/t54c-books`
+  8/8 x4 y `temp/t54c-sd` 16/16 x4 (2 normal + 2 randomize); estática
+  `validate-meta` 54 OK, `render --check` 61 OK, triple 0.3.2; sin nueva OPP
+  (§2: alcance contenido en OPP-017, no duplica OPP-014/006/008/009/015/016).
   Deduplicación §2: sin coincidencia en backlog/log/findings/este registro
   (OPP-016 cubre fixtures+matriz base; OPP-017 añade orden-independencia,
   matriz condicional y WARNINGs multi-app).

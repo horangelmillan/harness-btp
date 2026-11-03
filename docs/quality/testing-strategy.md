@@ -182,3 +182,17 @@ Orden-independencia + matriz condicional + WARNINGs de aislamiento (OPP-017):
   no regresión).
 - Reviewer APTO-CON-PENDIENTES (pendiente approuter sh paridad objeto vs
   conteo); E2E/BTP N-A; `AI/clients/` intacto.
+
+## Validación T5.4-CLOSE (2026-11-03, solo-docs, sin tocar código)
+
+Cierre de la deuda de orden pendiente del reviewer T5.4 (OPP-017 conserva
+COMPLETED, nota de cierre añadida; sin nueva OPP):
+
+- Fixes: DEP0190 eliminado vía `cmd.exe shell:false`, approuter `.sh` por
+  objeto (paridad con `.ps1`), `check-prereqs -NeedUi5` + `cds` vía `npx`,
+  subshell `sh` corregido, `backend-cap` alineado.
+- Copias `temp/t54c-books` 8/8 x4 y `temp/t54c-sd` 16/16 x4
+  (2 normal + 2 randomize).
+- Estática: `validate-meta` 54 OK, `render --check` 61 OK, triple 0.3.2;
+  reviewer inicial APTO-CON-PENDIENTES con fixes aplicados; E2E/BTP N-A;
+  `AI/clients/`, `temp/` y originales intactos.

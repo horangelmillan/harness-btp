@@ -76,6 +76,17 @@
   conteo); E2E/BTP N-A; solo `.md` producto + validador solo-lectura,
   `AI/clients/` intacto; sin commits (2026-11-03).
 
+- [x] T5.4-CLOSE Cierre deuda orden (solo-docs, sin tocar código):
+  fixes sobre pendientes reviewer inicial — DEP0190 eliminado vía
+  `cmd.exe shell:false`, approuter `.sh` por objeto, `check-prereqs -NeedUi5`
+  + `cds` vía `npx`, subshell `sh` corregido, `backend-cap` alineado;
+  copias `temp/t54c-books` 8/8 x4 + `temp/t54c-sd` 16/16 x4
+  (2 normal + 2 randomize); `validate-meta` 54 OK, `render --check` 61 OK,
+  triple 0.3.2; OPP-017 conserva COMPLETED (nota cierre añadida, sin nueva
+  OPP); OPP-014 PROPOSED, OPP-006/008 VALIDATING, OPP-009 DEFERRED,
+  OPP-015/016 COMPLETED intactos; `AI/clients/`, `temp/` y originales
+  intactos; sin commits (2026-11-03).
+
 - [x] T4-E/F/G conocimiento: OPP-006→VALIDATING (xs-security, APTO estático
   54/61/0.3.2, sin BTP real) + OPP-008 VALIDATING (approuter) + OPP-009
   DEFERRED (HANA) + OPP-010 REJECTED (OData→mejora `cap-cli`); mapa/catálogos

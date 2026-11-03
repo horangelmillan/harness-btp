@@ -1,17 +1,18 @@
 #!/bin/sh
 # Verificación de prerrequisitos del harness BTP (POSIX sh).
-# Uso: ./check-prereqs.sh [--warn-only] [--need-mtar] [--need-java] [--need-cds] [--need-gh] [--need-op]
-# --need-*: promociona ese opcional a REQUERIDO (cuando la spec del MVP lo exija).
+# Uso: ./check-prereqs.sh [--warn-only] [--need-mtar] [--need-java] [--need-cds] [--need-ui5] [--need-gh] [--need-op]
+# --need-*: promociona ese opcional a REQUERIDO (cuando la spec del MVP lo exija; --need-cds no promociona ui5).
 # --warn-only: nunca falla (exit 0); lo usan install.ps1/install.sh al final.
 # NUNCA imprime secretos: solo ejecuta "<comando> --version" y cuenta archivos.
 # REQUERIDO faltante -> exit 1 (salvo --warn-only). Solo opcionales -> exit 0.
-WARN_ONLY=0; NEED_MTAR=0; NEED_JAVA=0; NEED_CDS=0; NEED_GH=0; NEED_OP=0
+WARN_ONLY=0; NEED_MTAR=0; NEED_JAVA=0; NEED_CDS=0; NEED_UI5=0; NEED_GH=0; NEED_OP=0
 for a in "$@"; do
   case "$a" in
     --warn-only) WARN_ONLY=1 ;;
     --need-mtar) NEED_MTAR=1 ;;
     --need-java) NEED_JAVA=1 ;;
     --need-cds) NEED_CDS=1 ;;
+    --need-ui5) NEED_UI5=1 ;;
     --need-gh) NEED_GH=1 ;;
     --need-op) NEED_OP=1 ;;
     *) echo "ABORT: opción desconocida $a"; exit 1 ;;
@@ -83,10 +84,12 @@ if v=$(check_cmd java -version); then S=OK; else S=FALTA; fi
 row "java" "builds MTA Java (solo si la spec los pide)" "$LVL" "$S" "$v" "https://adoptium.net/"; record "$LVL" "$S" java
 
 LVL=$(opt_level $NEED_CDS)
-if v=$(check_cmd cds --version); then S=OK; else S=FALTA; v="no global; valido via npx -p @sap/cds-dk (solo si la spec exige CAP)"; fi
+if v=$(check_cmd cds --version); then S=OK; v="$v (global; el harness usa npx -p @sap/cds-dk cds)";
+elif command -v npx >/dev/null 2>&1; then S=OK; v="valido via npx -p @sap/cds-dk cds (sin instalacion global)";
+else S=FALTA; v="no global ni npx; valido via npx -p @sap/cds-dk (solo si la spec exige CAP)"; fi
 row "cds" "proyectos CAP (solo si la spec lo exige)" "$LVL" "$S" "$v" "https://cap.cloud.sap/docs/get-started/"; record "$LVL" "$S" cds
 
-if [ "$NEED_CDS" -eq 1 ]; then LVL=REQ; else LVL=OPT; fi
+LVL=$(opt_level $NEED_UI5)
 if v=$(check_cmd ui5 --version); then S=OK; else S=FALTA; fi
 row "ui5" "proyectos UI5/Fiori (solo si la spec lo exige)" "$LVL" "$S" "$v" "https://ui5.github.io/cli/"; record "$LVL" "$S" ui5
 

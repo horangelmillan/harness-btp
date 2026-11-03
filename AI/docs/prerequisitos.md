@@ -12,8 +12,8 @@ sh AI/scripts/check-prereqs.sh
 Si tu MVP exige builds o despliegues, promociona opcionales a requeridos:
 
 ```powershell
-AI/scripts/check-prereqs.ps1 -NeedMtar -NeedCds   # MTAR + CAP/UI5
-sh AI/scripts/check-prereqs.sh --need-mtar --need-gh
+AI/scripts/check-prereqs.ps1 -NeedMtar -NeedCds -NeedUi5   # MTAR + CAP + UI5
+sh AI/scripts/check-prereqs.sh --need-mtar --need-cds --need-ui5
 ```
 
 ## Requerido siempre
@@ -31,8 +31,8 @@ sh AI/scripts/check-prereqs.sh --need-mtar --need-gh
 |---|---|---|
 | `mbt` + `make` | el MVP construye MTAR | https://github.com/SAP/cloud-mta-build-tool y https://www.gnu.org/software/make/ |
 | `java` 17 | builds MTA Java | https://adoptium.net/ |
-| `cds` | la spec exige CAP (`npx -p @sap/cds-dk` vale, sin instalación global) | https://cap.cloud.sap/docs/get-started/ |
-| `ui5` | la spec exige UI5/Fiori | https://ui5.github.io/cli/ |
+| `cds` | la spec exige CAP (`npx -p @sap/cds-dk` vale, sin instalación global; `-NeedCds` no promociona `ui5`) | https://cap.cloud.sap/docs/get-started/ |
+| `ui5` | la spec exige UI5/Fiori (promociona con `-NeedUi5` / `--need-ui5`) | https://ui5.github.io/cli/ |
 | `gh` | la spec pide repo remoto/PR | https://cli.github.com/ |
 | `op` (1Password) | el equipo lo adopta | https://developer.1password.com/docs/cli/get-started/ |
 

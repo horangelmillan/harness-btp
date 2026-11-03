@@ -30,6 +30,7 @@ Entregables:
 
 En E5 ejecuta `AI/scripts/validate-app` (`.ps1`/`.sh`) y usa sus FAIL
 como criterios bloqueantes y sus WARNING como pendientes.
+Aislamiento orden-independiente según skill `cap-cli` (fixtures propias + `$filter` a valor inexistente).
 
 Límites: no implementas funcionalidad (solo tests y fixes menores de test);
 no despliegas; no declaras verde lo que no ejecutaste.

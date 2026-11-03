@@ -32,10 +32,12 @@ paquete `@cap-js/cds-dk` **no existe** — el correcto es `@sap/cds-dk`):
 
 - Puerto propio: `const PORT = Number(process.env.PORT || 4011)` (env con
   fallback; nunca literal fijo sin env).
-- Arranque: `spawn('npx', ['-p', '@sap/cds-dk', 'cds', 'serve', '--port',
-  String(PORT), '--in-memory'], { ..., shell: process.platform === 'win32' })`.
+- Arranque: `spawn(process.platform === 'win32' ? 'cmd.exe' : 'npx', process.platform === 'win32' ? ['/d','/s','/c','npx', '-p', '@sap/cds-dk', 'cds', 'serve', '--port',
+  String(PORT), '--in-memory'] : ['-p', '@sap/cds-dk', 'cds', 'serve', '--port', String(PORT), '--in-memory'], { ..., shell: false })` (win32 vía `cmd.exe /d /s /c npx ...` sin shell: `npx.cmd` directo con `shell:false` falla EINVAL en Node 24 y `shell:true` emite DEP0190; unix usa `npx` directo).
 - Espera lista: bucle `GET /Assets` hasta 200 con `Array.isArray(json.value)`,
   timeout 90 s, reintento 500 ms.
+- Lista vacía aislada: `GET /<Entidad>?$filter=<campo> eq '<NOEXISTE-uuid>'`
+  exige 200 `[]` (valor inexistente con `randomUUID`; no depende del orden).
 - Fixtures propias: `mkAsset()`/`mkRequest(assetID)` con seriales únicos
   (`randomUUID`), `cleanup(reqID, assetID)` con `DELETE` tolerante a fallos.
 - Cada `it` envuelve en `try { ... } finally { await cleanup(...) }`.
