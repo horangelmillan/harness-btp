@@ -319,8 +319,14 @@ Matriz honesta cliente × SO (`verificado` = probado con evidencia; `esperado` =
 - Instaladores y `check-prereqs` / `check-docs` verificados en Windows (`.ps1` nativo, `.sh` vía Git Bash, paridad CREATE/SKIP/BACKUP/OK + mismos `exit`).
 - SAP BTP Cloud Foundry solo cuando el MVP lo pida: el harness no crea cuentas ni espacios por sí solo.
 
-## Contribuir
+## Contribuir (con Meta-Harness interno)
 
+- Orquestador interno: `.opencode/agents/engineering-orchestrator.md`;
+  flujos: `.opencode/commands/engineering-*.md`; reglas: `AGENTS.md`.
+- Diagnóstico: `docs/engineering/initial-assessment.md`; sistema:
+  `docs/engineering/system-overview.md`; backlog: `docs/backlog/backlog.md`.
+- Puerta local antes de commit: `node scripts/validate-meta.js`
+  (frontmatter meta + docs + `render --check` + triple versión).
 - Abre un issue antes que un PR si el cambio afecta reglas o scripts.
 - PRs pequeños, en español, con evidencia del comando corrido.
 - Versionado semver: los cambios se publican como tags `vX.Y.Z` (`package.json` + `VERSION` + `AI/VERSION` + tag git coinciden; el workflow lo verifica).
