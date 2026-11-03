@@ -123,6 +123,10 @@ try {
   cp.execSync("node .github/scripts/check-release-versions.js", { cwd: ROOT, stdio: "pipe" });
   ok.push("OK: triple version");
 } catch (e) { fail.push("VERSION-DIFIERE (package.json/VERSION/AI/VERSION)"); }
+try {
+  cp.execSync("node scripts/check-package.js", { cwd: ROOT, stdio: "pipe" });
+  ok.push("OK: paquete npm sin fugas");
+} catch (e) { fail.push("PACK-CON-FUGAS (node scripts/check-package.js)"); }
 for (const l of ok) console.log(l);
 if (fail.length) {
   for (const l of fail) console.log(l);

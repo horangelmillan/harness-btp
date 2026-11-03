@@ -24,6 +24,8 @@ jobs:
           package-manager-cache: false
       - name: Empaquetado en seco (archivos incluidos)
         run: npm pack --dry-run 2>&1 | tail -n 25
+      - name: Guardia de distribución (sin fugas npm)
+        run: node scripts/check-package.js
       - name: Validar meta (render --check + triple versión)
         run: node scripts/validate-meta.js
       - name: Publicar en npm (OIDC, sin tokens)
