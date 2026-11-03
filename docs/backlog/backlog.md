@@ -20,11 +20,23 @@
 
 ## Después
 
-- [ ] Evidencia Linux/macOS y Claude/Cursor/Copilot (matriz → verificado).
 - [ ] `opencode.jsonc` real de ejemplo con MCPs por fase.
 - [ ] Métricas reales de eficiencia cuando el cliente exponga telemetría.
 
 ## Hecho
+
+- [x] R2.3 matriz compatibilidad OS×cliente (2026-11-03): canónica
+  `docs/engineering/compatibility-matrix.md` (12 celdas: 1 VERIFIED + 11
+  NOT VERIFIED, leyenda + alcance); Windows×OpenCode VERIFIED
+  (install.ps1 -Dest temp/r23/win-opencode + Test-Path, validate-meta 55 OK,
+  render --check 61 OK, check-docs OK, fixture R2.2 defecto HTTP 4/4 +
+  QUnit 13/0 + OPA5 5/0 con cleanup puertos 4022/9222 libres, logs en
+  temp/r23/logs/); `check-prereqs` exit 1 solo por `cf` ajeno en PATH
+  (1.0.0-beta.25, no CF CLI v8; resto REQ OK); README 3 frases a lenguaje
+  condicional + puntero a la matriz (línea 10, línea 151, § Compatibilidad:
+  Git Bash≠Linux); QA APTO; sin commit/push, sin version bump,
+  `AI/clients/` intacto.
+
 
 - [x] R2.2 fixture QUnit+OPA5 con runner default VERDE (2026-11-03):
   fixture nueva `AI/specs/examples/app-ui5-qunit-opa/` (CAP+SQLite Books,

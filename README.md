@@ -7,7 +7,7 @@
 
 Reglas, agentes y scripts reutilizables para llevar un MVP SAP de la especificación al despliegue en Cloud Foundry, con cualquier cliente agéntico que lea `AGENTS.md`.
 
-Para quien construye MVPs SAP BTP y quiere empezar cada proyecto con el mismo flujo probado, sin copiar y pegar. Funciona en Windows, Linux y macOS, con OpenCode, Claude Code o cualquier otro cliente que lea `AGENTS.md` y ejecute scripts del proyecto.
+Para quien construye MVPs SAP BTP y quiere empezar cada proyecto con el mismo flujo probado, sin copiar y pegar. Diseñado para Windows, Linux y macOS, con OpenCode, Claude Code o cualquier otro cliente que lea `AGENTS.md` y ejecute scripts del proyecto. Estado real por combinación en [`docs/engineering/compatibility-matrix.md`](docs/engineering/compatibility-matrix.md) (verificado solo Windows × OpenCode a 2026-11-03; resto pendiente de evidencia).
 
 ## Contenidos
 
@@ -148,7 +148,7 @@ Si prefieres que tu agente lo haga todo (clonar + instalar), pégale esta línea
 Déjame este proyecto listo con el harness BTP: lee https://raw.githubusercontent.com/horangelmillan/harness-btp/main/prompts/setup.md y síguelo al pie de la letra. Si te falta un dato (p. ej. la URL del repo a clonar), pregúntamelo antes de suponer.
 ```
 
-Vale para proyecto nuevo (con URL), existente, Windows/Linux/macOS y cualquier cliente que lea este README. El archivo `prompts/setup.md` vive versionado con el harness: siempre está al día sin que cambies tu línea.
+Vale para proyecto nuevo (con URL) o existente, en principio en Windows/Linux/macOS con cualquier cliente que lea este README (ver estado real en [`docs/engineering/compatibility-matrix.md`](docs/engineering/compatibility-matrix.md)). El archivo `prompts/setup.md` vive versionado con el harness: siempre está al día sin que cambies tu línea.
 
 ## Manual de uso
 
@@ -311,14 +311,14 @@ Tú no configuras nada: el agente se adapta solo.
 
 ## Compatibilidad
 
-Matriz honesta cliente × SO (`verificado` = probado con evidencia; `esperado` = sin bloqueo conocido, pendiente de evidencia):
+Matriz honesta cliente × SO (`verificado` = probado con evidencia; `esperado` ≡ `NOT VERIFIED` en la matriz canónica: sin evidencia, no se afirma que funcione; detalle canónico en [`docs/engineering/compatibility-matrix.md`](docs/engineering/compatibility-matrix.md)):
 
 | Cliente agéntico | Windows | Linux | macOS |
 |---|---|---|---|
-| OpenCode | verificado | esperado (`install.sh` par verificado en Git Bash) | esperado |
+| OpenCode | verificado | esperado (Git Bash no equivale a Linux nativo) | esperado |
 | Claude Code, otros que lean `AGENTS.md` | esperado | esperado | esperado |
 
-- Instaladores y `check-prereqs` / `check-docs` verificados en Windows (`.ps1` nativo, `.sh` vía Git Bash, paridad CREATE/SKIP/BACKUP/OK + mismos `exit`).
+- Instaladores y `check-prereqs` / `check-docs` verificados en Windows (`.ps1` nativo; `.sh` documentado pero no ejecutado en Linux/macOS nativo en este turno).
 - SAP BTP Cloud Foundry solo cuando el MVP lo pida: el harness no crea cuentas ni espacios por sí solo.
 
 ## Contribuir (con Meta-Harness interno)
