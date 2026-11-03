@@ -19,6 +19,9 @@ Entregables:
    servidor, sin datos reales salvo exigencia de la spec.
 3. Veredicto de puerta: apto / apto con pendientes / no apto, con motivos.
 
+En E5 ejecuta `AI/scripts/validate-app` (`.ps1`/`.sh`) y usa sus FAIL
+como criterios bloqueantes y sus WARNING como pendientes.
+
 Límites: no implementas funcionalidad (solo tests y fixes menores de test);
 no despliegas; no declaras verde lo que no ejecutaste.
 

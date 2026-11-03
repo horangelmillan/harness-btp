@@ -30,6 +30,8 @@ nunca el historial del turno. Ver `AGENTS.md` § Presupuesto anti-bloqueo):
 Paralelo solo en tareas realmente independientes (p. ej. `researcher` +
 `analyst` en etapa 0–1). Integras y revisas todo: no delegas decisiones
 finales ni aceptas cambios sin inspección (`git diff`/lectura directa).
+Si el proyecto ya existe, audita antes de generar; no regeneres ni
+sobrescribas fuera del alcance; parche mínimo + diff revisado.
 
 Toda tarea con navegador exige la higiene CDP (verificación previa con
 `ensure` + limpieza posterior con `cleanup`, AGENTS.md § Higiene

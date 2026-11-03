@@ -17,5 +17,8 @@ Verificaciones (delegables en `qa-review` + `deploy-cf` en solo lectura):
 Veredicto: apto / no apto con motivos concretos. Este comando nunca
 despliega ni muta nada en Cloud Foundry.
 
+En puerta E7, antes del veredicto, ejecuta `AI/scripts/validate-app.ps1`
+(o `.sh`) sobre el MVP y adjunta su salida como evidencia previa.
+
 Si el veredicto es NO APTO por entorno o configuración (herramientas,
 accesos, spec ausente), sugiere `/prepare` en vez de reintentar `/verify`.
