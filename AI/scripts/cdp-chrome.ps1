@@ -37,7 +37,12 @@ $PidFile = Join-Path $ProfileDir "owner.json"
 $Endpoint = "http://localhost:$Port/json/version"
 
 function Get-Listener {
-  Get-NetTCPConnection -LocalPort $Port -State Listen -ErrorAction SilentlyContinue |
+  # Sin filtro -State: en este equipo los sockets Bound (Chrome headless y
+  # node) muestran State vacio y -State Listen los pierde (R2.1). Cualquier
+  # fila con LocalPort=$Port es ocupacion (los TIME_WAIT usan puerto local
+  # efimero y quedan excluidos).
+  Get-NetTCPConnection -LocalPort $Port -ErrorAction SilentlyContinue |
+    Where-Object { $_.LocalPort -eq $Port } |
     Select-Object -First 1
 }
 
@@ -141,6 +146,11 @@ if ($Mode -eq "cleanup") {
     Write-Output "LIMPIEZA OK: $killed proceso(s) propio(s) detenido(s), $skipped ya ausente(s)/ajeno(s) intacto(s), puerto $Port libre."
     exit 0
   }
-  Write-Output "LIMPIEZA INCOMPLETA: propios vivos=$($remaining.Count) (PIDs: $($remaining -join ',')), puerto libre=$( -not $listener). Revisar manual."
+  $who = ""
+  if ($listener) {
+    $lp = Get-Process -Id $listener.OwningProcess -ErrorAction SilentlyContinue
+    $who = "ocupante: PID $($listener.OwningProcess) ($($lp.ProcessName)), ajeno intacto (no se mata)"
+  }
+  Write-Output "LIMPIEZA INCOMPLETA: propios vivos=$($remaining.Count) (PIDs: $($remaining -join ',')), puerto libre=$( -not $listener). $who Revisar manual."
   exit 1
 }
