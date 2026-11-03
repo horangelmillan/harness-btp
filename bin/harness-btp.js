@@ -12,19 +12,36 @@ function arg(name, def) {
   return i !== -1 && process.argv[i + 1] ? process.argv[i + 1] : def;
 }
 let cmd = process.argv[2];
+if (process.argv.includes("--help") || process.argv.includes("-h")) {
+  console.log("Uso: harness-btp init --dest <dir> [--force] [--ref <tag>] [--backup-dir <dir>] [--client auto|all|opencode,claude,...]");
+  console.log("  --dest <dir>     proyecto destino (por defecto: .)");
+  console.log("  --force          reinstala AI/ con backup (por defecto <dest>/AI.bak)");
+  console.log("  --backup-dir <d> backups fuera del destino (recomendado)");
+  console.log("  --ref <tag>      informativo (el paquete incluye su propia versión; ver VERSION)");
+  console.log("  --client <list>  auto (defecto) | all | opencode,claude,cursor,copilot,aider");
+  process.exit(0);
+}
 if (!cmd || cmd.startsWith("-")) {
   // Sin comando (p. ej. `pnpm dlx create-harness-btp --dest .`): asumir init.
   process.argv.splice(2, 0, "init");
   cmd = "init";
 }
+function backupPath(cur) {
+  if (backupDir) {
+    fs.mkdirSync(backupDir, { recursive: true });
+    return path.join(backupDir, path.basename(cur) + ".bak");
+  }
+  return cur + ".bak";
+}
 const dest = arg("--dest", ".");
 const force = process.argv.includes("--force");
 const ref = arg("--ref", null);
+const backupDir = arg("--backup-dir", "");
 const clientSpec = arg("--client", "auto");
 const src = path.join(__dirname, "..");
 
 if (cmd !== "init") {
-  console.log("Uso: harness-btp init --dest <dir> [--force] [--ref <tag>] [--client auto|all|opencode,claude,...]");
+  console.log("Uso: harness-btp init --dest <dir> [--force] [--ref <tag>] [--backup-dir <dir>] [--client auto|all|opencode,claude,...]");
   process.exit(1);
 }
 if (ref) console.log("REF: " + ref + " (el paquete incluye su propia versión; ver VERSION)");
@@ -32,6 +49,7 @@ if (!fs.existsSync(path.join(src, "AI"))) {
   console.log("ABORT: no se encontró AI/ junto al paquete");
   process.exit(1);
 }
+fs.mkdirSync(dest, { recursive: true });
 function readVer(p) {
   try {
     return fs.readFileSync(p, "utf8").split(/\r?\n/)[0].trim() || "desconocida";
@@ -39,15 +57,25 @@ function readVer(p) {
 }
 const harnessVersion = readVer(path.join(src, "AI", "VERSION"));
 
+function movePath(from, to) {
+  try { fs.renameSync(from, to); }
+  catch (e) {
+    if (e && (e.code === "EXDEV" || e.code === "EPERM")) {
+      fs.cpSync(from, to, { recursive: true });
+      fs.rmSync(from, { recursive: true, force: true });
+    } else throw e;
+  }
+}
+
 const aiDst = path.join(dest, "AI");
 if (fs.existsSync(aiDst)) {
   if (force) {
     const oldVersion = readVer(path.join(aiDst, "VERSION"));
-    const bak = path.join(dest, "AI.bak");
+    const bak = backupPath(aiDst);
     fs.rmSync(bak, { recursive: true, force: true });
-    fs.renameSync(aiDst, bak);
+    movePath(aiDst, bak);
     fs.cpSync(path.join(src, "AI"), aiDst, { recursive: true });
-    console.log("BACKUP: AI/ (v" + oldVersion + ") -> AI.bak; CREATE: AI/ (v" + harnessVersion + ")");
+    console.log("BACKUP: AI/ (v" + oldVersion + ") -> " + bak + "; CREATE: AI/ (v" + harnessVersion + ")");
   } else {
     console.log("SKIP: AI/ ya existe (usa --force para reinstalar con backup .bak)");
   }
@@ -100,10 +128,10 @@ function mergeTree(treeSrc, treeDst, label) {
   const bakLabel = label.replace(/\/$/, "") + ".bak";
   if (force) {
     if (fs.existsSync(treeDst)) {
-      const bak = treeDst + ".bak";
+      const bak = backupPath(treeDst);
       fs.rmSync(bak, { recursive: true, force: true });
-      fs.renameSync(treeDst, bak);
-      console.log("BACKUP: " + label + " -> " + bakLabel);
+      movePath(treeDst, bak);
+      console.log("BACKUP: " + label + " -> " + bakLabel + " (" + bak + ")");
     }
     fs.cpSync(treeSrc, treeDst, { recursive: true });
     console.log("CREATE: " + label + " (+" + listFilesRec(treeDst, treeDst).length + " archivos)");

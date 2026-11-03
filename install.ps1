@@ -1,8 +1,10 @@
 <# Instalador del harness BTP (idempotente, PowerShell 5.1).
-   Uso: .\install.ps1 [-Dest "."] [-Force] [-Client auto]
-   - Copia AI/ al proyecto destino (SKIP si ya existe; con -Force hace backup a AI.bak).
+   Uso: .\install.ps1 [-Dest "."] [-Force] [-Client auto] [-BackupDir <dir>]
+   - Copia AI/ al proyecto destino (SKIP si ya existe; con -Force hace backup).
+     Backup por defecto: AI.bak junto al destino; con -BackupDir va fuera
+     (p. ej. -BackupDir $env:TEMP\harness-bak), según AI/AGENTS.md § Frontera.
    - Fusiona el árbol del cliente agéntico desde AI/clients/<cliente>/ en la raíz
-     (solo faltantes; con -Force hace backup a <dir>.bak):
+     (solo faltantes; con -Force hace backup a <dir>.bak o a -BackupDir):
      -Client auto (defecto): detecta por huellas (CLAUDE.md|.claude→claude,
      .cursor→cursor, .github→copilot, opencode.json*|.opencode→opencode;
      sin huellas→opencode) | all: todos | lista explícita (p. ej. claude,copilot).
@@ -12,7 +14,8 @@
 param(
   [string]$Dest = ".",
   [switch]$Force,
-  $Client = "auto"
+  $Client = "auto",
+  [string]$BackupDir = ""
 )
 
 $ErrorActionPreference = "Stop"
@@ -21,6 +24,7 @@ $AiSrc = Join-Path $Src "AI"
 $TplPointer = Join-Path $Src "templates\AGENTS.pointer.md"
 
 if (-not (Test-Path $AiSrc)) { Write-Output "ABORT: no se encontró AI/ junto a install.ps1"; exit 1 }
+if (-not (Test-Path $Dest)) { New-Item $Dest -ItemType Directory -Force | Out-Null }
 
 $HarnessVersion = "desconocida"
 $VersionFile = Join-Path $AiSrc "VERSION"
@@ -28,17 +32,25 @@ if (Test-Path $VersionFile) { $HarnessVersion = ((Get-Content $VersionFile | Sel
 if (-not $HarnessVersion) { $HarnessVersion = "desconocida" }
 
 $AiDst = Join-Path $Dest "AI"
+function Get-BackupPath([string]$CurrentPath, [string]$Suffix) {
+  if ($BackupDir -ne "") {
+    if (-not (Test-Path $BackupDir)) { New-Item $BackupDir -ItemType Directory -Force | Out-Null }
+    $base = Split-Path -Leaf $CurrentPath
+    return (Join-Path $BackupDir ($base + $Suffix + ".bak"))
+  }
+  return ($CurrentPath + $Suffix + ".bak")
+}
 if (Test-Path $AiDst) {
   if ($Force) {
     $OldVersion = "desconocida"
     $DstVersionFile = Join-Path $AiDst "VERSION"
     if (Test-Path $DstVersionFile) { $OldVersion = ((Get-Content $DstVersionFile | Select-Object -First 1) + "").Trim() }
     if (-not $OldVersion) { $OldVersion = "desconocida" }
-    $Bak = Join-Path $Dest "AI.bak"
+    $Bak = Get-BackupPath $AiDst ""
     if (Test-Path $Bak) { Remove-Item $Bak -Recurse -Force }
-    Rename-Item $AiDst "AI.bak"
+    if ($BackupDir -ne "") { Move-Item $AiDst $Bak -Force } else { Rename-Item $AiDst ([IO.Path]::GetFileName($Bak)) }
     Copy-Item $AiSrc $AiDst -Recurse -Force
-    Write-Output "BACKUP: AI/ (v$OldVersion) -> AI.bak; CREATE: AI/ (v$HarnessVersion)"
+    Write-Output "BACKUP: AI/ (v$OldVersion) -> $Bak; CREATE: AI/ (v$HarnessVersion)"
   } else {
     Write-Output "SKIP: AI/ ya existe (usa -Force para reinstalar con backup .bak)"
   }
@@ -81,13 +93,13 @@ function Get-ClientList($Spec, $DestDir) {
 
 function Merge-Tree($TreeSrc, $TreeDst, $Label) {
   if (-not (Test-Path $TreeSrc)) { Write-Output "AVISO: no existe $TreeSrc (regenera con node scripts/render-clients.js)"; return }
-  $BakLabel = $Label.TrimEnd("/") + ".bak"
   if ($Force) {
     if (Test-Path $TreeDst) {
-      $Bak = "$TreeDst.bak"
+      $Bak = Get-BackupPath $TreeDst ""
       if (Test-Path $Bak) { Remove-Item $Bak -Recurse -Force }
-      Rename-Item $TreeDst ([IO.Path]::GetFileName($Bak))
-      Write-Output "BACKUP: $Label -> $BakLabel"
+      if ($BackupDir -ne "") { Move-Item $TreeDst $Bak -Force } else { Rename-Item $TreeDst ([IO.Path]::GetFileName($Bak)) }
+      $BakLabel = $Label.TrimEnd("/") + ".bak"
+      Write-Output "BACKUP: $Label -> $BakLabel ($Bak)"
     }
     Copy-Item $TreeSrc $TreeDst -Recurse -Force
     $TreeCount = @(Get-ChildItem $TreeDst -Recurse -File).Count

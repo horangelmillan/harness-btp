@@ -1,43 +1,65 @@
 #!/bin/sh
 # Instalador del harness BTP (idempotente, POSIX sh).
-# Uso: ./install.sh [--dest <dir>] [--force] [--client auto|all|opencode,claude,...] [--help]
+# Uso: ./install.sh [--dest <dir>] [--force] [--client auto|all|opencode,claude,...] [--backup-dir <dir>] [--help]
 # Sin secretos. No toca package.json ni mta.yaml del proyecto.
+# Backup por defecto: <dest>/AI.bak; con --backup-dir va fuera
+# (p. ej. --backup-dir "$TMPDIR/harness-bak"), según AI/AGENTS.md § Frontera.
 # Fusiona el árbol del cliente agéntico desde AI/clients/<cliente>/ en la raíz
-# (solo faltantes; con --force hace backup a <dir>.bak).
+# (solo faltantes; con --force hace backup a <dir>.bak o a --backup-dir).
 # --client auto (defecto): detecta por huellas (CLAUDE.md|.claude→claude,
 # .cursor→cursor, .github→copilot, opencode.json*|.opencode→opencode;
 # sin huellas→opencode). all: todos. Lista explícita: esos.
 DEST="."
 FORCE=0
 CLIENT="auto"
+BACKUP_DIR=""
 while [ $# -gt 0 ]; do
   case "$1" in
     --dest) DEST="$2"; shift 2 ;;
     --force) FORCE=1; shift ;;
     --client) CLIENT="$2"; shift 2 ;;
+    --backup-dir) BACKUP_DIR="$2"; shift 2 ;;
     -h|--help)
-      echo "Uso: ./install.sh [--dest <dir>] [--force] [--client <clientes>] [--help]"
+      echo "Uso: ./install.sh [--dest <dir>] [--force] [--client <clientes>] [--backup-dir <dir>] [--help]"
       echo "  --dest <dir>    proyecto destino (por defecto: .)"
-      echo "  --force         reinstala AI/ con backup a AI.bak"
+      echo "  --force         reinstala AI/ con backup (por defecto <dest>/AI.bak)"
+      echo "  --backup-dir <dir>  backups fuera del destino (recomendado, p. ej. \$TMPDIR/harness-bak)"
       echo "  --client <list> auto (defecto) | all | opencode,claude,cursor,copilot,aider"
       echo "  -h, --help      muestra esta ayuda"
       exit 0 ;;
     *) echo "ABORT: opción desconocida $1 (usa --help)"; exit 1 ;;
   esac
 done
+# Limpieza de transitorios del merge (MT_LIST) ante salida/interrupción.
+MT_CLEANUP=""
+trap 'rm -f "$MT_CLEANUP" "${TMPDIR:-/tmp}/harness-mt-$$.tmp"' EXIT INT TERM
 SRC="$(cd "$(dirname "$0")" && pwd)"
 if [ ! -d "$SRC/AI" ]; then echo "ABORT: no se encontró AI/ junto a install.sh"; exit 1; fi
+mkdir -p "$DEST"
 HARNESS_VERSION="desconocida"
 if [ -f "$SRC/AI/VERSION" ]; then HARNESS_VERSION="$(tr -d '[:space:]' < "$SRC/AI/VERSION")"; fi
 [ -n "$HARNESS_VERSION" ] || HARNESS_VERSION="desconocida"
+
+# Resuelve la ruta de backup: fuera del destino si --backup-dir, si no <ruta>.bak.
+backup_path() {
+  BP_CUR="$1"
+  if [ -n "$BACKUP_DIR" ]; then
+    mkdir -p "$BACKUP_DIR"
+    BP_BASE=$(basename "$BP_CUR")
+    printf '%s' "$BACKUP_DIR/$BP_BASE.bak"
+  else
+    printf '%s' "$BP_CUR.bak"
+  fi
+}
 
 if [ -d "$DEST/AI" ]; then
   if [ "$FORCE" -eq 1 ]; then
     OLD_VERSION="desconocida"
     if [ -f "$DEST/AI/VERSION" ]; then OLD_VERSION="$(tr -d '[:space:]' < "$DEST/AI/VERSION")"; fi
     [ -n "$OLD_VERSION" ] || OLD_VERSION="desconocida"
-    rm -rf "$DEST/AI.bak" && mv "$DEST/AI" "$DEST/AI.bak"
-    cp -r "$SRC/AI" "$DEST/AI" && echo "BACKUP: AI/ (v$OLD_VERSION) -> AI.bak; CREATE: AI/ (v$HARNESS_VERSION)"
+    BP_AI=$(backup_path "$DEST/AI")
+    rm -rf "$BP_AI" && mv "$DEST/AI" "$BP_AI"
+    cp -r "$SRC/AI" "$DEST/AI" && echo "BACKUP: AI/ (v$OLD_VERSION) -> $BP_AI; CREATE: AI/ (v$HARNESS_VERSION)"
   else
     echo "SKIP: AI/ ya existe (usa --force para reinstalar con backup .bak)"
   fi
@@ -59,14 +81,16 @@ merge_tree() {
   MT_BAKLABEL="$(printf '%s' "$MT_LABEL" | sed 's:/$::').bak"
   if [ "$FORCE" -eq 1 ]; then
     if [ -d "$MT_DST" ]; then
-      rm -rf "$MT_DST.bak" && mv "$MT_DST" "$MT_DST.bak"
-      echo "BACKUP: $MT_LABEL -> $MT_BAKLABEL"
+      MT_BAK=$(backup_path "$MT_DST")
+      rm -rf "$MT_BAK" && mv "$MT_DST" "$MT_BAK"
+      echo "BACKUP: $MT_LABEL -> $MT_BAKLABEL ($MT_BAK)"
     fi
     mkdir -p "$(dirname "$MT_DST")"
     cp -r "$MT_SRC" "$MT_DST" && MT_COUNT=$(find "$MT_DST" -type f | wc -l) && echo "CREATE: $MT_LABEL (+$MT_COUNT archivos)"
   else
     MT_COUNT=0
     MT_LIST="${TMPDIR:-/tmp}/harness-mt-$$.tmp"
+    MT_CLEANUP="$MT_LIST"
     find "$MT_SRC" -type f -print > "$MT_LIST"
     while IFS= read -r MT_FILE; do
       MT_REL=${MT_FILE#"$MT_SRC"/}

@@ -21,3 +21,11 @@ AI*.bak/
 .opencode/
 AI/.opencode/
 opencode.jsonc
+opencode.json
+.claude/
+.cursor/
+.agents/
+.agents/skills/
+.github/agents/
+.github/skills/
+.github/prompts/
