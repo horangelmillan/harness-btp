@@ -45,6 +45,14 @@
   + OPP-005 aclarada (REJECTED era el duplicado, historial `da66d5c`)
   + OPP-013 COMPLETED; `cds test` nativo documentado no aplicable sin
   `@cap-js/cds-test`; sin commits (2026-11-03).
+- [x] T5.2 E2E Generation ServiceDesk: NL→spec (analyst+documentarian,
+  12 CAs) → diseño (architect: association, plan, UI5 diferido) →
+  generación (backend-cap: 6 archivos+lockfile, compile 0) → 16/16 tests
+  (qa-review APTO + gaps sap corregidos) → validate-app exit 0 con N-A
+  correctos → Fase H real (defecto R5 inyectado 12/14, fix producto 1/3,
+  R6-masking documentado) → independencia (%TEMP%, install+14/14+compile)
+  → OPP-015 (nota SQLite en cap-cli + render) ; `render` 61 OK,
+  `validate-meta` 54 OK, triple 0.3.2; sin commits (2026-11-03).
 
 - [x] T4-E/F/G conocimiento: OPP-006→VALIDATING (xs-security, APTO estático
   54/61/0.3.2, sin BTP real) + OPP-008 VALIDATING (approuter) + OPP-009

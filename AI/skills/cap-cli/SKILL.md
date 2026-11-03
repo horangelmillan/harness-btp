@@ -16,6 +16,10 @@ paquete `@cap-js/cds-dk` **no existe** — el correcto es `@sap/cds-dk`):
 - Facets usadas en este harness: `mta xsuaa approuter html5-repo
   destination ui5` (lista completa real con `cds add --help`, no de memoria).
 - Tras `cds add`, siempre `npm install` antes del siguiente comando.
+- SQLite local NO enforcea `String enum` ni `@assert.unique` (DDL sin
+  CHECK/UNIQUE verificado en T5.2 con `@sap/cds` 10.2.2 + `@cap-js/sqlite`
+  3.1.2): valida enums/unicidad en handlers `before CREATE/UPDATE`
+  (400/409), no confíes en el runtime.
 - `cds add` es aditivo y genera `mta.yaml`/`xs-security.json`: revisar el
   diff antes de aceptar lo generado (nombres de instancia deben coincidir
   con las existentes en la subcuenta).

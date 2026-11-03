@@ -219,3 +219,19 @@ Un duplicado detectado se cierra como `REJECTED (duplicada de OPP-xxx)`.
   Prioridad: Medium. Estado: PROPOSED (2026-11-03: deduplicado — sin
   coincidencia en backlog/log/findings/este registro; temáticamente
   cercano al item P2 multi-cliente del backlog, pero distinto alcance).
+
+### OPP-015 · Nota SQLite enum/unique en skill `cap-cli` (T5.2)
+- Problema: MVPs CAP+SQLite asumen que `String enum` y `@assert.unique`
+  se enforcean en runtime; en realidad el DDL SQLite no genera CHECK/UNIQUE
+  y POSTs inválidos devolvían 201 (detectado por `backend-cap` en T5.2-D,
+  desviación 1).
+  Evidencia: `temp/t52-servicedesk/srv/servicedesk.js:1-11` (nota +
+  validación en handlers 400/409) + `AI/skills/cap-cli/SKILL.md` (+2 líneas
+  con versiones verificadas) + 4 clientes regenerados por render.
+  Componente: `AI/skills/cap-cli` (producto, capacidad existente mejorada —
+  no skill nueva, según Fase K).
+  Impacto: medio (todo MVP CAP+SQLite). Frecuencia: cada validación de enums.
+  Causa: presunción de enforcement DDL. Solución: nota en skill + patrón
+  handlers (aplicado). Esfuerzo: T0. Riesgo regresión: nulo (docs;
+  `render --check` 61 OK, `validate-meta` 54 OK).
+  Prioridad: Medium. Estado: COMPLETED (2026-11-03).
