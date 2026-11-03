@@ -20,10 +20,27 @@
 
 ## Después
 
-- [ ] `opencode.jsonc` real de ejemplo con MCPs por fase.
-- [ ] Métricas reales de eficiencia cuando el cliente exponga telemetría.
-
 ## Hecho
+
+- [x] R2.4 `opencode.jsonc` por fases + telemetría local (2026-11-03):
+  `AI/opencode.jsonc.example` extendido (1 activo `graphify-code` byte-igual
+  fragment + 6 MCP comentados por fase, placeholders `<...>`, claves
+  verificadas schema OpenCode v2.0.23 incl. `timeout`) +
+  `scripts/check-opencode-example.js` (estructural, "no implica conectado") +
+  `AI/scripts/log-telemetry.js` (opt-in `HARNESS_TELEMETRY=1`, JSONL `temp/`,
+  duración+exit reales, `steps` omitido sin fuente, redacción
+  `token|secret|passwd|pwd|password|key=|authorization=`) +
+  `scripts/tests/test-*.js` 7 pass/0 fail + `AI/docs/opencode-fases.md` +
+  `docs/engineering/metrics/telemetry-local.md` (`baseline-P1.md` intacto);
+  `validate-meta` 58 OK (+3 checks), `docs/mcp/catalog.md` +1 línea; QA APTO
+  (58 checks, render 61, pack 178 limpio, versiones 0.3.2, tests 7/0,
+  redacción OK); reviewer APTO-CON-PENDIENTES (P2-1 `timeout` en header y
+  P2-3 regex ampliada aplicados y re-verificados en verde; P2-2 duplicación
+  `stripJsonc` queda como deuda documentada, sin refactor); decisiones:
+  lockfile no aplica, placeholders `<...>` solo en real local, `steps`
+  omitido sin fuente del cliente, conectividad no afirmada; capacidad parcial
+  honesta en métricas (duración+exit reales, steps/tokenomics n/d sin fuente
+  del cliente); sin commit/push, sin version bump, `AI/clients/` intacto.
 
 - [x] R2.3 matriz compatibilidad OS×cliente (2026-11-03): canónica
   `docs/engineering/compatibility-matrix.md` (12 celdas: 1 VERIFIED + 11

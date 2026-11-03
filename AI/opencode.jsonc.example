@@ -1,5 +1,14 @@
 // PLANTILLA versionada. El `opencode.jsonc` real es LOCAL (generado al instalar, ignorado).
 // No editar este ejemplo por MVP: copiar a `<raíz>/opencode.jsonc` y ajustar allí.
+// Guia por fases: `AI/docs/opencode-fases.md`. Validar con
+// `node scripts/check-opencode-example.js` (estructural; no implica conectado).
+// Claves verificadas contra schema https://opencode.ai/config.json (OpenCode v2.0.23):
+// top: `$schema`, `mcp`; servidor local: `type`, `command`, `cwd`,
+// `environment`, `enabled`; servidor remoto: `type`, `url`, `headers`, `enabled`;
+// comun: `timeout`.
+// Lo no verificado va solo en comentario, nunca en JSON.
+// Placeholders `<...>`: rellenar en el real local; nunca claves en repo.
+// Si descomentas un bloque, anade la coma que falte en el bloque anterior.
 {
   "$schema": "https://opencode.ai/config.json",
   "mcp": {
@@ -9,5 +18,57 @@
       "cwd": ".",
       "enabled": false
     }
+    // FASE 1 Investigacion — `context7`: docs vigentes. Entorno: ninguno
+    // (servidor remoto por `url`; sin variables). Para habilitar: descomentar
+    // en el real local y poner `"enabled": true`.
+    // "context7": {
+    //   "type": "remote",
+    //   "url": "<CONTEXT7-MCP-URL>",
+    //   "enabled": false
+    // },
+    // FASE 1 Investigacion — `codebase-memory`: grafo del repo indexado.
+    // Entorno: ninguno; exige proyecto ya indexado (sin reindex redundante).
+    // "codebase-memory": {
+    //   "type": "local",
+    //   "command": ["<CODEBASE-MEMORY-COMMAND>"],
+    //   "cwd": ".",
+    //   "enabled": false
+    // },
+    // FASE 0 Transversal (opcional) — `github`: repos remotos/PRs solo si la
+    // spec lo pide. Entorno: el portador vive SOLO en el real local
+    // (`headers`), nunca en repo.
+    // "github": {
+    //   "type": "remote",
+    //   "url": "<GITHUB-MCP-URL>",
+    //   "headers": {
+    //     "Authorization": "Bearer <GITHUB-PORTADOR>"
+    //   },
+    //   "enabled": false
+    // },
+    // FASE 4 Desarrollo — `eslint`: calidad estatica JS/TS. Entorno: ninguno
+    // (comando local por `command`).
+    // "eslint": {
+    //   "type": "local",
+    //   "command": ["<ESLINT-MCP-COMMAND>"],
+    //   "cwd": ".",
+    //   "enabled": false
+    // },
+    // FASE 7 E2E — `playwright`: validacion Fiori en navegador. Entorno: host
+    // CDP en http://localhost:9222 (`AI/scripts/cdp-chrome.ps1 ensure` antes,
+    // `cleanup` despues; sin endpoint verificado no hay E2E que dar por hecha).
+    // "playwright": {
+    //   "type": "local",
+    //   "command": ["<PLAYWRIGHT-MCP-COMMAND>", "--cdp-endpoint", "http://localhost:9222"],
+    //   "cwd": ".",
+    //   "enabled": false
+    // },
+    // FASE 7 E2E — `chrome-devtools`: depuracion (traces, LCP, heaps).
+    // Entorno: ninguno extra (canal propio, no necesita :9222).
+    // "chrome-devtools": {
+    //   "type": "local",
+    //   "command": ["<CHROME-DEVTOOLS-MCP-COMMAND>"],
+    //   "cwd": ".",
+    //   "enabled": false
+    // }
   }
 }

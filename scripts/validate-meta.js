@@ -119,6 +119,48 @@ try {
   cp.execSync("node scripts/render-clients.js --check", { cwd: ROOT, stdio: "pipe" });
   ok.push("OK: render --check");
 } catch (e) { fail.push("RENDER-DIFIERE (corre node scripts/render-clients.js)"); }
+// R2.4: ejemplo opencode por fases + telemetría mínima local (+3 checks).
+function stripJsonc(s) {
+  let out = ""; let i = 0; let q = null;
+  while (i < s.length) {
+    const c = s[i]; const n = s[i + 1];
+    if (q) {
+      out += c;
+      if (c === "\\") { out += n || ""; i += 2; continue; }
+      if (c === q) q = null;
+      i++; continue;
+    }
+    if (c === '"' || c === "'") { q = c; out += c; i++; continue; }
+    if (c === "/" && n === "/") { while (i < s.length && s[i] !== "\n") i++; continue; }
+    if (c === "/" && n === "*") {
+      i += 2;
+      while (i < s.length && !(s[i] === "*" && s[i + 1] === "/")) {
+        if (s[i] === "\n") out += "\n";
+        i++;
+      }
+      i += 2; continue;
+    }
+    out += c; i++;
+  }
+  return out;
+}
+try {
+  cp.execSync("node scripts/check-opencode-example.js", { cwd: ROOT, stdio: "pipe" });
+  ok.push("OK: ejemplo opencode por fases valido");
+} catch (e) { fail.push("EJEMPLO-DIFIERE (node scripts/check-opencode-example.js)"); }
+try {
+  const exJ = JSON.parse(stripJsonc(fs.readFileSync(path.join(ROOT, "AI/opencode.jsonc.example"), "utf8")));
+  const frJ = JSON.parse(stripJsonc(fs.readFileSync(path.join(ROOT, "AI/opencode.fragment.jsonc"), "utf8")));
+  if (JSON.stringify(frJ.mcp) === JSON.stringify({ "graphify-code": exJ.mcp["graphify-code"] }))
+    ok.push("OK: fragmento C ejemplo opencode");
+  else fail.push("FRAGMENT-DIFIERE (AI/opencode.fragment.jsonc)");
+} catch (e) { fail.push("FRAGMENTO-ILEGIBLE: " + e.message); }
+try {
+  const raw = fs.readFileSync(path.join(ROOT, "AI/opencode.jsonc.example"), "utf8").replace(/<[^<>\n]*>/g, "");
+  const leak = raw.match(/token|secret|passwd|pwd|password|BEGIN PRIVATE|sk-|ghp_|AKIA|authorization\s*=/i);
+  if (leak) fail.push("SECRETO-POSIBLE en ejemplo (" + leak[0] + ")");
+  else ok.push("OK: ejemplo opencode sin secretos");
+} catch (e) { fail.push("EJEMPLO-ILEGIBLE: " + e.message); }
 try {
   cp.execSync("node .github/scripts/check-release-versions.js", { cwd: ROOT, stdio: "pipe" });
   ok.push("OK: triple version");

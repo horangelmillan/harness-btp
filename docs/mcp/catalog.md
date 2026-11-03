@@ -16,3 +16,4 @@ coste, alternativas. No inventar servidores.
 
 Coste: cada MCP suma contexto y llamadas; cargar solo en su fase
 (`AI/AGENTS.md § MCP y skills`). Sin telemetría no hay métricas de coste.
+> Telemetría mínima local (duración/exit sin plataforma): `docs/engineering/metrics/telemetry-local.md`; plantilla por fases: `AI/docs/opencode-fases.md`.
