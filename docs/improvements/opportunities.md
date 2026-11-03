@@ -76,6 +76,10 @@ Un duplicado detectado se cierra como `REJECTED (duplicada de OPP-xxx)`.
 - Evidencia: re-registro intencional de OPP-001 durante este ciclo.
   Búsqueda en backlog + improvement-log + este registro localiza OPP-001 →
   segundo registro cerrado como `REJECTED (duplicada de OPP-001)`.
+  Aclaración T5.1 (2026-11-03, sin cambio de decisión): el `REJECTED` se
+  refiere al duplicado sin ID propio, no a OPP-005; ver también
+  `docs/quality/testing-strategy.md:92` (G duplica OPP-001 → REJECTED).
+  Historial git: OPP-005 creada en `da66d5c` siempre con estado COMPLETED.
   Prioridad: Medium. Estado: COMPLETED (mecanismo §2 verificado).
 
 ### OPP-006 · Skill reutilizable XSUAA/IAS (Escenario H, SAP BTP)
@@ -140,3 +144,78 @@ Un duplicado detectado se cierra como `REJECTED (duplicada de OPP-xxx)`.
   Riesgo regresión: medio si se duplica (confusión de triggers).
   Prioridad: Low. Estado: REJECTED (2026-11-03: duplicada/solapada —
   derivado a mejora futura de `cap-cli`, con justificación).
+
+### OPP-011 · Validador condicional producto `validate-app` (T5-E/F)
+- Problema: `/verify` solo 4 checks genéricos; checklists XSUAA/Approuter
+  eran guías sin ejecución; ningún diagnóstico estructurado por tipo de app.
+  Evidencia: auditoría T5-A/B (researcher T5-C + architect T5-D) +
+  `AI/scripts/validate-app.ps1` / `.sh` (solo-lectura, veredictos
+  PASS/WARNING/FAIL/N-A/BLOCKED, exit 0/1) + integración en
+  `AI/agents/qa-review.md` (E5) y `AI/commands/verify.md` (E7).
+  Componente: `AI/scripts|agents|commands` (producto).
+  Impacto: alto (puerta E5/E7 con evidencia previa condicional).
+  Frecuencia: cada MVP con backend/frontend/MTA.
+  Causa: validación documentada sin implementación ejecutable.
+  Solución: validador condicional por archivos presentes + diagnósticos
+  archivo|problema|impacto|fix + niveles LOCAL/BTP/E2E (implementado).
+  Esfuerzo: T2 (diseño + 2 scripts + 3 ediciones + demo + render).
+  Riesgo regresión: bajo (solo-lectura; `render --check` 61 OK,
+  `validate-meta` 54 OK, triple 0.3.2; demo 22 PASS + 1 BLOCKED).
+  Prioridad: High. Estado: COMPLETED (2026-11-03: runtime local verificado
+  por orquestador + harness-qa APTO + reviewer APTO-CON-PENDIENTES;
+  sin paisaje BTP real — ver OPP-006/008 VALIDATING).
+
+### OPP-012 · Escenario demo local `app-local-demo` (T5-I)
+- Problema: sin escenario mínimo que demuestre generación+validación
+  end-to-end sin credenciales. Evidencia:
+  `AI/specs/examples/app-local-demo/` (package.json cds^10.2.2/sqlite^3.1.2,
+  db/schema.cds Books, srv/service.cds con @(requires:'Viewer'),
+  mta.yaml uaa `org.cloudfoundry.managed-service`, SQLite solo-local
+  documentado, xs-security/xs-app/manifest coherentes, test/README).
+  Componente: `AI/specs/examples` (producto). Impacto: medio (base
+  reproducible para E2E futuro). Frecuencia: cada ciclo de validación.
+  Causa: demos anteriores acopladas a paisaje real. Solución: demo
+  autocontenida local + `test/validate-local.md`.
+  Esfuerzo: T1 (dentro de T5-EF). Riesgo regresión: nulo (ejemplos).
+  Prioridad: Medium. Estado: COMPLETED (2026-11-03: validate-app exit 0
+  en `.ps1` y `.sh`; `cds compile/test` pendientes de cds-dk — ver OPP-013).
+
+### OPP-013 · Convertir BLOCKED `cds` en verificación LOCAL-BUILD (T5-G)
+- Problema: `validate-app` emite BLOCKED en `cds` (CLI ausente en este
+  equipo/CI); `cds compile --to edmx` y `cds test` de la demo no ejecutados.
+  Evidencia: salida `BLOCKED|build|cds|CLI cds no disponible` (`.ps1` y
+  `.sh`, exit 0) + QA T5-G pendiente ambiental.
+  Componente: entorno dev/CI (no producto). Impacto: medio (compilación
+  real CDS sin verificar). Frecuencia: cada validación CAP.
+  Causa: `cds` solo vía proyecto (`npx -p @sap/cds-dk`), nada instalado.
+  Solución: instalar `@sap/cds-dk` en CI/dev por proyecto y ejecutar
+  `cds compile --to edmx` + `cds test` sobre la demo; sin cambiar el
+  validador (BLOCKED ya es el comportamiento correcto sin herramienta).
+  Esfuerzo: T1. Riesgo regresión: nulo (entorno).
+  Prioridad: Medium. Estado: COMPLETED (2026-11-03, T5.1: `npm install`
+  reproducible 72 paquetes, `@sap/cds` 10.2.2 + `@cap-js/sqlite` 3.1.2 con
+  lockfile; `cds compile --to edmx` exit 0 con `EntitySet Books`;
+  `npm test` 8/8 en verde con SQLite `:memory:`; `cds test` nativo queda
+  documentado como no aplicable sin `@cap-js/cds-test` — ver
+  `AI/specs/examples/app-local-demo/test/validate-local.md:5`; validador
+  intacto, que ya trataba `cds` ausente como BLOCKED).
+
+### OPP-014 · `node_modules/` ausente en `AI/.gitignore.fragment` (T5.1)
+- Problema: MVPs consumidores que instalen dependencias npm (p. ej. demo
+  CAP T5.1) pueden versionar `node_modules/` porque el fragmento producto
+  no lo ignora (cubre `temp/`, `*.mtar`, `.env*`, cachés de cliente, pero
+  no `node_modules/`).
+  Evidencia: `AI/.gitignore.fragment` (sin línea `node_modules/`) vs
+  `.gitignore:2` del propio harness (sí la tiene); `AI/specs/examples/
+  app-local-demo/node_modules/` existe en disco ignorado solo por el
+  `.gitignore` raíz, no por el fragmento que heredarían los MVPs.
+  Componente: `AI/.gitignore.fragment` (producto, instalador lo fusiona).
+  Impacto: medio (repos consumidores contaminados). Frecuencia: cada MVP
+  con `npm install`. Causa: fragmento previo a demos con dependencias.
+  Solución: añadir `node_modules/` (+ `package-lock.json` NO — el lock
+  debe versionarse para reproducibilidad) y caso de prueba en instalador.
+  Esfuerzo: T0 (1 línea + verificación `bin/harness-btp.js --help`/
+  install en `temp/`). Riesgo regresión: bajo (solo ignora más).
+  Prioridad: Medium. Estado: PROPOSED (2026-11-03: deduplicado — sin
+  coincidencia en backlog/log/findings/este registro; temáticamente
+  cercano al item P2 multi-cliente del backlog, pero distinto alcance).

@@ -26,6 +26,26 @@
 
 ## Hecho
 
+- [x] T5 Application Engineering & Verification: auditoría A/B real
+  (research T5-C + diseño T5-D reutilizando `/flow`+`/verify`+`qa-review`,
+  sin agentes/comandos/skills nuevos) + `AI/scripts/validate-app.ps1/.sh`
+  (OPP-011, condicional PASS/WARNING/FAIL/N-A/BLOCKED, 22 PASS + 1 BLOCKED
+  en demo, paridad ps1/sh, FAIL→exit 1 con diagnóstico) + demo
+  `AI/specs/examples/app-local-demo` (OPP-012, CAP+SQLite local, mta.yaml
+  CF válido, `@(requires:'Viewer')`) + revisión SAP (tipos MTA corregidos)
+  + QA APTO + reviewer APTO-CON-PENDIENTES; `render --check` 61 OK,
+  `validate-meta` 54 OK, triple 0.3.2; OPP-013 PROPOSED (cds-dk);
+  OPP-006/008 siguen VALIDATING (sin BTP real); sin commits (2026-11-03).
+- [x] T5.1 Application Runtime Verification: demo CAP ejecuta de verdad
+  (`npm install` 72 pkgs + lockfile; `cds compile` exit 0; `npm test`
+  8/8: 401/CRUD 201/200/404/400/204 con SQLite `:memory:` y mocks
+  reader/writer solo-[development]) + validate-app 9 escenarios A–J
+  (paridad ps1/sh 9/9 tras fix BOM en `json_ok`, 0 mutaciones,
+  limitación honesta: sintaxis CDS la captura `cds compile`)
+  + OPP-005 aclarada (REJECTED era el duplicado, historial `da66d5c`)
+  + OPP-013 COMPLETED; `cds test` nativo documentado no aplicable sin
+  `@cap-js/cds-test`; sin commits (2026-11-03).
+
 - [x] T4-E/F/G conocimiento: OPP-006→VALIDATING (xs-security, APTO estático
   54/61/0.3.2, sin BTP real) + OPP-008 VALIDATING (approuter) + OPP-009
   DEFERRED (HANA) + OPP-010 REJECTED (OData→mejora `cap-cli`); mapa/catálogos
