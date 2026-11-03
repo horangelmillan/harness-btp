@@ -76,3 +76,16 @@ del orquestador; subagentes sin shell/escritura → ejecución directa):
   triple versión 0.3.2; npm `files` excluye `graphify-out/`.
 - Config solo usuario (`~/.config/opencode/opencode.jsonc`,
   `graphify-local`, aditiva); nada versionado que obligue a otros devs.
+
+## Freshness Knowledge Lifecycle (2026-11-03, ver `knowledge-lifecycle.md` §4–§6)
+
+- `detect_changes` proyecto `C-Users-Horan-Desktop-harness-btp`:
+  `changed_count=0` (árbol limpio) → cero reindex (escenarios F/H).
+- `graphify check-update .` en silencio con HEAD (`024a316`) por delante del
+  grafo (`built_at_commit` anterior) en 2 commits solo-docs → correctamente
+  sin `update` (clase A, escenarios F/H).
+- `index_status`: ready 726/790. `graph_stats`: 517/381/159 con
+  `built_at_commit` 2 commits por detrás de HEAD (ambos solo-docs);
+  `check-update` en silencio → correctamente sin `update`.
+- Fallo de herramienta → `PEND-KNOWLEDGE` en backlog + APTO-CON-PENDIENTE,
+  nunca bloqueo (escenario G, política del ciclo).

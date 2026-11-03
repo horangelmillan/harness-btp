@@ -49,7 +49,9 @@ refactor (deuda→dependencias→diseño→implementación→regresión),
 improvement (observar harness→medir→cambio acotado→comparar→registrar),
 release (verificar→compat→render→tests→changelog→versión→artefactos).
 Composables, reutilizan etapas comunes. Inteligencia previa opcional:
-`knowledge-map.md` + `impact-guide.md` (T0/T1/T2, ver ADR-002).
+`knowledge-map.md` + `impact-guide.md` (T0/T1/T2, ver ADR-002). Ciclo
+transversal retrieve → verify: `knowledge-lifecycle.md` (referenciado en
+cada flujo, checklist al cierre).
 
 ## Automejora
 

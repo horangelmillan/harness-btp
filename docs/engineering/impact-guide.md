@@ -41,6 +41,8 @@ Regla: todo "sí" en 2–5 sube a T2. "Sí" en 6 con resto "no" = T0.
 > es fuente contextual bajo demanda, nunca paso obligatorio. T2 que toque
 > dependencias la consulta el especialista que la ejecuta, con presupuesto
 > acotado; T0/T1 no la necesitan (búsqueda directa basta).
+> Ciclo completo retrieve → verify: `docs/engineering/knowledge-lifecycle.md`.
+> T0 = sin retrieval; T1 = 1 fuente acotada; T2 = hasta 2 justificadas.
 
 ## 5. Escenarios A–E resueltos
 
@@ -58,3 +60,10 @@ Regla: todo "sí" en 2–5 sube a T2. "Sí" en 6 con resto "no" = T0.
 - **E (T0, no promocionar):** cambio de 6 líneas en `.gitignore.fragment`
   (ver backlog "Ahora"): aunque el tema sea P2, el diff acotado no justifica
   ciclo P1 completo → directo con `validate-meta.js` en verde.
+- **F (T0, narrativa sin impacto):** clase A → `graphify check-update`
+  en silencio + `detect_changes.changed_count=0` bastan como evidencia;
+  prohibido `update`/reindex (ver `knowledge-lifecycle.md` §6).
+- **G (fallo no bloqueante):** herramienta caída → checklist §5 pasos 1–2+7:
+  APTO-CON-PENDIENTE + `PEND-KNOWLEDGE` en backlog, `validate-meta.js` verde.
+- **H (fresco, cero indexaciones):** `check-update` silencio / `index_status`
+  fresh → se demuestra frescura sin mutar índices.

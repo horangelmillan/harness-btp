@@ -17,6 +17,7 @@ No duplica contenido: el detalle vive en cada catálogo/fuente.
 | Agentes producto (11, reutilizar patrones) | `docs/agents/catalog.md` § Producto |
 | MCP (7, descubrir antes de instalar) | `docs/mcp/catalog.md` |
 | Grafo estructural local (Graphify, opt-in) | `docs/mcp/graphify-local.md` |
+| Ciclo conocimiento (retrieve → verify) | `docs/engineering/knowledge-lifecycle.md` |
 | Skills producto (4) + globales + meta | `docs/skills/catalog.md` |
 | Flujos (5: feature/research/refactor/improvement/release) | `docs/engineering/system-overview.md` § Flujos |
 | Contratos delegación/respuesta | `docs/engineering/contracts.md` |
@@ -30,6 +31,8 @@ No duplica contenido: el detalle vive en cada catálogo/fuente.
 
 - Orquestador → catálogo agentes: elige especialista sin copiar su spec.
 - Orquestador → impact-guide: clasifica T0/T1/T2 antes de delegar.
+- Orquestador → lifecycle: retrieval/sync según T en
+  `knowledge-lifecycle.md` (T0 omite, T1/T2 selectivo, cierre §5).
 - Implementer/qa → catálogo MCP: solo MCP listados; si falta, propone vía
   `mcp-skills-engineer`, no lo inventa.
 - Implementer → catálogo skills: reutiliza producto/globales primero.

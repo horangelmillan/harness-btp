@@ -46,3 +46,12 @@
   `docs/mcp/graphify-local.md` + catálogo + knowledge-map +
   system-overview + impact-guide + ADR-003; `AI/` intacto, npm limpio
   (2026-11-03).
+- [x] Knowledge Lifecycle: ciclo retrieve → verify transversal
+  (`docs/engineering/knowledge-lifecycle.md` canónico + punteros de 1 línea
+  en 5 flujos y orquestador, sin flujo/agentes/aprobaciones nuevos);
+  matriz Graphify vs Codebase Memory vs ninguno + anti-doble-consulta;
+  detect A/B/C + exclusión; sync `graphify update` bajo demanda con puerta
+  `check-update` y `detect_changes` para Codebase Memory; freshness 3 campos;
+  checklist cierre §5 con fallo no bloqueante (`PEND-KNOWLEDGE`);
+  escenarios A–H verificados (F/H: cero indexaciones con árbol limpio);
+  `AI/` intacto (2026-11-03).
