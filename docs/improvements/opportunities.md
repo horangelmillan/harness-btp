@@ -340,3 +340,17 @@ Un duplicado detectado se cierra como `REJECTED (duplicada de OPP-xxx)`.
   `AI/scripts/validate-app.ps1` fallback ahora WARNING (paridad exacta;
   caso normal PASS/PASS en ambos). QUnit/OPA5: solo stub, NO ejecutado
   (sin runner; no se afirma).
+
+### OPP-019 · Fricción sesión/roles BTP sin guía operativa (R3-C)
+- Problema: fricción sesión/roles sin guía operativa (--info no prueba sesión; confusión rol vs role collection; re-preguntas dentro del alcance).
+  Evidencia: diseño R3-C (sin tocar paisaje BTP/CF; sintaxis verificada en CLI 2.116.3).
+  Componente: AI/skills/btp-cli (producto, capacidad existente mejorada, no skill nueva) + AI/scripts/check-prereqs.ps1/.sh (fila OPT btp).
+  Impacto: medio (toda tarea BTP con sesión/roles). Frecuencia: cada turno con comandos btp.
+  Causa: skill sin session-check/rol-colección/alcance + btp ausente en check-prereqs. Solución: 3 bloques en btp-cli/SKILL.md (session-check con lectura real + Unknown session hacia re-login SSO manual; rol-colección con create/add/assign idempotente; alcance aprobado) + fila OPT btp en ambos check-prereqs (solo --version, sin llamadas al servidor; BTP_BIN con guardia basename).
+  Esfuerzo: T1. Riesgo regresión: bajo (solo-docs producto + fila OPT
+  solo-lectura; `render --check` 65 OK, triple 0.3.2, `validate-meta` 58 OK,
+  `check-package` 183 limpio, `check-prereqs.ps1/.sh` fila btp verificada
+  en ambos).
+  Prioridad: Medium. Estado: COMPLETED (2026-11-04, este ciclo; validado
+  sin paisaje por diseño — operativa viva ya demostrada en R3-C).
+  Deduplicación p2: sin coincidencia en backlog/log/findings/este registro (OPP-006 auth XSUAA/IAS; OPP-009 HANA diferido; OPP-010 skill OData rechazada, alcance distinto).

@@ -4,6 +4,22 @@ Roadmap: [fuente de verdad del roadmap](../engineering/roadmap/source-of-truth.m
 
 ## Ahora (P-siguiente)
 
+- [ ] R3-B HANA Cloud + HDI (condicionada a plan free viable; provisión
+  con autorización específica) o R3-E (IAS + Connectivity) según decida
+  el usuario.
+
+- [x] R3-C XSUAA (COMPLETADA 2026-11-04): instancia `books-xsuaa` (application, `books-dev`) creada
+  con `-c xs-security.json` (ruta de fichero; JSON inline rechazado por
+  el CLI) + binding `existing-service` + `auth: dummy` dev / `xsuaa`
+  `[production]` + suite 11/11 + MTAR 20.6 MB + deploy OK. Runtime:
+  sin token 401 (colección + $metadata), JWT malformado 401,
+  `/health` 200, token client_credentials válido sin scopes 403
+  (key temporal `r3c-temp` creada→usada→borrada y verificada en 0 keys,
+  cero secretos en repo/logs). Lecciones: dummy ignora el binding
+  (exige perfil production); `cds-serve` no sirve SQLite en CF.
+  Pendiente guiado resuelto en R3-D: 200 con rol verificado vía approuter
+  tras login SSO (ver entrada R3-D).
+
 - [ ] Branch protection: marcar job `validate` como required en `main`.
 - [ ] Pin SHA acciones (recomendación security, hoy `@v6` por convención).
 - [x] Indexar `harness-btp` en `codebase-memory` → proyecto
@@ -23,6 +39,22 @@ Roadmap: [fuente de verdad del roadmap](../engineering/roadmap/source-of-truth.m
 ## Después
 
 ## Hecho
+
+- [x] R3-D Approuter + Destination (COMPLETADA 2026-11-04, 200 con rol
+  verificado en navegador del usuario): `books-approuter` + `books-srv`
+  STARTED, `books-destination` lite, destino `books-srv`
+  (OAuth2UserTokenExchange + credenciales del token-service, keys
+  temporales borradas). Fixes: `logout` objeto, `.mtaignore` + limpiar
+  `mta_archives` (anidado), sin `methods` en approuter 23.x (Viewer en
+  ruta, Editor vía CAP 403), `TENANT_HOST_PATTERN` (update a dedicated
+  imposible), `redirect-uris` registradas, destino con Name/KeyName y
+  luego con credenciales (path API válido:
+  `destination-configuration/v1/instanceDestinations`; `PUT` 405,
+  recrear por DELETE+POST). Matriz: sin login redirect/401, token sin
+  scopes 403, login SSO + rol → 200 `{"value":[]}`. Incidente e2e-fiori
+  (espera ciega + cierre por PID, lección registrada). Pendiente menor:
+  403 solo-Viewer (usuario con ambos roles) y arranque E2E headed desde
+  sub-sesión (sin desktop app). Siguiente: R3-B o R3-E.
 
 - [x] R3-A CF + CAP + OData V4 + MTA (2026-11-04, DESPLEGADO y verificado):
   app Books en `temp/r3a/books` (OData V4, SQLite efímero declarado,
