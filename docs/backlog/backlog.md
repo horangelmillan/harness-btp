@@ -1,5 +1,7 @@
 # Backlog
 
+Roadmap: [fuente de verdad del roadmap](../engineering/roadmap/source-of-truth.md)
+
 ## Ahora (P-siguiente)
 
 - [ ] Branch protection: marcar job `validate` como required en `main`.
@@ -21,6 +23,41 @@
 ## Después
 
 ## Hecho
+
+- [x] R3-A CF + CAP + OData V4 + MTA (2026-11-04, DESPLEGADO y verificado):
+  app Books en `temp/r3a/books` (OData V4, SQLite efímero declarado,
+  `mta.yaml` 256M sin servicios gestionados): `cds compile` exit 0, suite
+  local 6/6, `validate-app` sin FAIL, `mbt build` OK (MTAR final 14.6 MB).
+  Despliegue autorizado → 3 ciclos: (1) crash por auth JWT sin XSUAA (fix:
+  `cds.requires.auth.kind: dummy`); (2) 500 por SQLite sin esquema (fix:
+  `cds deploy --to sqlite` en build + `server.js` ESM con esquema en el
+  MTAR); (3) VERDE: `books-srv` started web:1/1 en
+  `e1156e9atrial-dev-books-srv.cfapps.us10-001.hana.ondemand.com`, CRUD
+  HTTP 200/201/200/204/404 con registro de prueba eliminado, 0 servicios
+  creados. Lecciones: builder `npm` sin `commands`; `cds-serve` no sirve
+  SQLite en CF (requiere `server.js` + esquema desplegado); SQLite
+  efímero ante restage. Siguiente: R3-B; sin commit/push.
+
+- [x] R3.0.1 preparación operativa local (2026-11-04): skill producto
+  `btp-cli` (solo lectura `--info/get/list`, convención `$env:BTP_BIN`,
+  espejo de `cf-cli`) + `cf-safe.ps1` honra `$env:CF_BIN` con guardia
+  fail-closed basename (nombres `cf`/`sap_cf`) + `check-prereqs.ps1/.sh` resuelven `CF_BIN` con
+  hint de mapeo + `cf-safe.sh` guardia basename y quote de binario con
+  espacios + fila `btp-cli` en catálogo + `BTP_BIN` en tabla `AI/AGENTS.md`;
+  `AI/clients/` vía render (65 archivos); validación viva: `btp --info` +
+  `get subaccount` vigentes, broker ps1/sh `target` OK contra
+  `api.cf.us10-001` con binario real v8.19.0 (mapeo local no versionado
+  `sap_cf.cmd` → `cf.exe`; el otro `cf` en PATH es ajeno, sin renombrar ni
+  reinstalar CLIs), `npx -p @sap/cds-dk` operativo
+  (10.2.0 en npm), `check-prereqs` FALTA+hint sin mapeo y OK con mapeo en
+  ps1/sh; gates `render --check` 65 OK, `check-package` 183 limpio, triple
+  0.3.2, `validate-meta` 58 OK; QA APTO-CON-PENDIENTES (pendiente cubierto
+  por evidencia viva del orquestador) + reviewer APTO-CON-PENDIENTES
+  (P1-P3 paridad sh/AGENTS aplicados y re-verificados, incl. fix quote de
+  ruta con espacios); decisiones: sin bump de versión, `cap-cli`
+  (`npx -p`) y `sap-verify` (solo clasifica) intactos, `AI/.opencode/`
+  espejo local no tocado, raw logs transitorios borrados; siguiente: R3-A;
+  sin commit/push, sin provisión/despliegue BTP.
 
 - [x] R2.4 `opencode.jsonc` por fases + telemetría local (2026-11-03):
   `AI/opencode.jsonc.example` extendido (1 activo `graphify-code` byte-igual
