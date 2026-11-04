@@ -2,7 +2,7 @@
 
 **Estado al:** 2026-11-04  
 **Versión del producto:** 0.3.2  
-**Estado global:** R3.0 completada (`READY WITH LIMITATIONS`); R3.0.1 completada 2026-11-04; R3-A completada 2026-11-04 (desplegada y verificada); R3-C completada 2026-11-04 (401/403 runtime + roles asignados); R3-D completada 2026-11-04 (200 con rol vía approuter). R3-B, R3-E a R3-F pendientes.
+**Estado global:** R3.0 completada (`READY WITH LIMITATIONS`); R3.0.1 completada 2026-11-04; R3-A completada 2026-11-04 (desplegada y verificada); R3-C completada 2026-11-04 (401/403 runtime + roles asignados); R3-D completada 2026-11-04 (200 con rol vía approuter); R3-B completada 2026-11-04 (CRUD + persistencia HANA). R3-E a R3-F pendientes.
 
 ## Propósito y continuidad
 
@@ -25,7 +25,8 @@ Al retomar el trabajo, leer este documento y sus fuentes; comprobar el checkout,
 | 9 | R3-A | COMPLETADA 2026-11-04 (desplegada y verificada) | App Books STARTED + CRUD HTTP; ver § R3-A y backlog. |
 | 10 | R3-C | COMPLETADA 2026-11-04 (401/403 runtime; 200 con rol guiado pendiente) | Instancia + binding + matriz sin-token/sin-scopes; ver backlog. |
 | 11 | R3-D | COMPLETADA 2026-11-04 (200 con rol vía approuter) | Login SSO + destino OAuth2; ver backlog. |
-| 11 | R3-B, R3-D a R3-F | PENDIENTES / CONDICIONADAS | Persistencia, enrutamiento, identidad/conectividad e integración. |
+| 12 | R3-B | COMPLETADA 2026-11-04 (CRUD + persistencia HANA) | Base + HDI + deployer + restart puro; ver backlog. |
+| 13 | R3-E a R3-F | PENDIENTES / CONDICIONADAS | Identidad/conectividad e integración. |
 | 10 | Pendientes anteriores | PENDIENTES / DIFERIDOS | Retomar después de R3; ver §6 y backlog actual. |
 
 ## Historial de fases completadas
@@ -164,4 +165,4 @@ Al completar o cerrar R3, volver al backlog original antes de declarar terminado
 
 Al cerrar cada fase, registrar en backlog y aquí su estado, fecha, alcance, archivos afectados, evidencia ejecutada, limitaciones, recursos creados/modificados, pendientes y siguiente fase. Mantener `NOT VERIFIED`, `BLOCKED`, `DEFERRED` o `REJECTED` cuando aplique; la ausencia de evidencia no es éxito.
 
-**Siguiente paso registrado:** R3-B (HANA Cloud + HDI, provisión con autorización específica) o R3-E (IAS + Connectivity) según decida el usuario. Al terminar R3, retomar los pendientes anteriores de §6.
+**Siguiente paso registrado:** R3-E (IAS + Connectivity) o R3-F (integración full-stack con HANA) según decida el usuario. Al terminar R3, retomar los pendientes anteriores de §6.

@@ -131,8 +131,10 @@ Un duplicado detectado se cierra como `REJECTED (duplicada de OPP-xxx)`.
   Frecuencia: cada proyecto con HANA. Causa: presupuesto T4 agotado en
   OPP-006/008. Solución: checklist+ejemplo HDI en ciclo futuro con fuente
   oficial. Esfuerzo: T1 estimado. Riesgo: bajo.
-  Prioridad: Medium. Estado: DEFERRED (2026-11-03: pospuesto con justificación,
-  no descartado).
+  Prioridad: Medium. Estado: VALIDATING (2026-11-04 R3-B: base
+  `books-hana` hana-free + HDI `books-db` + deployer Exit 0 + CRUD 201
+  contra HANA + persistencia tras restart verificadas en trial; falta la
+  checklist+ejemplo HDI producto que pedía la solución).
 
 ### OPP-010 · Skill OData dedicada rechazada (T4-G)
 - Problema: propuesta de skill OData dedicada.
@@ -366,3 +368,41 @@ Un duplicado detectado se cierra como `REJECTED (duplicada de OPP-xxx)`.
   `check-package` 183 limpio — verificados por orquestador 2026-11-04).
 - Prioridad: High. Estado: COMPLETED (2026-11-04, este ciclo; validado
   sin navegador/paisaje por diseño).
+
+### OPP-021 · Prohibido pedir al usuario código ejecutable (R3-B)
+- Problema: orquestador pidió al usuario pegar `fetch` en DevTools para POST OData, pudiendo automatizarlo el harness con navegador visible + chrome-devtools/playwright.
+- Evidencia: R3-B (snippet pedido al usuario; 403 resultante era CSRF del snippet, no de roles — diagnosticado en logs CF por el orquestador). Componente: AI/agents/e2e-fiori.md + AI/AGENTS.md § Higiene (producto, capacidades existentes, no agente nuevo).
+- Impacto: alto (toda E2E interactiva). Frecuencia: cada validación que requiera actuar en navegador.
+- Causa probable: regla no escrita; se asumió que el usuario debía actuar. Solución: PROHIBIDO pedir código/DevTools/JWTs al usuario cuando sea automatizable; al usuario solo SSO/consentimiento/decisiones.
+- Esfuerzo: T0. Riesgo de regresion: nulo (solo-docs producto; pendiente gates al cierre).
+- Prioridad: High. Estado: COMPLETED (2026-11-04, este ciclo;
+  render 65 OK, validate 58 OK, check-package 183 limpio, triple 0.3.2).
+
+### OPP-022 · Perfil de navegador persistente opt-in para reutilizar SSO
+- Problema: cada `ensure` usa perfil temporal nuevo; con IdP/SSO el usuario
+  debe re-autenticarse en cada sesión E2E aunque su SSO siga vigente.
+- Evidencia: `AI/scripts/cdp-chrome.ps1` (perfil siempre temporal
+  `mvp-cdp-$Port`; `cleanup` borra el dir) + `AI/AGENTS.md` § Higiene
+  (perfil temporal propio en todo el protocolo).
+  Componente: `AI/scripts/cdp-chrome.ps1` + `AI/agents/e2e-fiori.md` +
+  `AI/AGENTS.md` § Higiene (producto, capacidades existentes mejoradas —
+  no flags CLI nuevos, no agente nuevo).
+  Impacto: medio (toda E2E con login IdP recurrente). Frecuencia: cada
+  sesión E2E tras caducar el perfil temporal.
+  Causa probable: protocolo diseñado solo con perfil temporal por higiene;
+  sin vía opt-in para reutilizar SSO vigente.
+  Solución: `HARNESS_BROWSER_PROFILE` opt-in (si definida se reutiliza SSO;
+  sin ella, temporal como siempre; sesión limpia invocando sin la variable;
+  SSO caducado → `BLOQUEADO` + 1 login manual por flujo existente) +
+  `ensure` anuncia `perfil persistente`, `cleanup` mata PIDs propios pero
+  omite borrar el dir persistente, `status` informa el modo; variable solo
+  en mapeo local no versionado `~/.harness/local.ps1` (como `CF_BIN`) con
+  permisos restringidos; concurrencia instancia única con fail-fast.
+  Esfuerzo: T1 (1 script + 2 docs producto + render).
+  Riesgo de regresión: bajo (por defecto temporal intacto; sin la variable
+  el comportamiento no cambia; validado sin navegador/paisaje por diseño).
+  Prioridad: Medium. Estado: COMPLETED (2026-11-04, este ciclo;
+  QA APTO + reviewer APTO-CON-PENDIENTES con P2/P3 aplicados:
+  owner.json se limpia en cleanup persistente, 1 puerto↔1 perfil
+  documentado; render 65 OK, validate 58 OK, check-package 183 limpio,
+  triple 0.3.2, `status` en ambos modos).

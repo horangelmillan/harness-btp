@@ -4,9 +4,16 @@ Roadmap: [fuente de verdad del roadmap](../engineering/roadmap/source-of-truth.m
 
 ## Ahora (P-siguiente)
 
-- [ ] R3-B HANA Cloud + HDI (condicionada a plan free viable; provisión
-  con autorización específica) o R3-E (IAS + Connectivity) según decida
-  el usuario.
+- [x] R3-B HANA Cloud + HDI (COMPLETADA 2026-11-04): base
+  `books-hana` READY (hana-free 16/80/1, systempassword del usuario
+  solo en memoria transitoria; calibración: sin `-c`/`{}` falla, 30 GB
+  y 32 GB rechazados por límites trial) + HDI `books-db` sin
+  `database_id` (broker resuelve la base; Central innecesario) +
+  deployer Exit 0 + srv STARTED con HANA (fix: `db.sqlite` fuera del
+  MTAR + disk 1G) + POST 201 automatizado (sin pedir código, OPP-021)
+  + persistencia tras restart puro (`HANA Proof 2`). Lección: el POST
+  previo se perdió por redeploy intermedio, no por restart. OPP-009 →
+  VALIDATING. Siguiente: R3-E o R3-F.
 
 - [x] R3-C XSUAA (COMPLETADA 2026-11-04): instancia `books-xsuaa` (application, `books-dev`) creada
   con `-c xs-security.json` (ruta de fichero; JSON inline rechazado por
@@ -39,6 +46,11 @@ Roadmap: [fuente de verdad del roadmap](../engineering/roadmap/source-of-truth.m
 ## Después
 
 ## Hecho
+
+- [x] Perfil navegador persistente opt-in COMPLETED 2026-11-04 (OPP-022):
+  `HARNESS_BROWSER_PROFILE` reutiliza SSO (temporal por defecto
+  intacto); QA APTO + reviewer con P2/P3 aplicados; gates 65/58/183;
+  activación: 1 línea en `~/.harness/local.ps1` (fuera del repo).
 
 - [x] Mejora E2E interactivo COMPLETED 2026-11-04 (OPP-020): `e2e-fiori`
   con espera por evento + monitoreo activo + pre-chequeo visible +
