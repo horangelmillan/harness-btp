@@ -48,6 +48,19 @@ navegador y CDP):**
   el veredicto mira el resultado final + consola limpia de errores de app
   (404s inocuos de `Component-preload`/`i18n` no bloquean, se reportan aparte).
 
+**Espera por evento + monitoreo activo:**
+- Esperar SIEMPRE por evento observable (cambio de URL/título/estado) con
+  polling acotado y timeout explícito; NUNCA waits ciegos (`waitForURL` u
+  otros sin timeout ni condición de salida).
+- Ante página de error determinista (IdP 4xx como `redirect_uri`, 500
+  persistente) abortar y entregar de inmediato.
+- Monitoreo activo obligatorio: revisar red/consola/snapshot periódicamente
+  durante esperas. Pre-chequeo de capacidad visible ANTES de empezar (sin
+  desktop app → informarlo y veredicto `BLOQUEADO`, no a mitad).
+- `chrome-devtools` = observación primera (red/consola/snapshot);
+  `playwright` = interacción. Anti-atasco: ante orden de entrega, entregar
+  + cleanup por PID propio sin discutir.
+
 **Entregable:**
 1. Resultado por criterio (comando + salida real + captura/ruta si aplica).
 2. Consola (conteo de errores por tipo) + red (status de `$metadata`,

@@ -226,6 +226,8 @@ el `ECONNREFUSED`. `chrome-devtools` usa canal propio y no necesita `:9222`.
    Sin limpieza verificada no se cierra la tarea.
 4. **Evidencia:** el cierre informa salida de `ensure`/`cleanup` (o de
    `status` si no se usó navegador) + qué quedó pendiente.
+   Esperas solo por evento observable con timeout explícito (patrón
+   `e2e-fiori` § Espera por evento; cero waits ciegos).
 
 ## MCP y skills: selección por fase
 
