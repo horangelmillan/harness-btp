@@ -4,6 +4,44 @@ Roadmap: [fuente de verdad del roadmap](../engineering/roadmap/source-of-truth.m
 
 ## Ahora (P-siguiente)
 
+- [x] R3-F integración full-stack (COMPLETADA 2026-11-04): diseño
+  T2 harness-architect opción B estáticos en books-srv (+0M, sin
+  recursos nuevos) + autorización usuario "Aprobar deploy UI5"
+  (org e1156e9atrial/space dev; mismos módulos/recursos; +0M) + 2
+  correcciones (CDN 1.120.0→1.120 por 404 del exacto, lección T5.5; base
+  href /app/ por resolución de recursos en /). Local: `npm test` 11/11,
+  UI5 local 200 (/app/index.html, manifest books.ui5, OData [], health);
+  `validate-app -Path` exit 0; `validate-meta` 58 OK; build+deploy OK
+  (apps STARTED, bindings intactos). SSO headed: aviso previo al usuario,
+  Chrome visible con perfil persistente `~/.harness/browser-profile`,
+  login manual solo SSO (sin pedir JWT/código; OPP-021 respetada), PIDs
+  propios limpiados, puerto 9222 libre. Diagnóstico $batch con red (CDP +
+  playwright network): #23 GET $metadata 200; #24 POST $batch 403
+  "Forbidden" (9B, sin token = desafío CSRF); #25 HEAD 200 (token fetch
+  automático del modelo); #26 POST $batch 200 con header x-csrf-token y
+  cuerpo con HANA Proof + Proof 2; tabla 3 filas con ambos registros.
+  Conclusión: handshake CSRF estándar, modelo auto-recuperado, SIN defecto
+  (P1 anterior retirado con evidencia). MTAR: `excludes:` ignorado por
+  builder npm (empírico 2 sintaxis) → `ignore:` sí honrado; MTAR final
+  52.906.918 bytes; data.zip solo prod (app, srv, db, server.js,
+  node_modules; sin test/approuter/db.sqlite/gen/.mtaignore/.vscode/
+  Makefile). Post-deploy limpio: tabla con Proofs; R3F-UI-mievy9 201→204
+  + filtro R3F- []; Proofs intactos (4 redeploys); Component-preload 404
+  benigno; screenshot timeout menor. Matriz Editor vía approuter con CSRF:
+  GET colección 200 (HANA Proof + Proof 2), $metadata 200, POST 201,
+  GET 200, PATCH 200, PATCH inválido 400, DELETE 204, GET 404.
+  Persistencia restart (`cf restart`, filter 200) y redeploy verificadas.
+  Limpieza: DELETE 204 + filtro R3F- 200 []; HANA Proof* intactos; cero
+  secretos en repo; keys temporales 0. Hallazgos: P2 excludes-vs-ignore
+  builder npm registrado (lección mta-build, posible mejora futura de
+  skill/docs producto — pendiente, no cambio); P3 screenshot timeout +
+  403 solo-Viewer no testeable (identidad única con ambos roles). QA APTO
+  parcial (re-verificó tests/MTAR/apps/services; no re-verificó SSO por
+  presupuesto) + reviewer COMPLETADA (sin bloqueos). Veredicto: R3-F
+  COMPLETADA 2026-11-04. R3-E no tocada ni marcada. OPP-009 sigue
+  VALIDATING (falta checklist+ejemplo HDI producto). Siguiente: R3-E y
+  pendientes §6.
+
 - [x] R3-B HANA Cloud + HDI (COMPLETADA 2026-11-04): base
   `books-hana` READY (hana-free 16/80/1, systempassword del usuario
   solo en memoria transitoria; calibración: sin `-c`/`{}` falla, 30 GB

@@ -2,7 +2,7 @@
 
 **Estado al:** 2026-11-04  
 **Versión del producto:** 0.3.2  
-**Estado global:** R3.0 completada (`READY WITH LIMITATIONS`); R3.0.1 completada 2026-11-04; R3-A completada 2026-11-04 (desplegada y verificada); R3-C completada 2026-11-04 (401/403 runtime + roles asignados); R3-D completada 2026-11-04 (200 con rol vía approuter); R3-B completada 2026-11-04 (CRUD + persistencia HANA). R3-E a R3-F pendientes.
+**Estado global:** R3.0 completada (`READY WITH LIMITATIONS`); R3.0.1 completada 2026-11-04; R3-A completada 2026-11-04 (desplegada y verificada); R3-C completada 2026-11-04 (401/403 runtime + roles asignados); R3-D completada 2026-11-04 (200 con rol vía approuter); R3-B completada 2026-11-04 (CRUD + persistencia HANA). R3-F completada 2026-11-04 (ver fila 13 y backlog). R3-E pendiente.
 
 ## Propósito y continuidad
 
@@ -26,7 +26,8 @@ Al retomar el trabajo, leer este documento y sus fuentes; comprobar el checkout,
 | 10 | R3-C | COMPLETADA 2026-11-04 (401/403 runtime; 200 con rol guiado pendiente) | Instancia + binding + matriz sin-token/sin-scopes; ver backlog. |
 | 11 | R3-D | COMPLETADA 2026-11-04 (200 con rol vía approuter) | Login SSO + destino OAuth2; ver backlog. |
 | 12 | R3-B | COMPLETADA 2026-11-04 (CRUD + persistencia HANA) | Base + HDI + deployer + restart puro; ver backlog. |
-| 13 | R3-E a R3-F | PENDIENTES / CONDICIONADAS | Identidad/conectividad e integración. |
+| 13 | R3-F | COMPLETADA 2026-11-04 | Diseño opción B estáticos en books-srv (+0M) + autorización "Aprobar deploy UI5". Local: `npm test` 11/11, UI5 local 200, `validate-app` exit 0, `validate-meta` 58 OK, build+deploy OK. SSO headed con perfil persistente (OPP-021). Diagnóstico $batch con red: #23 GET $metadata 200, #24 POST $batch 403 "Forbidden" 9B sin token (desafío CSRF), #25 HEAD 200 (token fetch automático), #26 POST $batch 200 con x-csrf-token y HANA Proof + Proof 2; tabla 3 filas con ambos registros — handshake CSRF estándar, modelo auto-recuperado, SIN defecto (P1 anterior retirado con evidencia). MTAR 52.906.918 bytes (`excludes:` ignorado por builder npm, 2 sintaxis empíricas; `ignore:` honrado; data.zip solo prod). Post-deploy limpio: R3F-UI-mievy9 201→204 + filtro R3F- [], Proofs intactos (4 redeploys), Component-preload 404 benigno, screenshot timeout menor. Persistencia restart y redeploy verificadas. Limpieza DELETE 204 + filtro []; HANA Proof* intactos; 0 temporales; cero secretos. Hallazgos: P2 excludes-vs-ignore (lección mta-build, mejora futura pendiente, no cambio); P3 screenshot timeout + 403 solo-Viewer no testeable. QA APTO parcial (tests/MTAR/apps/services; SSO no re-verificado por presupuesto) + reviewer COMPLETADA sin bloqueos. OPP-009 sigue VALIDATING (falta checklist+ejemplo HDI producto). Ver backlog. |
+| 14 | R3-E | PENDIENTE (no tocada en R3-F) | Identidad/conectividad; ver § R3-E. |
 | 10 | Pendientes anteriores | PENDIENTES / DIFERIDOS | Retomar después de R3; ver §6 y backlog actual. |
 
 ## Historial de fases completadas
@@ -165,4 +166,4 @@ Al completar o cerrar R3, volver al backlog original antes de declarar terminado
 
 Al cerrar cada fase, registrar en backlog y aquí su estado, fecha, alcance, archivos afectados, evidencia ejecutada, limitaciones, recursos creados/modificados, pendientes y siguiente fase. Mantener `NOT VERIFIED`, `BLOCKED`, `DEFERRED` o `REJECTED` cuando aplique; la ausencia de evidencia no es éxito.
 
-**Siguiente paso registrado:** R3-E (IAS + Connectivity) o R3-F (integración full-stack con HANA) según decida el usuario. Al terminar R3, retomar los pendientes anteriores de §6.
+**Siguiente paso registrado:** R3-F COMPLETADA 2026-11-04 (handshake CSRF estándar verificado con red, MTAR 52.9MB con `ignore:`, post-deploy limpio, QA APTO parcial + reviewer COMPLETADA). Siguiente: R3-E (IAS + Connectivity) y pendientes §6. OPP-009 sigue VALIDATING (falta checklist+ejemplo HDI producto). Al terminar R3, retomar los pendientes anteriores de §6.
