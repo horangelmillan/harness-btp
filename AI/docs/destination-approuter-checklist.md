@@ -58,6 +58,7 @@
   estáticos locales, sin HTML5 repo) — no mezclar: o una u otra según la
   spec, verificado por paisaje.
 - Ejemplo mínimo: ver `AI/specs/examples/xs-app.json`.
+- UI5 bajo subruta approuter (`/app/*`): CDN con rama (`1.120`, no pin exacto `1.120.0` → 404); `<base href="/app/">` (recursos resuelven contra `/`); express 5 rechaza `/app/*` (path-to-regexp v8) → regex `/^\/app\/(.+)$/`.
 
 ## 4. Verificación
 

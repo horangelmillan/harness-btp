@@ -31,6 +31,7 @@ navegador y CDP):**
   (`list_console_messages` con filtro `error`), red (`list_network_requests`,
   `get_network_request` para cuerpos 4xx/5xx), `evaluate_script` para estado
   UI5 (modelos, bindings), screenshots solo como evidencia adjunta.
+  - Quirks MCP Playwright: `browser_tabs` exige `action`, `browser_network_requests` exige `static`, `browser_take_screenshot` exige `scale`; `browser_wait_for` timeout fijo 5s; `browser_evaluate` sin `setTimeout` (sandbox → polling con promesa en página).
 - Skills instaladas: `sapui5` (selectores Fiori, binding OData V4, CSRF),
   `playwright-best-practices` + `webapp-testing` (patrones E2E),
   `systematic-debugging` ante fallos, `verification-before-completion`
@@ -46,9 +47,7 @@ navegador y CDP):**
   formatter + `targetType: 'any'`; cero `FormatException` en consola.
 - Tras subida, la fila puede venir sin `extractedJson`: validar panel
   poblado, no solo strip de éxito.
-- Flujo CSRF: primer POST puede dar 403 y reintentar con token — es normal;
-  el veredicto mira el resultado final + consola limpia de errores de app
-  (404s inocuos de `Component-preload`/`i18n` no bloquean, se reportan aparte).
+- Flujo CSRF: primer POST puede dar 403 y reintentar con token — es normal; en `$batch` el primer POST da 403 "Forbidden" 9B → HEAD 200 auto → retry 200 con datos (red #24/#25/#26); tabla "Sin datos" tras el 403 es prematura, veredicto solo tras retry.
 
 **Espera por evento + monitoreo activo:**
 - Esperar SIEMPRE por evento observable (cambio de URL/título/estado) con

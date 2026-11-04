@@ -32,8 +32,9 @@ paquete `@cap-js/cds-dk` **no existe** — el correcto es `@sap/cds-dk`):
 
 - Puerto propio: `const PORT = Number(process.env.PORT || 4011)` (env con
   fallback; nunca literal fijo sin env).
-- Arranque: `spawn(process.platform === 'win32' ? 'cmd.exe' : 'npx', process.platform === 'win32' ? ['/d','/s','/c','npx', '-p', '@sap/cds-dk', 'cds', 'serve', '--port',
+- Arranque: `spawn(... 'cds', 'serve', ...)` (solo sin `server.js` propio; con server propio ver `Arranque único`): `spawn(process.platform === 'win32' ? 'cmd.exe' : 'npx', process.platform === 'win32' ? ['/d','/s','/c','npx', '-p', '@sap/cds-dk', 'cds', 'serve', '--port',
   String(PORT), '--in-memory'] : ['-p', '@sap/cds-dk', 'cds', 'serve', '--port', String(PORT), '--in-memory'], { ..., shell: false })` (win32 vía `cmd.exe /d /s /c npx ...` sin shell: `npx.cmd` directo con `shell:false` falla EINVAL en Node 24 y `shell:true` emite DEP0190; unix usa `npx` directo).
+- Arranque único: si el proyecto tiene `server.js` con `export default cds.server()`, usar `cds run` (no `cds serve` + server propio = doble listen → `EADDRINUSE` y shutdown flaky; suite 11/11 con `cds run` <1s).
 - Espera lista: bucle `GET /Assets` hasta 200 con `Array.isArray(json.value)`,
   timeout 90 s, reintento 500 ms.
 - Lista vacía aislada: `GET /<Entidad>?$filter=<campo> eq '<NOEXISTE-uuid>'`

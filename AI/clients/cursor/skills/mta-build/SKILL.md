@@ -21,6 +21,9 @@ mbt build                # requiere mta.yaml en la raíz del proyecto
   pendiente si una spec lo exige).
 - `mbt build --help` para flags (`--mtar`, `--platform=cf`).
 
+## Exclusión de artefactos
+- Builder npm (mbt 1.2.50) ignora `excludes:` (2 sintaxis probadas) → usar `ignore:` (sí honrado; 246MB→52.9MB, `data.zip` solo prod).
+
 ## Despliegue del MTAR
 
 `cf deploy <archivo>.mtar` requiere el **plugin multiapps**. Verificar

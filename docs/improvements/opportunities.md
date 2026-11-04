@@ -406,3 +406,45 @@ Un duplicado detectado se cierra como `REJECTED (duplicada de OPP-xxx)`.
   owner.json se limpia en cleanup persistente, 1 puerto↔1 perfil
   documentado; render 65 OK, validate 58 OK, check-package 183 limpio,
   triple 0.3.2, `status` en ambos modos).
+
+### OPP-023 · Runner único `cds run` vs doble-listen `cds serve` + `server.js` (R3-F)
+- Problema: patrón doble-listen `cds serve` + `server.js` custom provoca
+  EADDRINUSE y shutdown flaky en suites.
+  Evidencia: R3-F-close 11/11 <1s con runner único + `cap-cli:35-36`
+  documenta `serve`.
+  Componente: `AI/skills/cap-cli` (producto, capacidad existente mejorada).
+  Impacto: medio-alto (toda suite con `server.js` custom). Frecuencia: cada
+  suite con `server.js` custom.
+  Causa probable: patrón sin advertencia contra doble-listen.
+  Solución: bullet arranque único (`cds run` como runner único; no combinar
+  `cds serve` + `server.js` en el mismo puerto).
+  Esfuerzo: T0. Riesgo de regresión: bajo (solo-docs producto).
+  Prioridad: High. Estado: PROPOSED.
+
+### OPP-024 · Builder npm MBT ignora `excludes:`, honra `ignore:` (R3-F)
+- Problema: MTAR de 246MB por `excludes:` ignorado en builder npm.
+  Evidencia: 2 sintaxis probadas → 52.9MB `data.zip` solo prod con `ignore:`
+  + `mta-build` 45 líneas sin sección de exclusión.
+  Componente: `AI/skills/mta-build` (producto, capacidad existente mejorada).
+  Impacto: alto (todo `mbt build` npm). Frecuencia: cada `mbt build` npm 1.2.50.
+  Causa probable: semántica de exclusión no documentada.
+  Solución: subsección exclusión en `mta-build` (`ignore:` honrado vs
+  `excludes:` ignorado + verificación tamaño `data.zip`).
+  Esfuerzo: T0. Riesgo de regresión: bajo (solo-docs producto).
+  Prioridad: High. Estado: PROPOSED.
+
+### OPP-025 · UI5 bajo subruta approuter + quirks MCP Playwright (R3-F)
+- Problema: UI5 bajo subruta approuter con 404 CDN/assets contra `/` +
+  wildcard express5 + 5 quirks MCP Playwright sin guía.
+  Evidencia: R3-F-close (1.120, base href, regex; action/static/scale/5s/sin
+  setTimeout) + checklist §3 sin subruta + `e2e-fiori:31-34` sin quirks.
+  Componente: checklist §3 + `AI/agents/e2e-fiori.md` (producto, capacidades
+  existentes mejoradas).
+  Impacto: medio-alto (toda UI5 tras approuter / cada sesión MCP).
+  Frecuencia: cada UI5 tras approuter / cada sesión MCP.
+  Causa probable: cobertura parcial (subruta y quirks no documentados).
+  Solución: 2 bullets (subruta approuter en checklist §3 + quirks MCP en
+  `e2e-fiori`; L4 `$batch` va por extensión de lección existente, fuera de
+  esta OPP).
+  Esfuerzo: T0. Riesgo de regresión: bajo (solo-docs producto).
+  Prioridad: Medium. Estado: PROPOSED.
