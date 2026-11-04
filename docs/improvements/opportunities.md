@@ -91,9 +91,13 @@ Un duplicado detectado se cierra como `REJECTED (duplicada de OPP-xxx)`.
   Causa: conocimiento disperso en consumidores. Solución: 2 docs producto
   + ejemplos + puerta `sap-verify` (no skill nueva).
   Esfuerzo: T1. Riesgo regresión: bajo (solo docs/ejemplos, `AI/clients/` por render).
-  Prioridad: High. Estado: VALIDATING (2026-11-03: APTO estático —
-  `validate-meta` 54 OK, `render --check` 61 OK, triple 0.3.2; NO `AVAILABLE`
-  sin prueba real BTP; pendiente despliegue CF/XSUAA para COMPLETED).
+  Prioridad: High. Estado: COMPLETED (2026-11-04: criterio "despliegue
+  CF/XSUAA" cubierto por R3-C — instancia application + binding + matriz
+  401/403/200 + roles Viewer/Editor — R3-D — 200 con rol — R3-E — trust
+  sap.default + propagación IAS→XSUAA — R3-F — integración. Artefactos ya
+  existentes: xs-security-checklist + xs-security.json + sap-verify +
+  _template. Reviewer APROBAR-CON-CAMBIOS — P3 conteo fuentes aplicado;
+  QA APTO).
 
 ### OPP-007 · Freshness: `detect_changes` no mide desfase del índice (T3.1)
 
@@ -118,9 +122,12 @@ Un duplicado detectado se cierra como `REJECTED (duplicada de OPP-xxx)`.
   destinos. Causa: conocimiento disperso en consumidores.
   Solución: checklist + 2 ejemplos producto (no skill nueva).
   Esfuerzo: T1. Riesgo regresión: bajo (solo docs/ejemplos).
-  Prioridad: High. Estado: VALIDATING (2026-11-03: APTO estático —
-  `validate-meta` 54 OK, `render --check` 61 OK, triple 0.3.2; NO `AVAILABLE`
-  sin prueba real BTP con destino/Approuter para COMPLETED).
+  Prioridad: High. Estado: COMPLETED (2026-11-04: criterio "prueba real
+  BTP destino/Approuter" cubierto por R3-D — lite OAuth2UserTokenExchange,
+  SSO, 200 {"value":[]}, PUT 405→recreate, TENANT_HOST_PATTERN — + R3-F —
+  UI5 tras approuter. Artefactos: destination-approuter-checklist +
+  2 ejemplos. Reviewer APROBAR-CON-CAMBIOS — P3 conteo fuentes aplicado;
+  QA APTO).
   Trazabilidad: problema (sin patrón) → implementación (T4-E/F) → validación
   (T4-F estática; T4-G registra).
 
@@ -131,10 +138,15 @@ Un duplicado detectado se cierra como `REJECTED (duplicada de OPP-xxx)`.
   Frecuencia: cada proyecto con HANA. Causa: presupuesto T4 agotado en
   OPP-006/008. Solución: checklist+ejemplo HDI en ciclo futuro con fuente
   oficial. Esfuerzo: T1 estimado. Riesgo: bajo.
-  Prioridad: Medium. Estado: VALIDATING (2026-11-04 R3-B: base
-  `books-hana` hana-free + HDI `books-db` + deployer Exit 0 + CRUD 201
-  contra HANA + persistencia tras restart verificadas en trial; falta la
-  checklist+ejemplo HDI producto que pedía la solución).
+  Prioridad: Medium. Estado: COMPLETED (2026-11-04: checklist
+  AI/docs/hana-hdi-checklist.md + ejemplo
+  AI/specs/examples/mta-hdi-snippet.yaml CREADOS y validados — URLs 4/4
+  vivas 2026-11-04, 5ª 404 descartada; requires sin huérfanos; cero
+  secretos; render 65 OK, validate-meta 58 OK, triple 0.3.2. Runtime ya
+  probado en R3-B — CRUD 201 + restart + Proofs tras 4 redeploys.
+  Reviewer APROBAR-CON-CAMBIOS — P3 conteo fuentes aplicado; QA APTO.
+  Límite conocido P2: snippet sin validación mtad-gen/mbt — fragmento,
+  no app desplegable — pendiente antes del primer uso real).
 
 ### OPP-010 · Skill OData dedicada rechazada (T4-G)
 - Problema: propuesta de skill OData dedicada.
@@ -419,7 +431,10 @@ Un duplicado detectado se cierra como `REJECTED (duplicada de OPP-xxx)`.
   Solución: bullet arranque único (`cds run` como runner único; no combinar
   `cds serve` + `server.js` en el mismo puerto).
   Esfuerzo: T0. Riesgo de regresión: bajo (solo-docs producto).
-  Prioridad: High. Estado: PROPOSED.
+  Prioridad: High. Estado: COMPLETED (2026-11-04, §6-learnings: bullet
+  arranque único `cds run` en `AI/skills/cap-cli/SKILL.md:37` (+ aclaración
+  `:35`); suite R3-F-close 11/11 <1s; render 65 OK, meta 58 OK; QA APTO +
+  reviewer APROBAR).
 
 ### OPP-024 · Builder npm MBT ignora `excludes:`, honra `ignore:` (R3-F)
 - Problema: MTAR de 246MB por `excludes:` ignorado en builder npm.
@@ -431,7 +446,9 @@ Un duplicado detectado se cierra como `REJECTED (duplicada de OPP-xxx)`.
   Solución: subsección exclusión en `mta-build` (`ignore:` honrado vs
   `excludes:` ignorado + verificación tamaño `data.zip`).
   Esfuerzo: T0. Riesgo de regresión: bajo (solo-docs producto).
-  Prioridad: High. Estado: PROPOSED.
+  Prioridad: High. Estado: COMPLETED (2026-11-04, §6-learnings: subsección
+  Exclusión en `AI/skills/mta-build/SKILL.md:24-25` (`ignore:` honrado,
+  246MB→52.9MB); render 65 OK, meta 58 OK; QA APTO + reviewer APROBAR).
 
 ### OPP-025 · UI5 bajo subruta approuter + quirks MCP Playwright (R3-F)
 - Problema: UI5 bajo subruta approuter con 404 CDN/assets contra `/` +
@@ -447,4 +464,8 @@ Un duplicado detectado se cierra como `REJECTED (duplicada de OPP-xxx)`.
   `e2e-fiori`; L4 `$batch` va por extensión de lección existente, fuera de
   esta OPP).
   Esfuerzo: T0. Riesgo de regresión: bajo (solo-docs producto).
-  Prioridad: Medium. Estado: PROPOSED.
+  Prioridad: Medium. Estado: COMPLETED (2026-11-04, §6-learnings: bullet
+  subruta en `destination-approuter-checklist.md:61` + quirks
+  (`e2e-fiori.md:35`) + extensión $batch CSRF (`e2e-fiori.md:51`, L4 fuera
+  de esta OPP por diseño); UI5 CF verificada con datos HANA vía $batch
+  real; render 65 OK, meta 58 OK; QA APTO + reviewer APROBAR).
