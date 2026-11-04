@@ -4,6 +4,36 @@ Roadmap: [fuente de verdad del roadmap](../engineering/roadmap/source-of-truth.m
 
 ## Ahora (P-siguiente)
 
+- [x] R3-E IAS + Connectivity (PARCIAL/CONDICIONADA 2026-11-04): IAS
+  VERIFICADO (límites trial): trust `sap.default` (Business and platform
+  users, origin sap.default) Active, 1 entry, intacto — re-verificado hoy
+  vía `btp list security/trust` (cero mutaciones de trust en todo R3);
+  IdP del login approuter = IAS (`accounts.sap.com`, `uaa-cf-us10` 2FA,
+  observado en sesiones headed R3-F/R3-F-close); propagación principal
+  IAS→XSUAA probada funcionalmente (matriz Editor/Viewer R3-F-close:
+  201/403 por rol con sesión SSO); sesión BTP CLI caducada → re-login SSO
+  interactivo del usuario (sin pedir credenciales) y re-verificación OK.
+  Entitlements vigentes: connectivity lite (1) + connectivity_proxy (1),
+  destination lite (1), identity application (1), APPLICATION_RUNTIME
+  MEMORY 4. Instancias: solo 4 (books-xsuaa, books-destination, books-hana,
+  books-db); SIN instancia connectivity, SIN instancia identity
+  (tenant-level, esperado). Connectivity cloud-cloud: plan disponible,
+  runtime NO VERIFICADO (sin instancia/binding/prueba; crear una sin
+  backend no probaría nada — no se creó nada). On-prem: BLOQUEADO — sin
+  Cloud Connector (puerto 8443 cerrado, sin dir install, sin servicio) y
+  sin sistema backend; la llamada Destination OAuth2 a books-srv (R3-D)
+  es cloud-cloud y NO se presenta como prueba de Connector/on-prem.
+  Prerrequisito exacto para cerrar Connectivity: Connector instalado +
+  backend alcanzable + destino con conectividad + instancia lite; entonces
+  test de propagación de principal. Cero mutaciones BTP en R3-E (todo
+  lectura + re-login usuario); cero secretos; cuota sin cambios.
+  Veredicto: R3-E PARCIAL/CONDICIONADA (IAS verificado; Connectivity
+  runtime pendiente de prerrequisitos de entorno, no del harness).
+  OPP-009 sigue VALIDATING. Siguiente: R3 cerrada en lo verificable;
+  retomar §6. (Salidas observadas en sesión del orquestador 2026-11-04;
+  comandos: `btp list security/trust`, `btp list accounts/entitlement`,
+  `btp list services/instance`, `cf services`/`marketplace`, check 8443.)
+
 - [x] R3-F integración full-stack (COMPLETADA 2026-11-04): diseño
   T2 harness-architect opción B estáticos en books-srv (+0M, sin
   recursos nuevos) + autorización usuario "Aprobar deploy UI5"
@@ -38,7 +68,7 @@ Roadmap: [fuente de verdad del roadmap](../engineering/roadmap/source-of-truth.m
   403 solo-Viewer no testeable (identidad única con ambos roles). QA APTO
   parcial (re-verificó tests/MTAR/apps/services; no re-verificó SSO por
   presupuesto) + reviewer COMPLETADA (sin bloqueos). Veredicto: R3-F
-  COMPLETADA 2026-11-04. R3-E no tocada ni marcada. OPP-009 sigue
+  COMPLETADA 2026-11-04. R3-E no tocada ni marcada (a fecha R3-F). OPP-009 sigue
   VALIDATING (falta checklist+ejemplo HDI producto). Siguiente: R3-E y
   pendientes §6.
 
@@ -65,21 +95,91 @@ Roadmap: [fuente de verdad del roadmap](../engineering/roadmap/source-of-truth.m
   Pendiente guiado resuelto en R3-D: 200 con rol verificado vía approuter
   tras login SSO (ver entrada R3-D).
 
-- [ ] Branch protection: marcar job `validate` como required en `main`.
-- [ ] Pin SHA acciones (recomendación security, hoy `@v6` por convención).
+- [x] Branch protection (RESUELTO 2026-11-04, verificado remoto):
+  ruleset `main-requiere-validate` (id 26513554, enforcement active) en
+  refs/heads/main exige check `validate` (integración 15368,
+  strict=false); repo sin protección previa (protection 404, rulesets [])
+  ni otras protecciones alteradas; workflow `Validate meta` job `validate`;
+  temp `ruleset-main.json` borrado. Siguiente §6 pendiente: pin SHA.
+- [x] Pin SHA acciones (RESUELTO-por-verificación 2026-11-04, sin edición de workflows): 2 workflows (.github/workflows/validate-meta.yml, publish.yml), 4 referencias `uses:`, todas con pin SHA + comentario `# v6`: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6 (2026-07-16) y actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6 (ambos workflows); verificación upstream (gh api repos/<org>/<repo>/commits/v6): checkout → d23441a48…af803 COINCIDE, setup-node → 24997072…5ba9c38 COINCIDE; sin majors que actualizar (v6 vigente en ambos), sin cambios de comportamiento; alcance: sin reusable workflows, sin imágenes Docker, sin referencias locales en workflows; check `validate`, triggers, permisos y jobs intactos; `validate-meta` 58 OK; versión 0.3.2 intacta. Siguiente §6 pendiente: actualizar columna fecha en AI/docs/fuentes-oficiales.md → 2026-11-03.
 - [x] Indexar `harness-btp` en `codebase-memory` → proyecto
   `C-Users-Horan-Desktop-harness-btp`, 726 nodos / 790 aristas,
   `index_status: ready` (2026-11-03).
-- [ ] Actualizar columna fecha en `AI/docs/fuentes-oficiales.md` → 2026-11-03.
-- [ ] P2: completar `.gitignore.fragment` multi-cliente (`.claude/`,
-  `.cursor/`, `.github/agents|prompts|skills`, `.agents/skills`).
-  Escenario E: NO promocionar a P1, cambio 6 líneas.
-- [ ] P2: backup fuera del repo (`--backup-dir`, `%TEMP%/harness-bak`);
-  alinear con `AI/AGENTS.md § Frontera`.
-- [ ] P3: `bump-version.js` único (adiós triple edición manual).
-- [ ] P3: `provision-espacio` par `.sh` + `cf-safe.sh`/`pre-commit` par.
-- [ ] Mejora no bloqueante: granularidad log publish (regresión menor P1 —
-  log CI menos granular tras unificar `publish.yml`).
+- [x] Actualizar columna fecha en `AI/docs/fuentes-oficiales.md` (RESUELTO 2026-11-04): `./AI/scripts/check-docs.ps1` exit 0: 7/7 OK (cf-cli, mbt, cap, ui5-cli, opencode, npm-trusted-publishers REQUERIDAS + op-1password OPCIONAL con redirect 308 ya documentado). Fechas registradas: 2026-11-04 real en las 7 celdas (NO la objetivo 2026-11-03); línea 26 actualizada. Cero URLs rotas, cero cambios de contenido que exijan modificar guías → sin trabajo adicional. Gates: render 65 OK (0 escritos), validate-meta 58 OK, triple 0.3.2, check-package 183 limpio. Siguiente §6 pendiente: completar `.gitignore.fragment` multi-cliente (P2, escenario E: sin promocionar a P1).
+- [x] P2: completar `.gitignore.fragment` multi-cliente (RESUELTO-por-verificación 2026-11-04, sin edición del fragmento): las 6 entradas YA existían (commit b7a6195 R1 2026-11-03, blame líneas 25-31): `.claude/`, `.cursor/`, `.agents/` (+`.agents/skills/`), `.github/agents/`, `.github/skills/`, `.github/prompts/`; cero ediciones necesarias. Escenario E validado con mecanismo existente: `install.ps1 -Dest temp/s64-install` fusiona las 6 (grep OK); `git check-ignore -v` en repo scratch: ignorados `.claude/c.md`, `.cursor/x.md`, `.github/agents/a.md`, `.github/prompts/p.md`, `.github/skills/s2.md`, `.agents/skills/s.md` (este último vía regla padre `.agents/`); visibles `.github/workflows/ci.yml` y `README.md` (check-ignore vacío). `.github/` completo NO ignorado; workflows intactos. Transitorios borrados. Sin cambios de producto (fragmento intacto); `validate-meta` 58 OK; clasificación P2 conservada (no promocionado a P1, escenario E). Siguiente §6 pendiente: backup fuera del repo (`--backup-dir`, `%TEMP%/harness-bak`) + alinear con AI/AGENTS.md § Frontera.
+- [x] P2: backup fuera del repo (RESUELTO 2026-11-04, P2 conservada — NO promocionada a P1): diseño T2 harness-architect + implementación + 2 fixes + QA matriz + reviewer. Cambio: default fuera del proyecto (ps1 `%TEMP%/harness-bak/<yyyy-MM-dd>/`, sh `$HOME/.harness/bak/<yyyy-MM-dd>/`; `-BackupDir`/`--backup-dir` lo sustituye añadiendo fecha salvo que termine en fecha); pre-validación ABORT exit 1 si backup-dir dentro del destino (incluye rutas relativas: fix `canon_path` con prepend cwd en sh; ps1 vía GetFullPath); nombres únicos `<base>-<HHmmss>[-n].bak` tope 100, SIN borrar previos (eliminados Remove-Item/rm -rf de backups); BakLabel = basename real; ayudas actualizadas; mensajes SKIP/CREATE/BACKUP/OK/ABORT intactos. QA: matriz 4 fixtures × ps1/sh 8/8 PASS tras fix (inicial sin backup; update con backup recuperable fuera + 2º force sin borrar; override fechado/no-duplicado; rechazo interno relativo+absoluto exit 1 dest intacto; sh en Git Bash). Reviewer: APTO-CON-PENDIENTES, P1 ninguno; P2 colisión mismo segundo entre árboles con igual basename (`skills` ×3, distinguibles solo por ruta completa del mensaje — sin pérdida de datos, mejora futura de nombre); P3 symlinks/case en canon_path + trap ruidoso (menores, futuros). Gates: validate-meta 58 OK; triple 0.3.2 intacta (sin bump); render N/A justificado (no se toca AI/canónico); check-package N/A (instaladores fuera de npm). Cero secretos; transitorios y .bak de prueba borrados. Siguiente §6 pendiente: P3 `bump-version.js` único (adiós triple edición manual).
+- [x] P3: `bump-version.js` único (RESUELTO 2026-11-04, P3 conservada — mecanismo completado, NO bump): el mecanismo YA existía (`scripts/bump-version.js`, R1.2: `<X.Y.Z> [--check]`); §6.6 lo COMPLETA con guarda pre-escritura (+6 líneas): en modo escritura aborta (exit 1, sin escribir) si la triple previa discrepa; interfaz y estilo intactos. Validación: repo real `--check` → OK 0.3.2 exit 0; sandbox temp triple discrepante → `--check` y escritura exit 1 sin escribir; sandbox triple 0.0.0 → escritura 9.9.9 OK + guardia OK; sandbox borrado. Triple real 0.3.2 intacta (SIN bump: la tarea centraliza procedimiento, no versiona). Gates: `validate-meta` 58 OK; sin cambios en AI/, workflows, versions, docs de producto; cero secretos. Siguiente §6 pendiente: paridad `provision-espacio` + `cf-safe.sh` + pre-commit (par `.sh`).
+- [x] P3: `provision-espacio` par `.sh` + `cf-safe.sh`/`pre-commit` par (§6.7 RESUELTO 2026-11-04, P3 conservada): diseño
+  T2 + implementación F1 (CF_BIN con fallback en ambos provision-templates) + F2 (sh acepta $2/$3) + F3
+  (gate service-key+valores→exit 2 sin --allow-write en sh) + fix WhatIf-redactado + fix canon_path relativas
+  + 2 micro-edits del orquestador (divergencia NeedValues documentada como intencional; Bearer/JWT en WhatIf sh).
+  QA matriz stub-cf 7/7 PASS (PS5.1 + Git Bash, sin BTP real) + re-verificación orquestador (d)-sh
+  relativo/absoluto ABORT exit 1, force OK; probes Bearer/JWT redactados, what-if plano intacto. Reviewer
+  APTO-CON-PENDIENTES, P1 ninguno; P2 gate 1-flag vs 2-flags (divergencia intencional documentada: sh nunca
+  devuelve valores); P3 substring-falso-SKIP y trap ruidoso (aceptados, documentados). Diferencias aceptadas por
+  diseño (NO tocadas): P3 match exacto/substring, S2 JSON shape, S3 sed/`set --`, S4 wording, sin dry-run en
+  provision, args con espacios no soportados en sh. Gates: validate-meta 58 OK; render N/A justificado
+  (AI/scripts no propaga a AI/clients/); triple 0.3.2 intacta; cero secretos; transitorios borrados.
+  Siguiente §6 pendiente: granularidad de logs publish (regresión menor P1 — log CI menos granular tras
+  unificar publish.yml).
+- [x] P1 (mejora no bloqueante): granularidad logs publish (§6.8 RESUELTO
+  2026-11-04): historial 9af5d2c steps sin nombre → b7a6195 nombres+pins →
+  c1d3f74 guardia check-package; lo que se perdía: límites entre
+  validación/preparación/publicación (logs fundidos). Cambio: grupos
+  colapsables `::group::1/4..4/4` envolviendo los runs existentes + echo de
+  versión en 4/4 (`Publicando create-harness-btp v$(node -p ...)`); triggers/
+  permisos/OIDC/pins SHA/nombres/check `validate`/semántica intactos; cero
+  secretos (solo versión pública). Validación sin publicar: `gh workflow view`
+  parsea el YAML en servidor OK; simulación local de cuerpos (pack dry-run 183
+  ficheros, version echo 0.3.2, check-package 183 limpio, validate-meta 58 OK).
+  Mejora no bloqueante conservada (no exige re-publicación).
+  Siguiente §6 pendiente: §6.9 OPP-006/008/009 COMPLETED 2026-11-04 +
+  restantes exactos (ver entrada Siguiente).
+- [x] §6.9 OPP-006 COMPLETED (2026-11-04): criterio "despliegue
+  CF/XSUAA" cubierto por R3-C (instancia application + binding + matriz
+  401/403/200 + roles Viewer/Editor), R3-D (200 con rol), R3-E (trust
+  sap.default + propagación IAS→XSUAA), R3-F (integración). Artefactos ya
+  existentes: xs-security-checklist + xs-security.json + sap-verify +
+  _template. Reviewer APROBAR-CON-CAMBIOS (P3 conteo fuentes aplicado);
+  QA APTO. Cero BTP nuevo.
+- [x] §6.9 OPP-008 COMPLETED (2026-11-04): criterio "prueba real BTP
+  destino/Approuter" cubierto por R3-D (lite OAuth2UserTokenExchange, SSO,
+  200 {"value":[]}, PUT 405→recreate, TENANT_HOST_PATTERN) + R3-F (UI5 tras
+  approuter). Artefactos: destination-approuter-checklist + 2 ejemplos.
+  Reviewer APROBAR-CON-CAMBIOS (P3 conteo fuentes aplicado); QA APTO.
+  Cero BTP nuevo.
+- [x] §6.9 OPP-009 COMPLETED (2026-11-04): checklist
+  AI/docs/hana-hdi-checklist.md + ejemplo
+  AI/specs/examples/mta-hdi-snippet.yaml CREADOS y validados (URLs 4/4
+  vivas 2026-11-04, 5ª 404 descartada; requires sin huérfanos; cero
+  secretos; render 65 OK, validate-meta 58 OK, triple 0.3.2). Runtime ya
+  probado en R3-B (CRUD 201 + restart + Proofs tras 4 redeploys).
+  Reviewer APROBAR-CON-CAMBIOS (P3 conteo fuentes aplicado); QA APTO.
+  Límite conocido P2: snippet sin validación mtad-gen/mbt (fragmento, no
+  app desplegable) — pendiente antes del primer uso real. Cero BTP nuevo.
+- [x] §6.9 OPP-023 COMPLETED (2026-11-04): bullet arranque único `cds run`
+  en AI/skills/cap-cli/SKILL.md:37 (+ aclaración :35); suite R3-F-close
+  11/11 <1s; render 65 OK, meta 58 OK; QA APTO + reviewer APROBAR (tarea
+  §6-learnings). Cero BTP nuevo.
+- [x] §6.9 OPP-024 COMPLETED (2026-11-04): subsección Exclusión en
+  AI/skills/mta-build/SKILL.md:24-25 (`ignore:` honrado, 246MB→52.9MB);
+  render 65 OK, meta 58 OK; QA APTO + reviewer APROBAR (tarea
+  §6-learnings). Cero BTP nuevo.
+- [x] §6.9 OPP-025 COMPLETED (2026-11-04): bullet subruta en
+  destination-approuter-checklist.md:61 + quirks (e2e-fiori.md:35) +
+  extensión $batch CSRF (e2e-fiori.md:51, L4 fuera de esta OPP por diseño);
+  UI5 CF verificada con datos HANA vía $batch real; render 65 OK, meta 58
+  OK; QA APTO + reviewer APROBAR (tarea §6-learnings). Cero BTP nuevo.
+- [ ] Siguiente §6 pendiente / restantes exactos (2026-11-04, sin mezclar):
+  - P2 snippet mtad-gen RESUELTO 2026-11-04 (fixture aislada temp/t611, `mbt mtad-gen` exit 0: mvp-hdb/mvp-srv → mvp-hdi, recursos hana/hdi-shared; sin defectos, sin despliegue)
+  - P2 colisión basename `skills` RESUELTO 2026-11-04 (§6.12 nombres backup inequívocos, P2 conservada — NO promocionada a P1): fix tag saneado en Get-UniqueBackupPath/unique_backup_path (`<tag>-<HHmmss>[-n].bak`, tope 100, ABORT al agotar); call sites AI→`AI`, Merge-Tree→label (agents-skills, github-skills, opencode); 1 línea ayuda c/u; paridad ps1/sh; sin rutas personales en el nombre (solo etiqueta); ABORT pre-cambio y mensajes intactos. QA APTO: 3 dests × 2 skills trees × ps1/sh = 12 backups únicos e identificables; colisión real mismo segundo en ps1 (`AI-030523`+`AI-030523-1` vía contador); contenido preservado (markers); update/restore OK (restore=copia manual, sin comando); cero .bak en dests; sh probe contador OK. Reviewer APTO-CON-PENDIENTES, P1/P2 ninguno; P3: race TOCTOU concurrente ínfimo, HHmmss sin fecha (aislado por dir yyyy-MM-dd), heredados symlinks/case + trap (NO reabiertos, siguen separados). Gates: validate-meta 58 OK; triple 0.3.2; render N/A (AI/scripts no propaga); cero secretos; transitorios borrados.
+  - P3 symlinks/case canon_path + trap ruidoso RESUELTO 2026-11-04 (§6.13, P3 conservada — NO promocionada; TOCTOU NO reabierto, sigue P3 separado): fix canon_path físico + trap on_exit. QA inicial NO-APTO (junctions intermedias no resueltas: fail-open sh con 2 niveles inexistentes + ps1 solo reparse final); fix: sh baja al ancestro existente + pwd -P, ps1 camina todos los componentes con Resolve-Link (.Target, tope 32); trap on_exit (EXIT preserva código, INT→130/TERM→143 con mensaje stderr, MT_CLEANUP="" tras merge OK). Re-verificación orquestador con junctions reales mklink /J (sin admin): ps1 y sh ABORT exit 1 ante junction→dentro (relativa y absoluta), ACEPTAN e instalan exit 0 ante junction→fuera; exit 0 en éxito-con-avisos en ambos (un "exit 1" intermedio fue artefacto de Select-Object truncando el pipe, verificado en limpio). Reviewer APTO (P1 ninguno; P2 ninguno; P3: TOCTOU separado, symlinks /D sin privilegios NO-VERIFICADO con junctions como cobertura Windows). Symlinks /D reales: NO-VERIFICADO (mklink exige privilegios; causa registrada). Gates: validate-meta 58 OK; triple 0.3.2; render N/A (AI/scripts no propaga); cero secretos; temp/t613 + backups de prueba borrados (incl. $TEMP/harness-bak/<fecha> del orquestador).
+  - P3 Component-preload 404 benigno + screenshot timeout TRIADO §6.15 2026-11-04 (ver entrada §6.15; cero fixes)
+  - P3 ventana TOCTOU MITIGADA (§6.14 MITIGADO 2026-11-04, P3 conservada — NO eliminada, riesgo residual explícito, nada reabierto): mitigación con mecanismos existentes, sin locks por diseño: Assert-ExternalBackupRoot/assert_external_backup_root llamados justo antes de cada escritura (AI + Merge-Tree), pre-validación intacta; ventana reducida a microsegundos. QA APTO: revalidación detecta reapuntado j→dentro (ABORT exit 1, dest intacto) en ps1+sh; race-loop 30 installs + 80 flips: 22 ABORT, 8 exit 0, 0 .bak dentro; regresión update/restore OK; limpieza hecha. Reviewer APTO (P1 ninguno; P2 opcional: revalidar también el path final $Bak — registrado como mejora futura, NO aplicado). Riesgo residual EXPLÍCITO (NO declarar eliminado): intercalado exacto entre Assert y Move (microsegundos, 0/30 en prueba) sigue teóricamente posible; TOCTOU concurrente real posible aunque no observado; impacto acotado (backup caería dentro del proyecto u otra ruta local; sin secretos en backups más allá del contenido del repo). Siguiente §6 pendiente: P3 symlinks /D sin privilegios (NO-VERIFICADO, intacto) + resto P3 (preload 404, screenshots, 403 solo-Viewer; colisión basename ya resuelta §6.12).
+  - 403 solo-Viewer no testeable TRIADO §6.15 2026-11-04 (LIMITACIÓN DE IDENTIDAD; ver entrada §6.15; cero fixes)
+  - [x] §6.15 symlink /D + triage P3 R3-F (REGISTRADO 2026-11-04, solo-docs, sin cambios de código): symlink /D `cmd /c mklink /D temp\t615\link-out temp\t615\real` → error "Carece de privilegios suficientes para realizar esta operación", exit 1; sin Developer Mode ni elevación (prohibido elevar/retocar ACLs); resultado: caso symlink /D queda NOT VERIFIED con esa causa; cobertura Windows sigue siendo junctions mklink /J (ya verificadas §6.13/§6.14: ABORT dentro / ACEPTA fuera); fixture temp/t615 borrada. Triage P3 R3-F (clasificación, cero fixes, evidencia ya en R3-F/R3-F-close): a) 404 Component-preload.js → BENIGNO (estándar UI5 sin bundle pregenerado, fallback a individuales; app cargó y tabla mostró datos; observado en múltiples sesiones); b) timeout screenshot Playwright (fuentes) → LIMITACIÓN DE HERRAMIENTA/entorno (evidencia DOM+red ya cubría la verificación; no bloquea); c) 403 solo-Viewer no probado → LIMITACIÓN DE IDENTIDAD (identidad única con ambos roles; requeriría 2ª identidad/paisaje ampliado: NO se hace). Ninguno es defecto reproducible → cero fixes; P2 revalidación path final $Bak intacto como mejora futura opcional (separado); TOCTOU/symlinks/P3 cerrados intactos. Siguiente real: sin pendientes accionables en §6; §6 funcionalmente completo con los límites documentados (symlink /D NO-VERIFICADO, TOCTOU residual MITIGADO, P3 heredados benignos/limitados, P2 $Bak opcional).
+  - OPP-006/008/009/023/024/025 COMPLETED 2026-11-04 (fuera de la lista)
+  - Granularidad publish RESUELTA §6.8 (fuera de la lista)
 
 ## Después
 

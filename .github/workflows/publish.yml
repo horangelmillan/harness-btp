@@ -23,10 +23,23 @@ jobs:
           registry-url: "https://registry.npmjs.org"
           package-manager-cache: false
       - name: Empaquetado en seco (archivos incluidos)
-        run: npm pack --dry-run 2>&1 | tail -n 25
+        run: |
+          echo "::group::1/4 Empaquetado en seco (npm pack --dry-run)"
+          npm pack --dry-run 2>&1 | tail -n 25
+          echo "::endgroup::"
       - name: Guardia de distribución (sin fugas npm)
-        run: node scripts/check-package.js
+        run: |
+          echo "::group::2/4 Guardia de distribución (check-package)"
+          node scripts/check-package.js
+          echo "::endgroup::"
       - name: Validar meta (render --check + triple versión)
-        run: node scripts/validate-meta.js
+        run: |
+          echo "::group::3/4 Validar meta (render --check + triple versión)"
+          node scripts/validate-meta.js
+          echo "::endgroup::"
       - name: Publicar en npm (OIDC, sin tokens)
-        run: npm publish --access public
+        run: |
+          echo "::group::4/4 Publicar en npm"
+          echo "Publicando create-harness-btp v$(node -p "require('./package.json').version") (OIDC, sin tokens)"
+          npm publish --access public
+          echo "::endgroup::"

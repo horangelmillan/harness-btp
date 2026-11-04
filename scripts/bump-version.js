@@ -3,6 +3,7 @@
 // Uso: node scripts/bump-version.js <X.Y.Z> [--check]
 //   <X.Y.Z>: semver a establecer en los 3 archivos (no se ejecuta en R1; 0.4.0 solo al cierre).
 //   --check: no escribe; exit 0 si la triple coincide, exit 1 si difiere.
+//   En modo escritura aborta (§6.6) si la triple previa discrepa, sin escribir nada.
 // Sin dependencias (solo fs/path/child_process). No toca AI/clients/.
 const fs = require("fs");
 const path = require("path");
@@ -31,6 +32,11 @@ if (checkOnly) {
 }
 if (!want || !/^\d+\.\d+\.\d+$/.test(want)) {
   console.error("Uso: node scripts/bump-version.js <X.Y.Z> [--check]");
+  process.exit(1);
+}
+const cur = triple();
+if (cur.p !== cur.v || cur.p !== cur.a) {
+  console.error("ABORT: triple con discrepancia previa package.json=" + cur.p + " VERSION=" + cur.v + " AI/VERSION=" + cur.a + "; sincroniza a mano antes del bump");
   process.exit(1);
 }
 const pkgPath = path.join(ROOT, "package.json");

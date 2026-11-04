@@ -8,7 +8,10 @@
 # temp/cf-safe/*.raw.log, nunca secretos a stdout (redactado).
 # Garantías equivalentes a cf-safe.ps1 (ver matriz en informe R1-CLOSE):
 # denylist→allowlist→target, exit 0/1/2/3/4, WhatIf previo a red,
-# service-keys/service-key devuelven solo nombres, redacción + colapso
+# service-keys/service-key devuelven solo nombres (con valores exigen
+# --allow-write, exit 2; divergencia intencional vs ps1, que exige además
+# -NeedValues: sh no devuelve valores nunca, luego el flag único basta),
+# redacción + colapso
 # fail-closed de líneas con señales residuales. Diferencia residual honesta:
 # sin extracción de JSON anidado; ante duda la línea entera se colapsa.
 CF_BIN_RESOLVED="${CF_BIN:-cf}"
@@ -51,6 +54,14 @@ case "$ARGS" in *"|"*|*">"*|*";"*|*'`'*|*'$('* ) echo '{"ok":false,"exit":1,"ver
 if [ "$VERB" = "set-env" ] && [ "$ALLOW_WRITE" -eq 0 ]; then
   echo '{"ok":false,"exit":1,"verb":"'"$VERB"'","output":"DENY: set-env exige --allow-write explicito."}'; exit 1
 fi
+if [ "$VERB" = "service-key" ] || [ "$VERB" = "service-keys" ]; then
+  case "$ARGS" in
+    *"-p "*|*--parameters*|*"{"*)
+      if [ "$ALLOW_WRITE" -eq 0 ]; then
+        echo '{"ok":false,"exit":2,"verb":"'"$VERB"'","output":"FUERA DE ALLOWLIST: service-key con valores exige --allow-write."}'; exit 2
+      fi ;;
+  esac
+fi
 READ_OK=0
 for V in target apps app services service marketplace spaces space-users service-keys service-key env logs plugins; do
   if [ "$VERB" = "$V" ]; then READ_OK=1; fi
@@ -74,7 +85,14 @@ if [ "$VERB" = "logs" ]; then
   case "$ARGS" in *--recent*) ;; *) echo '{"ok":false,"exit":2,"verb":"logs","output":"FUERA DE ALLOWLIST: logs solo con --recent."}'; exit 2 ;; esac
 fi
 if [ "$WHAT_IF" -eq 1 ]; then
-  echo '{"ok":true,"exit":0,"verb":"'"$VERB"'","output":"WHATIF: cf'"$ARGS"'"}'; exit 0
+  WHATIF_ARGS=$(printf '%s' "$ARGS" | sed -E \
+    -e "s/-p[[:space:]][[:space:]]*('[^']*'|\"[^\"]*\"|\{[^{}]*\}|[^[:space:]]*)/-p ***REDACTED***/g" \
+    -e "s/--parameters[[:space:]][[:space:]]*=?[[:space:]]*('[^']*'|\"[^\"]*\"|\{[^{}]*\}|[^[:space:]]*)/--parameters ***REDACTED***/g" \
+    -e 's/eyJ[A-Za-z0-9_-]+\.eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_.-]+/***REDACTED***/g' \
+    -e 's/(Bearer|Basic)[[:space:]]+[^[:space:]]+/\1 ***REDACTED***/g' \
+    -e 's/\{[^{}]*\}/***REDACTED***/g' 2>/dev/null) || WHATIF_ARGS=" $VERB ***REDACTED***"
+  case "$WHATIF_ARGS" in *{*|*}*) WHATIF_ARGS=" $VERB ***REDACTED***" ;; esac
+  echo '{"ok":true,"exit":0,"verb":"'"$VERB"'","output":"WHATIF: cf'"$WHATIF_ARGS"'"}'; exit 0
 fi
 if [ -z "$VERB" ]; then echo '{"ok":false,"exit":2,"verb":"","output":"FUERA DE ALLOWLIST: sin argumentos."}'; exit 2; fi
 if ! command -v "$CF_BIN_RESOLVED" >/dev/null 2>&1; then

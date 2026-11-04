@@ -1,0 +1,37 @@
+# Snippet MTA: HANA Cloud + HDI + deployer hdb (sin credenciales)
+# Pegar los recursos/módulos que falten en el mta.yaml del MVP.
+resources:
+  - name: mvp-hdi
+    type: com.sap.xs.hdi-container
+    parameters:
+      service: hana
+      service-plan: hdi-shared
+  - name: mvp-hana
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: hana
+      service-plan: hana-free
+      # Si la subcuenta ya dispone de instancia HANA compartida, sustituir
+      # este recurso por un binding existente (se crea una vez por espacio,
+      # nunca en el MTA):
+      # type: org.cloudfoundry.existing-service
+      # parameters:
+      #   service-name: <instancia-hana-del-espacio>
+modules:
+  - name: mvp-hdb
+    type: hdb
+    path: gen/db
+    parameters:
+      buildpack: nodejs_buildpack
+    requires:
+      - name: mvp-hdi
+  - name: mvp-srv
+    type: nodejs
+    path: .
+    parameters:
+      memory: 256M
+      disk-quota: 1G
+    properties:
+      NODE_ENV: production
+    requires:
+      - name: mvp-hdi
