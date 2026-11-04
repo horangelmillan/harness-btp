@@ -38,6 +38,40 @@ secreto, redáctalo antes de citarla.
 - Cualquier cambio (target, entitlements, servicios) exige orden explícita
   del usuario y se ejecuta fuera de este skill, con evidencia observable.
 
+## Operativa R3-C (verificada en CLI 2.116.3)
+
+### Session-check: `btp --info` no prueba sesión
+
+`btp --info` muestra config local pero NO prueba sesión. Verificar
+con lectura real:
+
+```
+btp list accounts/subaccount --global-account <SUBDOMAIN>
+```
+
+Ante `Unknown session`, pedir re-login SSO interactivo al usuario;
+nunca pedir ni registrar credenciales.
+
+### Rol ≠ role collection
+
+XSUAA crea roles, no role collections. Con orden explícita del
+usuario y fuera de este skill (solo lectura: aquí NO se ejecuta nada,
+solo se documenta la sintaxis para usarla en el turno con autorización):
+
+```
+btp create security/role-collection NAME --subaccount ID
+btp add security/role NAME --to-role-collection RC --of-app <xsappname!tenant> --of-role-template T --subaccount ID
+btp assign security/role-collection RC --to-user EMAIL --subaccount ID
+```
+
+`assign` existente devuelve OK = idempotente (no duplicar).
+
+### Alcance aprobado
+
+Agrupar operaciones concretas del plan y continuar sin re-preguntar
+dentro del alcance. Ante acción externa nueva/más amplia, presentar
+cambio de alcance. Re-login SSO y consentimiento siempre manuales.
+
 ## Denylist
 
 - `create`, `update`, `delete`, `deploy` o cualquier verbo con efecto en BTP.

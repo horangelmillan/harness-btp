@@ -102,6 +102,14 @@ Add-Row "gh" "repo remoto/PR (solo si la spec pide remoto)" (Opt-Level $NeedGh) 
 $r = Test-Tool "op" @("--version")
 Add-Row "op (1Password)" "secretos de equipo (solo si el equipo lo adopta)" (Opt-Level $NeedOp) $(if ($r.Found) { "OK" } else { "FALTA" }) $r.Detail "https://developer.1password.com/docs/cli/get-started/"
 
+$btpName = "btp"
+if ($env:BTP_BIN) {
+  $btpBase = [System.IO.Path]::GetFileNameWithoutExtension($env:BTP_BIN)
+  if ($btpBase.ToLowerInvariant() -eq "btp") { $btpName = $env:BTP_BIN }
+}
+$r = Test-Tool $btpName @("--version")
+Add-Row "btp" "lecturas BTP (solo si la spec lo exige)" "OPT" $(if ($r.Found) { "OK" } else { "FALTA" }) "$($r.Detail) (sesion solo se verifica con lectura real (ver skill btp-cli))" "https://help.sap.com/docs/btp/sap-business-technology-platform/btp-command-line-interface-btp-cli"
+
 # --- Harness: skills, agentes, fragmento MCP (presencia de archivos) ---
 $skills = @()
 $skillsDir = Join-Path $HarnessRoot "AI\.opencode\skills"

@@ -106,6 +106,15 @@ LVL=$(opt_level $NEED_OP)
 if v=$(check_cmd op --version); then S=OK; else S=FALTA; fi
 row "op (1Password)" "secretos de equipo (solo si el equipo lo adopta)" "$LVL" "$S" "$v" "https://developer.1password.com/docs/cli/get-started/"; record "$LVL" "$S" "op (1Password)"
 
+BTP_CMD="btp"
+if [ -n "${BTP_BIN:-}" ]; then
+  btpbase="$(basename "$BTP_BIN" .exe)"; btpbase="${btpbase%.cmd}"
+  case "$btpbase" in btp) BTP_CMD="$BTP_BIN" ;; esac
+fi
+if v=$(check_cmd "$BTP_CMD" --version); then S=OK; else S=FALTA; fi
+v="$v (sesion solo se verifica con lectura real, ver skill btp-cli; \$BTP_BIN)"
+row "btp" "lecturas BTP (solo si la spec lo exige)" "OPT" "$S" "$v" "https://help.sap.com/docs/btp/sap-business-technology-platform/btp-command-line-interface-btp-cli"; record OPT "$S" btp
+
 NSKILLS=0
 if [ -d "$HARNESS_ROOT/AI/.opencode/skills" ]; then
   for d in "$HARNESS_ROOT"/AI/.opencode/skills/*/; do
