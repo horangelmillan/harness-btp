@@ -213,7 +213,11 @@ el `ECONNREFUSED`. `chrome-devtools` usa canal propio y no necesita `:9222`.
    se invoca igual con navegador VISIBLE (`headed`, perfil temporal propio)
    para que el usuario se autentique en su ventana y luego continúa; espera
    acotada al login manual (máximo definido en la delegación, sin reintentos
-   en bucle) y el agente nunca pide ni registra credenciales. El orquestador
+   en bucle) y el agente nunca pide ni registra credenciales. Al usuario
+   solo le corresponden SSO/consentimiento y decisiones: PROHIBIDO pedirle
+   que ejecute código, abra DevTools o pegue JWTs/tokens cuando el agente
+   pueda automatizarlo con navegador visible + `chrome-devtools`/
+   `playwright`. El orquestador
    avisa al usuario ANTES de abrir el navegador (2026-10-31: avisar tarde
    = 5 min perdidos). Ante muro de
    login, `e2e-fiori` deja veredicto formal `BLOQUEADO`-con-evidencia
@@ -228,6 +232,15 @@ el `ECONNREFUSED`. `chrome-devtools` usa canal propio y no necesita `:9222`.
    `status` si no se usó navegador) + qué quedó pendiente.
    Esperas solo por evento observable con timeout explícito (patrón
    `e2e-fiori` § Espera por evento; cero waits ciegos).
+5. **Perfil persistente opt-in:** `HARNESS_BROWSER_PROFILE` vive solo en el
+   mapeo local no versionado `~/.harness/local.ps1` (como `CF_BIN`), fuera
+   del repo y de commits, con permisos restringidos; nunca se versiona ni
+   se transcribe en docs/specs.
+6. **Concurrencia:** instancia única por perfil (1 puerto ↔ 1 perfil;
+   dos puertos con el mismo perfil pelearían por el lock de Chrome, no
+   hacerlo); si el puerto lo ocupa otro
+   (ajeno o segunda instancia), fail-fast — detenerse e informar, sin matar
+   ni compartir el perfil en paralelo.
 
 ## MCP y skills: selección por fase
 

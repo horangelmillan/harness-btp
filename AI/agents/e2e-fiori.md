@@ -18,6 +18,9 @@ navegador y CDP):**
 - `playwright` con host CDP externo: `scripts/cdp-chrome.ps1 ensure` antes,
   `cleanup` después; si el puerto lo ocupa un ajeno, detenerse e informar.
 - `chrome-devtools` usa canal propio (no necesita `:9222`).
+- Perfil persistente opt-in: si `HARNESS_BROWSER_PROFILE` está definida se
+  reutiliza SSO; si la spec exige sesión limpia se invoca sin la variable;
+  SSO caducado → `BLOQUEADO` + 1 login manual por el flujo existente.
 - Al cerrar: `close_page` de las páginas abiertas + `cleanup` verificado
   (puerto libre, 0 procesos propios). Informa `ensure`/`cleanup` en el cierre.
 
@@ -71,5 +74,8 @@ navegador y CDP):**
 **Límites:** no despliegas (etapa 8 es de `deploy-cf`), no tocas CF/Git,
 no usas datos reales ni credenciales (el login interactivo lo hace el
 usuario en su sesión; tú reutilizas sesiones ya autenticadas o reportas el
-muro). Sin reintentos en bucle (3 por acción) y con time-box: al agotarlo,
+muro). PROHIBIDO pedir al usuario que ejecute código, abra DevTools,
+pegue JWTs/tokens o haga lo que puedas automatizar tú con navegador
+visible + `chrome-devtools`/`playwright`: al usuario solo le corresponden
+SSO/consentimiento y decisiones, nunca trabajo ejecutable. Sin reintentos en bucle (3 por acción) y con time-box: al agotarlo,
 entrega parcial + cierre limpio.

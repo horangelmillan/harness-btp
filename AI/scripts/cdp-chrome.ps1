@@ -13,7 +13,7 @@
               sin matarlo e informa; si esta libre, lanza Chrome propio).
     cleanup - mata SOLO los procesos Chrome lanzados por este script
               (verificados por PID + linea de comandos con el perfil propio),
-              borra el perfil temporal y verifica que el puerto quede libre.
+              borra el perfil temporal (omite el borrado si HARNESS_BROWSER_PROFILE define perfil persistente) y verifica que el puerto quede libre.
 
   Regla irrestricta (AGENTS.md, Higiene obligatoria de navegador y CDP):
   `ensure` antes de cada sesion de pruebas con navegador, `cleanup` al
@@ -32,7 +32,8 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
-$ProfileDir = Join-Path $env:TEMP "mvp-cdp-$Port"
+$ProfileDir = if ($env:HARNESS_BROWSER_PROFILE) { $env:HARNESS_BROWSER_PROFILE } else { Join-Path $env:TEMP "mvp-cdp-$Port" }
+$IsPersistent = [bool]$env:HARNESS_BROWSER_PROFILE
 $PidFile = Join-Path $ProfileDir "owner.json"
 $Endpoint = "http://localhost:$Port/json/version"
 
@@ -93,6 +94,7 @@ if ($Mode -eq "status") {
     Write-Output "PUERTO ${Port}: libre"
   }
   Write-Output "ENDPOINT: $(if (Test-Endpoint) { 'responde' } else { 'sin respuesta' })"
+  Write-Output "PERFIL: $(if ($IsPersistent) { 'persistente' } else { 'temporal' }) ($ProfileDir)"
   $alive = @(Get-OwnAlive)
   Write-Output "PROPIOS VIVOS: $($alive.Count)"
   exit 0
@@ -129,7 +131,7 @@ if ($Mode -eq "ensure") {
   $after = @(Get-Process -Name "chrome" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Id)
   $mine = @($after | Where-Object { $_ -notin $before })
   $mine | ConvertTo-Json | Set-Content $PidFile
-  Write-Output "ENDPOINT operativo en ${Endpoint} (PIDs propios: $($mine -join ','), perfil temporal)."
+  Write-Output "ENDPOINT operativo en ${Endpoint} (PIDs propios: $($mine -join ','), perfil $(if ($IsPersistent) { 'persistente' } else { 'temporal' }))."
   exit 0
 }
 
@@ -143,8 +145,11 @@ if ($Mode -eq "cleanup") {
   }
   Start-Sleep -Seconds 2
   $remaining = @(Get-OwnAlive)
-  if ($remaining.Count -eq 0 -and (Test-Path $ProfileDir)) {
+  if (-not $IsPersistent -and $remaining.Count -eq 0 -and (Test-Path $ProfileDir)) {
     Remove-Item -Recurse -Force $ProfileDir -ErrorAction SilentlyContinue
+  }
+  if ($IsPersistent -and $remaining.Count -eq 0 -and (Test-Path $PidFile)) {
+    Remove-Item -Force $PidFile -ErrorAction SilentlyContinue
   }
   $listener = Get-Listener
   if ($remaining.Count -eq 0 -and -not $listener -and -not (Test-Endpoint)) {
