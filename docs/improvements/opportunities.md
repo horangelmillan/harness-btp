@@ -354,3 +354,15 @@ Un duplicado detectado se cierra como `REJECTED (duplicada de OPP-xxx)`.
   Prioridad: Medium. Estado: COMPLETED (2026-11-04, este ciclo; validado
   sin paisaje por diseño — operativa viva ya demostrada en R3-C).
   Deduplicación p2: sin coincidencia en backlog/log/findings/este registro (OPP-006 auth XSUAA/IAS; OPP-009 HANA diferido; OPP-010 skill OData rechazada, alcance distinto).
+
+### OPP-020 · Espera por evento + monitoreo activo en E2E (R3-D)
+- Problema: esperas ciegas (waitForURL sin timeout ni condicion de salida) + sesion E2E atascada sin entrega (R3-D).
+- Evidencia: incidentes R3-D-LOGIN2/LOGIN3 + cierre por PID propio tras orden de entrega. Componente: AI/agents/e2e-fiori.md (producto, capacidad existente mejorada, no agente nuevo).
+- Impacto: alto (toda validacion E2E con login IdP). Frecuencia: cada E2E con espera de navegacion.
+- Causa probable: espera sin evento observable + sin monitoreo red/consola/snapshot durante la espera + sin pre-chequeo de capacidad.
+- Solucion propuesta: bloque Espera por evento + monitoreo activo en e2e-fiori (evento observable + polling acotado + timeout explicito; aborto ante error determinista IdP 4xx/500; monitoreo activo; pre-chequeo de capacidad visible; chrome-devtools=observacion, playwright=interaccion; anti-atasco) + 2 lineas en AI/AGENTS.md Higiene.
+- Esfuerzo: T1. Riesgo de regresion: bajo (solo-docs producto;
+  `render --check` 65 OK, triple 0.3.2, `validate-meta` 58 OK,
+  `check-package` 183 limpio — verificados por orquestador 2026-11-04).
+- Prioridad: High. Estado: COMPLETED (2026-11-04, este ciclo; validado
+  sin navegador/paisaje por diseño).

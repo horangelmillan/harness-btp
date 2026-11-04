@@ -40,6 +40,13 @@ Roadmap: [fuente de verdad del roadmap](../engineering/roadmap/source-of-truth.m
 
 ## Hecho
 
+- [x] Mejora E2E interactivo COMPLETED 2026-11-04 (OPP-020): `e2e-fiori`
+  con espera por evento + monitoreo activo + pre-chequeo visible +
+  anti-atasco (lección R3-D: navegador abierto observable, espera al
+  SSO por evento, sin waits ciegos); QA APTO + reviewer
+  APTO-CON-PENDIENTES (P3 aplicado); gates 65/58/183/0.3.2; sin
+  commit/push.
+
 - [x] R3-D Approuter + Destination (COMPLETADA 2026-11-04, 200 con rol
   verificado en navegador del usuario): `books-approuter` + `books-srv`
   STARTED, `books-destination` lite, destino `books-srv`
