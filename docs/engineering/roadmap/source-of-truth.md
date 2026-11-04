@@ -1,8 +1,8 @@
 # Roadmap fuente de verdad — harness-btp
 
 **Estado al:** 2026-11-04  
-**Versión del producto:** 0.3.2  
-**Estado global:** R3.0 completada (`READY WITH LIMITATIONS`); R3.0.1 completada 2026-11-04; R3-A completada 2026-11-04 (desplegada y verificada); R3-C completada 2026-11-04 (401/403 runtime + roles asignados); R3-D completada 2026-11-04 (200 con rol vía approuter); R3-B completada 2026-11-04 (CRUD + persistencia HANA). R3-F completada 2026-11-04 (ver fila 13 y backlog). R3-E PARCIAL/CONDICIONADA 2026-11-04 (IAS verificado; Connectivity runtime pendiente de prerrequisitos de entorno; ver fila 14 y backlog).
+**Versión del producto:** 0.4.0  
+**Estado global:** Release 0.4.0 publicada 2026-11-04 (flujo E completo: QA APTO, PR #4 mergeado 4a7728e, tag v0.4.0, Publish to npm OIDC success run 41802784727, npm confirma create-harness-btp@0.4.0 2026-11-04T08:53:27Z; ramas release-0.4.0 borradas; cero secretos). R3.0 completada (`READY WITH LIMITATIONS`); R3.0.1 completada 2026-11-04; R3-A completada 2026-11-04 (desplegada y verificada); R3-C completada 2026-11-04 (401/403 runtime + roles asignados); R3-D completada 2026-11-04 (200 con rol vía approuter); R3-B completada 2026-11-04 (CRUD + persistencia HANA). R3-F completada 2026-11-04 (ver fila 13 y backlog). R3-E PARCIAL/CONDICIONADA 2026-11-04 (IAS verificado; Connectivity runtime pendiente de prerrequisitos de entorno; ver fila 14 y backlog).
 
 ## Propósito y continuidad
 
@@ -29,6 +29,7 @@ Al retomar el trabajo, leer este documento y sus fuentes; comprobar el checkout,
 | 13 | R3-F | COMPLETADA 2026-11-04 | Diseño opción B estáticos en books-srv (+0M) + autorización "Aprobar deploy UI5". Local: `npm test` 11/11, UI5 local 200, `validate-app` exit 0, `validate-meta` 58 OK, build+deploy OK. SSO headed con perfil persistente (OPP-021). Diagnóstico $batch con red: #23 GET $metadata 200, #24 POST $batch 403 "Forbidden" 9B sin token (desafío CSRF), #25 HEAD 200 (token fetch automático), #26 POST $batch 200 con x-csrf-token y HANA Proof + Proof 2; tabla 3 filas con ambos registros — handshake CSRF estándar, modelo auto-recuperado, SIN defecto (P1 anterior retirado con evidencia). MTAR 52.906.918 bytes (`excludes:` ignorado por builder npm, 2 sintaxis empíricas; `ignore:` honrado; data.zip solo prod). Post-deploy limpio: R3F-UI-mievy9 201→204 + filtro R3F- [], Proofs intactos (4 redeploys), Component-preload 404 benigno, screenshot timeout menor. Persistencia restart y redeploy verificadas. Limpieza DELETE 204 + filtro []; HANA Proof* intactos; 0 temporales; cero secretos. Hallazgos: P2 excludes-vs-ignore (lección mta-build, mejora futura pendiente, no cambio); P3 screenshot timeout + 403 solo-Viewer no testeable. QA APTO parcial (tests/MTAR/apps/services; SSO no re-verificado por presupuesto) + reviewer COMPLETADA sin bloqueos. OPP-009 COMPLETED 2026-11-04 (§6.9: checklist + ejemplo HDI producto creados y validados). Ver backlog. |
 | 14 | R3-E | PARCIAL/CONDICIONADA 2026-11-04 | IAS VERIFICADO (límites trial): trust `sap.default` Active 1 entry intacto, re-verificado hoy vía `btp list security/trust` (cero mutaciones en todo R3); IdP approuter = IAS (`accounts.sap.com`, 2FA, sesiones headed R3-F/R3-F-close); propagación IAS→XSUAA funcional (matriz Editor/Viewer 201/403 con SSO); re-login SSO interactivo tras caducidad CLI y re-verificación OK. Entitlements: connectivity lite (1) + connectivity_proxy (1), destination lite (1), identity application (1), MEMORY 4. Instancias: solo 4 (books-xsuaa, books-destination, books-hana, books-db); SIN instancia connectivity/identity (tenant-level, esperado). Connectivity cloud-cloud: plan disponible, runtime NO VERIFICADO (sin instancia/binding/prueba; no se creó nada sin backend). On-prem BLOQUEADO (sin Cloud Connector: 8443 cerrado, sin install, sin servicio; sin backend; llamada Destination OAuth2 R3-D es cloud-cloud, no prueba on-prem). Prerrequisito de cierre: Connector + backend alcanzable + destino con conectividad + instancia lite → test propagación principal. Cero mutaciones BTP (lectura + re-login); cero secretos; cuota intacta. OPP-006/008/009 COMPLETED 2026-11-04 (§6.9). Ver backlog. |
 | 15 | Pendientes anteriores | PENDIENTES / DIFERIDOS | Retomar después de R3; ver §6 y backlog actual. |
+| 16 | Release 0.4.0 | PUBLICADA 2026-11-04 | Flujo E completo: QA APTO (render 65, triple, installers smoke, validate-meta 58, check-package 185, pack dry-run), docs README (backups externos + v0.4.0 + changelog), bump-version.js 0.3.2→0.4.0 triple OK, gates verdes, PR #4 (check validate verde) mergeado 4a7728e, tag v0.4.0 pusheado, workflow Publish to npm OIDC success (run 41802784727, 18s, tarball 0.4.0 185 ficheros), npm confirma create-harness-btp@0.4.0 2026-11-04T08:53:27Z. Ramas release-0.4.0 borradas (local+remoto). Cero secretos. Ver backlog. |
 
 ## Historial de fases completadas
 
@@ -307,7 +308,7 @@ Al completar o cerrar R3, volver al backlog original antes de declarar terminado
 
 ## Invariantes y restricciones
 
-- Mantener versión **0.3.2**.
+- Mantener versión **0.4.0**.
 - No hacer commit, push, merge, tag, release ni publish sin orden explícita.
 - No editar manualmente `AI/clients/`; usar el generador documentado si una fase aprobada lo requiere.
 - Mantener separadas la capa de producto (`AI/`) y Meta-Harness (`docs/`, herramientas y gobernanza internas).

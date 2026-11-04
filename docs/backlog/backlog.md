@@ -185,6 +185,16 @@ Roadmap: [fuente de verdad del roadmap](../engineering/roadmap/source-of-truth.m
 
 ## Hecho
 
+- [x] Release 0.4.0 (PUBLICADA 2026-11-04): flujo E completo. QA APTO
+  (render 65, triple, installers smoke, validate-meta 58, check-package
+  185, pack dry-run), docs README (backups externos + v0.4.0 +
+  changelog), bump-version.js 0.3.2→0.4.0 triple OK, gates verdes,
+  PR #4 (check validate verde) mergeado 4a7728e, tag v0.4.0 pusheado,
+  workflow Publish to npm OIDC success (run 41802784727, 18s, tarball
+  0.4.0 185 ficheros), npm confirma create-harness-btp@0.4.0
+  2026-11-04T08:53:27Z. Ramas release-0.4.0 borradas (local+remoto).
+  Cero secretos.
+
 - [x] Perfil navegador persistente opt-in COMPLETED 2026-11-04 (OPP-022):
   `HARNESS_BROWSER_PROFILE` reutiliza SSO (temporal por defecto
   intacto); QA APTO + reviewer con P2/P3 aplicados; gates 65/58/183;
