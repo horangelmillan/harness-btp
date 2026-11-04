@@ -5,6 +5,7 @@
 | Skill | Trigger |
 |---|---|
 | `cf-cli` | antes del primer `cf` del turno |
+| `btp-cli` | antes del primer `btp` del turno |
 | `cap-cli` | antes de cualquier `cds` |
 | `mta-build` | antes del primer build MTAR |
 | `sap-verify` | ante afirmación sobre servicio/plan BTP |

@@ -10,6 +10,7 @@
 | Uso | Comando | Notas |
 |---|---|---|
 | Cloud Foundry | `cf` (`$env:CF_BIN` si está definido) | CLI estándar de Cloud Foundry (v8). |
+| SAP BTP | `btp` (`$env:BTP_BIN` si está definido) | CLI de SAP BTP (solo lectura: `--info`/`get`/`list`; ver skill `btp-cli`). |
 | MTA build | `mbt` | Cloud MTA Build Tool (binario recuperado vía su propio `install.js`). |
 
 El mapeo máquina→binario NO se versiona: vive en `~/.harness/local.ps1` (Windows: `$env:CF_BIN="sap_cf.cmd"`) o `$HOME/.harness/local.sh` (Unix). El harness dice `cf`; el skill `cf-cli` resuelve: si existe `$env:CF_BIN` lo usa, si no `cf`, verificado con `Get-Command` una vez por sesión. Nunca transcribir el mapeo en `AGENTS.md` ni en la spec.

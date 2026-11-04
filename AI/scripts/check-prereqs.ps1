@@ -55,10 +55,15 @@ if ($node.Found) {
 }
 Add-Row "node 18+" "CAP, UI5, mbt, scripts del harness" "REQ" $(if ($nodeOk) { "OK" } else { "FALTA" }) $node.Detail "https://nodejs.org/"
 
-$r = Test-Tool "cf" @("--version")
+$cfName = "cf"
+if ($env:CF_BIN) {
+  $cfBase = [System.IO.Path]::GetFileNameWithoutExtension($env:CF_BIN)
+  if (@('cf', 'sap_cf') -contains $cfBase.ToLowerInvariant()) { $cfName = $env:CF_BIN }
+}
+$r = Test-Tool $cfName @("--version")
 $cfState = if ($r.Found) { "OK" } else { "FALTA" }
-if ($r.Found -and ($r.Detail -notmatch "(?i)cf version|cloudfoundry")) {
-  $r.Detail = "$($r.Detail) (AVISO: no parece el CLI de Cloud Foundry; si 'cf' es otra herramienta, define un alias al CLI real)"
+if ($r.Found -and ($r.Detail -notmatch "(?i)cf(\.exe)? version|cloudfoundry")) {
+  $r.Detail = "$($r.Detail) (AVISO: no parece el CLI de Cloud Foundry; si 'cf' es otra herramienta, define `$env:CF_BIN al CLI real (mapeo en ~/.harness/local.ps1, ver skill cf-cli))"
   $cfState = "FALTA"
 }
 Add-Row "cf" "despliegues y lecturas Cloud Foundry" "REQ" $cfState $r.Detail "https://docs.cloudfoundry.org/cf-cli/install-go-cli.html"

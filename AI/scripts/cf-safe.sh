@@ -12,6 +12,14 @@
 # fail-closed de líneas con señales residuales. Diferencia residual honesta:
 # sin extracción de JSON anidado; ante duda la línea entera se colapsa.
 CF_BIN_RESOLVED="${CF_BIN:-cf}"
+# Guardia fail-closed (par de cf-safe.ps1): solo basename cf o wrappers
+# documentados (sap_cf), con o sin extension .exe/.cmd.
+# Sin interpolar el valor en el JSON (construcción manual sin escape).
+cfbase="$(basename "$CF_BIN_RESOLVED" .exe)"; cfbase="${cfbase%.cmd}"
+case "$cfbase" in
+  cf|sap_cf) ;;
+  *) echo '{"ok":false,"exit":1,"verb":"","output":"DENY: binario no autorizado. Solo cf."}'; exit 1 ;;
+esac
 EXPECTED_API="https://api.cf.us10-001.hana.ondemand.com"
 EXPECTED_ORG=""
 ALLOW_WRITE=0
@@ -87,7 +95,7 @@ TMPD="$(dirname "$0")/../../temp/cf-safe"
 mkdir -p "$TMPD"
 RAW="$TMPD/cf-$(date +%Y%m%d-%H%M%S)-PID$$.raw.log"
 # shellcheck disable=SC2086
-OUT=$($CF_BIN_RESOLVED $ARGS 2>&1)
+OUT=$("$CF_BIN_RESOLVED" $ARGS 2>&1)
 CODE=$?
 printf '%s' "$OUT" > "$RAW"
 # Redacción equivalente a cf-safe-patterns.ps1 (orden: asignaciones, Bearer/

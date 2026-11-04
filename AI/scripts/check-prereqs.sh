@@ -59,8 +59,13 @@ if v=$(check_cmd node --version); then
 else S=FALTA; fi
 row "node 18+" "CAP, UI5, mbt, scripts del harness" "REQ" "$S" "$v" "https://nodejs.org/"; record REQ "$S" "node 18+"
 
-if v=$(check_cmd cf --version); then
-  case "$v" in *[Cc][Ff]*version*|*[Cc]loud*[Ff]oundry*) S=OK ;; *) S=FALTA; v="$v (AVISO: no parece el CLI de Cloud Foundry; si 'cf' es otra herramienta, define un alias al CLI real)" ;; esac
+CF_CMD="cf"
+if [ -n "${CF_BIN:-}" ]; then
+  cfbase="$(basename "$CF_BIN" .exe)"; cfbase="${cfbase%.cmd}"
+  case "$cfbase" in cf|sap_cf) CF_CMD="$CF_BIN" ;; esac
+fi
+if v=$(check_cmd "$CF_CMD" --version); then
+  case "$v" in *[Cc][Ff]*version*|*[Cc]loud*[Ff]oundry*) S=OK ;; *) S=FALTA; v="$v (AVISO: no parece el CLI de Cloud Foundry; si 'cf' es otra herramienta, define \$CF_BIN al CLI real (mapeo en ~/.harness/local.sh, ver skill cf-cli))" ;; esac
 else S=FALTA; fi
 row "cf" "despliegues y lecturas Cloud Foundry" "REQ" "$S" "$v" "https://docs.cloudfoundry.org/cf-cli/install-go-cli.html"; record REQ "$S" cf
 

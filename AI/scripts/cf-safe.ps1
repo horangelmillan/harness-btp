@@ -5,7 +5,8 @@
 
 .DESCRIPTION
   Orden de evaluacion (nada ejecuta antes de pasarla):
-    1. Binario: `cf` (CLI estandar de Cloud Foundry, resuelto en PATH).
+    1. Binario: `cf` (CLI estandar de Cloud Foundry, resuelto en PATH;
+       si existe `$env:CF_BIN` se usa ese binario previa guardia fail-closed).
     2. Denylist -> exit 1: delete-*, unbind-*, purge-*, restage-*, set-env sin
        -AllowWrite, create-service-key directo, service-key con valores sin
        -NeedValues (y sin -AllowWrite), inyeccion (| > ; ` $()).
@@ -63,7 +64,8 @@ if ($CfArgs.Count -gt 0 -and $CfArgs[0] -eq '--') {
   $CfArgs = @($CfArgs | Select-Object -Skip 1)
 }
 
-$CfCmd = (Get-Command cf -ErrorAction SilentlyContinue).Source
+$CfBinName = if ($env:CF_BIN) { $env:CF_BIN } else { 'cf' }
+$CfCmd = (Get-Command $CfBinName -ErrorAction SilentlyContinue).Source
 $TempDir = Join-Path (Split-Path $PSScriptRoot -Parent) 'temp\cf-safe'
 $MaxOutput = 4000
 $MaxLogLines = 200
@@ -93,6 +95,12 @@ $joined = ($CfArgs -join ' ')
 # 1. Binario: solo `cf` (resuelto en PATH).
 $binNorm = ([string]$CfBinary).ToLowerInvariant()
 $binOk = ($binNorm -eq 'cf' -or $binNorm -eq 'cf.exe')
+# Nombres de wrapper documentados en AI/AGENTS.md (p. ej. sap_cf.cmd).
+$cfAllowed = @('cf', 'sap_cf')
+if ($env:CF_BIN) {
+  $envBase = [System.IO.Path]::GetFileNameWithoutExtension($env:CF_BIN)
+  if ($cfAllowed -notcontains $envBase.ToLowerInvariant()) { $CfBinary = $env:CF_BIN; $binOk = $false }
+}
 if (-not $binOk) {
   Emit-Result -Ok $false -Code 1 -Verb $verb -WasRedacted $false -RawLog '' -Names @() -Text "DENY: binario no autorizado [$CfBinary]. Solo cf."
   exit 1
